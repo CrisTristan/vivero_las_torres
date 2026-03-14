@@ -1,0 +1,34 @@
+<div id="n8n-chat" class="h-[83vh]">
+    <div #historyContainer class="chat-history-container">
+        @for (item of historyItems(); track item.id) {
+            <div
+                class="chat-message"
+                [ngClass]="{
+                    'chat-message-from-user': item.typeUser === 'user',
+                    'chat-message-from-bot': item.typeUser === 'bot',
+                    'chat-message-image': item.kind === 'image',
+                    'chat-message-prediction': item.kind !== 'image'
+                }"
+            >
+                <div class="chat-message-markdown">
+                    @if (item.kind === 'image') {
+                        <img
+                            [src]="item.imageUrl"
+                            style="max-width: 200px; margin: 10px 0;"
+                            alt="Imagen de planta"
+                        />
+                    }
+                    @if (item.kind === 'prediction') {
+                        <p>La planta es probable que sea: {{ item.bestMatches?.join(', ') }}</p>
+                    }
+                    @if (item.kind === 'message') {
+                        <p>{{ item.message }}</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="chat-footer">
+        <button class="bg-green-50">Send</button>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="h-[82vh] overflow-hidden overflow-y-scroll">
+  <div class="flex flex-col justify-center items-center p-5 gap-3 text-center">
+    <h1 class="text-2xl">Crea tu propio Arreglo Personalizado</h1>
+    <h2 class="text-green-700 text-xl">
+      Combina
+      <div class="flex flex-col">
+        <p class="text-black font-bold">1.-<span class="text-red-600">PLANTA</span></p>
+        <p class="text-black font-bold">2.-<span class="text-yellow-600">MACETA</span></p>
+        <p class="text-black font-bold">3.-<span class="text-blue-600">PIEDRA DECORATIVA</span></p>
+      </div>
+       para crear un arreglo único que refleje tu personalidad
+    </h2>
+  </div>
+  <div class="flex flex-col items-center">
+    <div class="flex flex-row justify-around gap-5 my-3 font-bold">
+      <button
+        [class.active]="selectedFilter() === 'plantas'"
+        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        (click)="setFilter('plantas')"
+      >
+        1
+      </button>
+      <span class="material-symbols-outlined"> arrow_forward_ios </span>
+      <button
+        [class.active]="selectedFilter() === 'macetas'"
+        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        (click)="setFilter('macetas')"
+      >
+        2
+      </button>
+      <span class="material-symbols-outlined"> arrow_forward_ios </span>
+      <button
+        [class.active]="selectedFilter() === 'piedras'"
+        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        (click)="setFilter('piedras')"
+      >
+        3
+      </button>
+    </div>
+    <!-- Renderizar compoennete Plantas|Macetas|Piedras Decorativas Dependiendo de el filtro seleccionado de arriba -->
+    <div class="content text-xl my-10">
+      @switch (selectedFilter()) {
+        @case ('plantas') {
+          <app-plants-designs />
+        }
+
+        @case ('macetas') {
+          <app-plantpots-designs />
+        }
+
+        @case ('piedras') {
+          <app-rocks-designs />
+        }
+      }
+    </div>
+    <app-plant-design-view #previewComponent/>
+  </div>
+</div>

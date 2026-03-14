@@ -1,0 +1,9 @@
+<div>
+    <input
+        type="text"
+        placeholder="Buscar productos..."
+        class="w-full p-2 border rounded mb-4"
+        [value]="searchProduct()"
+        (input)="updateSearchProduct($event.target.value)"
+    />
+</div>

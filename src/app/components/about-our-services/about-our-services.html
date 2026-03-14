@@ -1,0 +1,143 @@
+<div 
+  class="bg-green-200"
+>
+  <div class="flex flex-col items-center p-3 gap-3">
+    <h1 class="text-2xl font-bold">Nuestros Servicios</h1>
+    <h2 class="text-xl">
+      Ofrecemos servicios profesionales de jardinería para mantener tus espacios verdes en perfectas
+      condiciones
+    </h2>
+  </div>
+  <app-service-card
+    serviceName="Mantenimiento de Jardines"
+    serviceDescription="Nuestro servicio de mantenimiento de jardines incluye cuidado regular, poda, riego y fertilización para mantener tus plantas saludables y hermosas."
+    [serviceFeatures]="[
+      'Cuidado regular de plantas',
+      'Poda y recorte',
+      'Riego eficiente',
+      'Fertilización adecuada',
+    ]"
+    [servicePrice]="1500"
+  >
+    <span serviceIcon class="material-symbols-outlined text-green-600 text-4xl"> content_cut </span>
+  </app-service-card>
+  <app-service-card
+    serviceName="Diseño de Jardines"
+    serviceDescription="Creamos espacios verdes únicos adaptados a tu estilo y necesidades específicas."
+    [serviceFeatures]="[
+      'Diseño personalizado',
+      'Selección de plantas',
+      'Planificación del espacio',
+      'Asesoramiento experto',
+    ]"
+    [servicePrice]="2000"
+  >
+    <span serviceIcon class="material-symbols-outlined text-green-600 text-4xl">
+      design_services
+    </span>
+  </app-service-card>
+  <app-service-card
+    serviceName="Plantación y Trasplante"
+    serviceDescription="Realizamos la plantación de nuevas plantas y el trasplante de especies existentes, asegurando su correcto establecimiento y crecimiento."
+    [serviceFeatures]="[
+      'Plantación de nuevas especies',
+      'Trasplante de plantas',
+      'Preparación del suelo',
+      'Cuidado post-plantación',
+    ]"
+    [servicePrice]="1800"
+  >
+    <span serviceIcon class="material-symbols-outlined text-green-600 text-4xl">
+      local_florist
+    </span>
+  </app-service-card>
+  <div id="aboutUs" class="flex flex-col items-center py-12 px-6 scroll-mt-30">
+    <h2 class="text-3xl font-bold mb-2">Por Qué Elegirnos</h2>
+    <h3 class="text-lg text-gray-700 mb-10 text-center max-w-xl">
+      Somos más que un vivero, somos tu aliado en crear espacios verdes llenos de vida
+    </h3>
+
+    <div class="flex flex-col items-center gap-8 w-full max-w-md">
+      <!-- Pasión por las Plantas -->
+      <div class="flex flex-col items-center text-center gap-2">
+        <div class="bg-green-600 rounded-2xl p-3 mb-1">
+          <span class="material-symbols-outlined text-white text-3xl">favorite</span>
+        </div>
+        <h4 class="text-xl font-bold">Pasión por las Plantas</h4>
+        <p class="text-gray-600">
+          Cada planta es cultivada con amor y dedicación para garantizar su salud y belleza.
+        </p>
+      </div>
+
+      <!-- Calidad Premium -->
+      <div class="flex flex-col items-center text-center gap-2">
+        <div class="bg-green-600 rounded-2xl p-3 mb-1">
+          <span class="material-symbols-outlined text-white text-3xl">workspace_premium</span>
+        </div>
+        <h4 class="text-xl font-bold">Calidad Premium</h4>
+        <p class="text-gray-600">
+          Seleccionamos solo las mejores especies para asegurar tu satisfacción.
+        </p>
+      </div>
+
+      <!-- Cultivo Sostenible -->
+      <div class="flex flex-col items-center text-center gap-2">
+        <div class="bg-green-600 rounded-2xl p-3 mb-1">
+          <span class="material-symbols-outlined text-white text-3xl">eco</span>
+        </div>
+        <h4 class="text-xl font-bold">Cultivo Sostenible</h4>
+        <p class="text-gray-600">
+          Prácticas ecológicas que respetan el medio ambiente y la naturaleza.
+        </p>
+      </div>
+
+      <!-- Asesoramiento Experto -->
+      <div class="flex flex-col items-center text-center gap-2">
+        <div class="bg-green-600 rounded-2xl p-3 mb-1">
+          <span class="material-symbols-outlined text-white text-3xl">groups</span>
+        </div>
+        <h4 class="text-xl font-bold">Asesoramiento Experto</h4>
+        <p class="text-gray-600">
+          Nuestro equipo está siempre listo para ayudarte a elegir y cuidar tus plantas.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div id="contactUs" class="flex justify-center">
+    <div
+      class="w-[85vw] bg-gray-100 py-8 px-4 flex flex-col items-center gap-2 border-2 border-green-400 rounded-2xl"
+    >
+      <h2 class="text-2xl font-bold text-center mb-4">Envianos un mensaje</h2>
+      <p class="text-center text-gray-700 mb-4">
+        ¿Tienes preguntas o necesitas asesoramiento? 
+      </p>
+      <p>
+        Contáctanos y estaremos encantados de ayudarte
+        a crear tu oasis verde.
+      </p>
+      <div class="flex justify-center flex-col">
+        <button
+          class="text-white rounded-lg px-6 py-3 hover:bg-green-700 transition-colors duration-300"
+          (click)="handleWhatsAppClick()"
+        >
+          <img
+            src="images/whatsapp_icon.webp"
+            alt="WhatsApp"
+            class="w-[15vw] h-[8vh] inline-block"
+          />
+        </button>
+        <!-- <button class="flex justify-center items-center bg-green-400 rounded-lg p-2">
+        <p class="text-gray-700 text-lg ml-4">9983787079</p>
+        <span class="material-symbols-outlined"> phone_in_talk </span>
+      </button> -->
+      </div>
+    </div>
+  </div>
+  <div>
+    <img
+      src="images/beautiful-grass.png"
+      alt="cesped"
+      class="w-full h-auto object-cover rounded-lg mt-8"
+    />
+  </div>
+</div>

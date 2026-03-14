@@ -1,0 +1,176 @@
+<div class="bg-gray-300 w-screen pb-10">
+  <div class="flex flex-row justify-between my-10">
+    <h2 class="text-xl font-bold">Tu arreglo</h2>
+    @if (
+      designService.userSelectedPlant() &&
+      designService.userSelectedPot() &&
+      designService.userSelectedStone()
+    ) {
+      <button class="bg-red-200 rounded-xl p-2" (click)="resetDesign()">
+        <span class="material-symbols-outlined"> replay </span>
+        <br />
+        Reiniciar
+      </button>
+    }
+  </div>
+  <div class="flex flex-col justify-center">
+    <div class="flex flex-row justify-around gap-4 my-20">
+      @if (designService.userSelectedPlant()) {
+        <div class="rounded-xl p-4 shadow mb-2.5">
+          <img
+            src="{{ designService.userSelectedPlant()?.productos?.imagen }}"
+            alt="{{ designService.userSelectedPlant()?.productos?.nombre }}"
+            class="shadow-2xl shadow-black w-[20vw] plant-img"
+            [class.selected]="
+              designService.userSelectedPlant() &&
+              designService.userSelectedPot() &&
+              designService.userSelectedStone()
+            "
+          />
+        </div>
+      } @else {
+        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600">
+          <h3>Planta</h3>
+        </div>
+      }
+
+      @if (designService.userSelectedPot()) {
+        <div class="rounded-xl p-4 shadow mb-2.5">
+          <img
+            src="{{ designService.userSelectedPot()?.productos?.imagen }}"
+            alt="{{ designService.userSelectedPot()?.productos?.nombre }}"
+            class="shadow-2xl shadow-black w-[20vw] plantPot-img"
+            [class.selected]="
+              designService.userSelectedPlant() &&
+              designService.userSelectedPot() &&
+              designService.userSelectedStone()
+            "
+          />
+        </div>
+      } @else {
+        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600">
+          <h3>Maceta</h3>
+        </div>
+      }
+
+      @if (designService.userSelectedStone()) {
+        <div class="rounded-xl p-4 shadow mb-2.5">
+          <img
+            src="{{ designService.userSelectedStone()?.productos?.imagen }}"
+            alt="{{ designService.userSelectedStone()?.productos?.nombre }}"
+            class="shadow-2xl w-[20vw] stone-img"
+            [class.selected]="
+              designService.userSelectedPlant() &&
+              designService.userSelectedPot() &&
+              designService.userSelectedStone()
+            "
+          />
+        </div>
+      } @else {
+        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600">
+          <h3>Piedra</h3>
+        </div>
+      }
+    </div>
+    <div class="border-t-2 border-gray-400 my-5"></div>
+    <p>Selecciona los elementos para ver tu arreglo</p>
+    <div class="productsResume flex flex-col gap-2.5 text-xl">
+      <div class="flex flex-row justify-between">
+        <div class="flex">
+        @if (designService.userSelectedPlant()) {
+          <img
+            src="{{ designService.userSelectedPlant()?.productos?.imagen }}"
+            alt="{{ designService.userSelectedPlant()?.productos?.nombre }}"
+            class="w-20 h-20 object-cover rounded-lg"
+          />
+        } @else {
+          <div>
+            <span class="material-symbols-outlined"> question_mark </span>
+          </div>
+        }
+
+        <div>
+          <p>Planta</p>
+          <p>{{ designService.userSelectedPlant()?.productos?.nombre }}</p>
+        </div>
+        </div>
+        <div>
+          <p>${{ designService.userSelectedPlant()?.productos?.precio }}</p>
+        </div>
+      </div>
+      <div class="flex flex-row justify-between">
+        <div class="flex">
+        @if (designService.userSelectedPot()) {
+          <img
+            src="{{ designService.userSelectedPot()?.productos?.imagen }}"
+            alt="{{ designService.userSelectedPot()?.productos?.nombre }}"
+            class="w-20 h-20 object-cover rounded-lg"
+          />
+        } @else {
+          <div>
+            <span class="material-symbols-outlined"> question_mark </span>
+          </div>
+        }
+        <div>
+          <p>Maceta</p>
+          <p>{{ designService.userSelectedPot()?.productos?.nombre }}</p>
+        </div>
+        </div>
+        <div>
+          <p>${{ designService.userSelectedPot()?.productos?.precio }}</p>
+        </div>
+      </div>
+      <div class="flex flex-row justify-between">
+        <div class="flex">
+        @if (designService.userSelectedStone()) {
+          <img
+            src="{{ designService.userSelectedStone()?.productos?.imagen }}"
+            alt="{{ designService.userSelectedStone()?.productos?.nombre }}"
+            class="w-20 h-20 object-cover rounded-lg"
+          />
+        } @else {
+          <div>
+            <span class="material-symbols-outlined"> question_mark </span>
+          </div>
+        }
+        <div>
+          <p>Piedra</p>
+          <p>{{ designService.userSelectedStone()?.productos?.nombre }}</p>
+        </div>
+        </div>
+        <div>
+          <p>${{ designService.userSelectedStone()?.productos?.precio }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t-2 border-gray-400 my-5"></div>
+    <div class="flex flex-row justify-between mt-5">
+      <p class="text-2xl">Total: </p>
+      <p class="text-2xl font-bold text-green-600">
+        $
+        {{
+          (designService.userSelectedPlant()?.productos?.precio || 0) +
+            (designService.userSelectedPot()?.productos?.precio || 0) +
+            (designService.userSelectedStone()?.productos?.precio || 0)
+        }}
+      </p>
+    </div>
+    <div class="flex justify-center">
+    <button class="bg-green-500 text-white rounded-xl p-2 ml-4 text-2xl my-5 justify-center items-center flex">
+      <span class="material-symbols-outlined">
+shopping_cart
+</span>
+    
+      @if (
+        designService.userSelectedPlant() &&
+        designService.userSelectedPot() &&
+        designService.userSelectedStone()
+      ) {
+        <span (click)="designService.handleShoppingCart((designService.userSelectedPlant()?.productos?.precio ?? 0) + (designService.userSelectedPot()?.productos?.precio ?? 0) + (designService.userSelectedStone()?.productos?.precio ?? 0))">Comprar</span>
+      }@else {
+        Completa tu Arreglo
+      }
+    </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+<div class="h-[82vh]">
+  <div class="flex flex-col md:flex-row gap-6 p-4">
+    <img
+      src="{{ productDetails()?.productos?.imagen }}"
+      alt="{{ productDetails()?.productos?.nombre }}"
+      class="w-full md:w-1/2 h-auto object-cover rounded-lg"
+    />
+    <div class="absolute top-45 right-6 bg-green-400 pt-2 rounded-xl px-2">
+    @if (this.productCategory === 'plantas') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyPlantsDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyPlantsDesigns(productDetails()?.id!)
+            ? removeFromMyPlantsDesigns(productDetails()?.id!)
+            : addToMyPlantsDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    } @else if (this.productCategory === 'macetas') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyPotsDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyPotsDesigns(productDetails()?.id!)
+            ? removeFromMyPotsDesigns(productDetails()?.id!)
+            : addToMyPotsDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    } @else if (this.productCategory === 'piedras') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyRocksDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyRocksDesigns(productDetails()?.id!)
+            ? removeFromMyRocksDesigns(productDetails()?.id!)
+            : addToMyRocksDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    } @else if (this.productCategory === 'tierra') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyTierraDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyTierraDesigns(productDetails()?.id!)
+            ? removeFromMyTierraDesigns(productDetails()?.id!)
+            : addToMyTierraDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    } @else if (this.productCategory === 'pasto') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyPastoDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyPastoDesigns(productDetails()?.id!)
+            ? removeFromMyPastoDesigns(productDetails()?.id!)
+            : addToMyPastoDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    } @else if (this.productCategory === 'plaguicidas') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyPlaguicidasDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyPlaguicidasDesigns(productDetails()?.id!)
+            ? removeFromMyPlaguicidasDesigns(productDetails()?.id!)
+            : addToMyPlaguicidasDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    } @else if (this.productCategory === 'herbicidas') {
+      <span
+        class="material-symbols-outlined text-red-600"
+        [class.favorite-selected]="this.isProductInMyHerbicidasDesigns(productDetails()?.id!)"
+        (click)="
+          isProductInMyHerbicidasDesigns(productDetails()?.id!)
+            ? removeFromMyHerbicidasDesigns(productDetails()?.id!)
+            : addToMyHerbicidasDesigns(productDetails()!);
+          $event.stopPropagation()
+        "
+      >
+        favorite
+      </span>
+    }
+    </div>
+    <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex justify-center items-center">
+        <h1 class="text-3xl font-bold mb-4">{{ this.productDetails()?.productos?.nombre }}</h1>
+      </div>
+      <div class="flex flex-col gap-4">
+        <div class="bg-green-300 p-5 rounded-lg">
+        <p class="text-xl font-semibold">Descripción:</p>
+        <p>
+          {{ productDetails()?.descripcion?.descripcion }}
+        </p>
+        </div>
+        <div class="flex justify-center items-center">
+          <p>Precio: <span class="text-green-600 text-2xl font-bold">${{ productDetails()?.productos?.precio }}</span></p>
+        </div>
+        <button
+          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex justify-center items-center"
+          (click)="addToCart(productDetails()!)"
+        >
+          <p>Agregar al carrito</p>
+          <span class="material-symbols-outlined ml-2"> shopping_cart </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

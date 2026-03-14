@@ -1,0 +1,17 @@
+<div class="w-full">
+    <!-- <img
+        src="images/beautiful-grass.png"
+        class="w-full h-10 object-cover absolute bottom-11 left-0 z-10"
+    /> -->
+    <nav class="bottom-nav-bar flex justify-around bg-green-400 fixed bottom-0 left-0 right-0">
+        <a routerLink="/productCatalog" routerLinkActive="active">
+            <span class="material-symbols-outlined">potted_plant</span>
+        </a>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <span class="material-symbols-outlined">home</span>
+        </a>
+        <a routerLink="/chatBot" routerLinkActive="active">
+            <span class="material-symbols-outlined">chat</span>
+        </a>
+    </nav>
+</div>

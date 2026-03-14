@@ -1,0 +1,49 @@
+<div class="flex flex-col gap-5 justify-center items-center">
+    <h2 class="font-bold">Elige la Piedra</h2>
+    <h3>Encuentra la piedra perfecta para tu maceta</h3>
+    <div #carrousel class="overflow-x-auto scroll-smooth snap-x snap-mandatory" (scroll)="onScroll()">
+    <div class="flex w-full">
+        @for(group of groupedStones(); track $index) {
+           <div class="min-w-full grid grid-cols-2 grid-rows-2 gap-4 p-2 snap-start">
+          @for (product of group; track product.id) {
+            @if(product.esPiedraSuelta === true) {
+              <div
+              class="border rounded-xl p-4 shadow cursor-pointer transition"
+              (click)="setSelectedStone(product)"
+              [class.selected]="designService.userSelectedStone()?.id === product.id"
+            >
+              <img
+                [src]="product.productos.imagen"
+                [alt]="product.productos.nombre"
+                class="shadow-2xl w-full h-40 object-cover rounded-lg"
+              />
+              <h2 class="text-xl font-bold text-center mt-2">
+                {{ product.productos.nombre }}
+              </h2>
+            </div>
+            }
+            
+          }
+        </div>
+        }@empty {
+           <div class="flex justify-center items-center w-full h-40">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+          </div>
+        } 
+        </div>
+    </div>
+     <div class="flex justify-center mt-3 space-x-2">
+    @for (group of groupedStones(); track $index; let i = $index) {
+      <div
+        class="w-2.5 h-2.5 rounded-full transition"
+        [class.bg-green-500]="currentPage === i"
+        [class.bg-gray-300]="currentPage !== i"
+      ></div>
+    }
+  </div>
+    @if(this.designService.selectedStones().length > 0) {
+        <div class="flex justify-center items-center m-0">
+        <button class="bg-green-400 text-white rounded-md p-2 ml-4 text-xl my-5" (click)="navigateToCatalog()">Explorar más Opciones</button>
+    </div>
+    }
+</div>

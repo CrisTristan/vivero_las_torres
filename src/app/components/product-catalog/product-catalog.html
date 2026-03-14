@@ -1,0 +1,132 @@
+<div class="h-[80vh] overflow-hidden overflow-y-scroll">
+  <div class="my-3">
+    <app-search-bar [value]="searchTerm()"></app-search-bar>
+    <div class="flex flex-row justify-between my-3 font-bold">
+      <button
+        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="selectedCategory() === 'plantas'"
+        (click)="filterByCategory('plantas')"
+      >
+        Plantas
+      </button>
+      <button
+        class="bg-gray-400 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="selectedCategory() === 'macetas'"
+        (click)="filterByCategory('macetas')"
+      >
+        Macetas
+      </button>
+      <button
+        class="bg-white px-4 py-2 rounded-lg border-2 border-black filter-button"
+        [class.filter-selected]="selectedCategory() === 'piedras'"
+        (click)="filterByCategory('piedras')"
+      >
+        Piedras
+      </button>
+      <button
+        class="bg-amber-600 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="selectedCategory() === 'tierra'"
+        (click)="filterByCategory('tierra')"
+      >
+        Tierra
+      </button>
+      <button
+        class="bg-green-600 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="selectedCategory() === 'pasto'"
+        (click)="filterByCategory('pasto')"
+      >
+        Pasto
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 grid-rows-2 gap-2">
+    @for (product of filteredProducts(); track product.id) {
+      @if(product.esPiedraSuelta !== true){
+      <div class="border rounded-xl p-4 shadow mb-2.5" (click)="navigateToProductDetails(product.id, selectedCategory()!)">
+        <div class="flex justify-end">
+          <h2
+            class="p-2 m-2 rounded-full text-xl px-5"
+            [class.interior]="product.tipo === 'interior'"
+            [class.exterior]="product.tipo === 'exterior'"
+            [class.barro]="product.tipo === 'barro'"
+          >
+            {{ product.tipo }}
+          </h2>
+        </div>
+        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="shadow-2xl" />
+        <div class="space-y-2 mt-2">
+          <h2 class="text-2xl font-bold text-center">{{ product.productos.nombre }}</h2>
+          <!-- <h3 class="text-green-600 font-semibold">$ {{ product.price }}</h3> -->
+           @if(this.selectedCategory() === 'plantas') {
+              <p class="text-2xl">Nivel de Cuidado: {{ product.nivel_cuidado }}</p>
+           }
+          
+
+          <div class="flex flex-col gap-2" [class.hidden]="!isProductSelected(product.id)">
+          <div class="bg-green-300 border-2 border-green-600 rounded-lg p-4">
+          <h3 class="text-xl font-bold">Descripción</h3>
+            <p class="text-xl">
+            @if(this.selectedCategory() === 'plantas'){
+              {{ product.descripcion.descripcion }}
+            }@else if(this.selectedCategory() === 'macetas'){
+              <ol class="list-disc list-inside">
+                <li>Volumen: {{ product.descripcion.volumen }}</li>
+                <li>Altura: {{ product.descripcion.altura }}</li>
+                <li>Diámetro Superior: {{ product.descripcion.diametro_superior }}</li>
+                <li>Diámetro Inferior: {{ product.descripcion.diametro_inferior }}</li>
+              </ol> 
+            }@else if(this.selectedCategory() === 'piedras'){
+              {{ product.descripcion.descripcion }}
+            }@else if(this.selectedCategory() === 'tierra'){
+              {{ product.descripcion.descripcion }}
+            }
+            
+          </p>
+          </div>
+           <div class="flex justify-between items-center">
+              <p>Añadir a favoritos</p>
+            @if (selectedCategory() === 'plantas') {            
+              <span
+                  class="material-symbols-outlined"
+                  [class.favorite-selected]="isProductInMyPlantsDesigns(product.id)"
+                  (click)="isProductInMyPlantsDesigns(product.id) ? removeFromMyPlantsDesigns(product.id) : addToMyPlantsDesigns(product); $event.stopPropagation()"
+                >
+                  favorite
+                </span>
+            } @else if (selectedCategory() === 'macetas') {
+
+             <span
+                  class="material-symbols-outlined"
+                  [class.favorite-selected]="isProductInMyPotsDesigns(product.id)"
+                  (click)="isProductInMyPotsDesigns(product.id) ? removeFromMyPotsDesigns(product.id) : addToMyPotsDesigns(product); $event.stopPropagation()"
+                >
+                  favorite
+              </span>
+            } @else if(selectedCategory() === 'piedras') {
+              <span
+                class="material-symbols-outlined"
+                [class.favorite-selected]="isProductInMyRocksDesigns(product.id)"
+                (click)="isProductInMyRocksDesigns(product.id) ? removeFromMyRocksDesigns(product.id) : addToMyRocksDesigns(product); $event.stopPropagation()"
+              >
+                favorite
+              </span>
+            }
+            </div>
+            <button
+              class="bg-green-400 text-white rounded-md p-2 mt-5 w-full"
+              (click)="addToCart(product); $event.stopPropagation()"
+            >
+              Añadir al Carrito 
+            </button>
+          </div>
+        </div>
+      </div>
+      }
+    } @empty {
+      <div class="fixed inset-0 flex items-center justify-center pointer-events-none">
+    <span class="material-symbols-outlined text-[20rem] leading-none animate-spin">autorenew</span>
+  </div>
+    }
+  </div>
+</div>

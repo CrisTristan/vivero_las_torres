@@ -1,0 +1,23 @@
+.plant-img {
+  transition: transform 2s ease, opacity 0.3s ease;
+}
+
+.plant-img.selected {
+  transform: translateY(-50px) translateX(130px) scale(1.5);
+}
+
+.plantPot-img{
+    transition: transform 2s ease, opacity 0.3s ease;
+}
+
+.plantPot-img.selected {
+    transform: translateY(80px) scale(1.5);
+}
+
+.stone-img{
+    transition: transform 2s ease, opacity 0.3s ease;
+}
+
+.stone-img.selected {
+    transform: translateX(-5px) scale(1.5);
+}

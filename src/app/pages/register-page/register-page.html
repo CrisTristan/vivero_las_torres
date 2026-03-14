@@ -1,0 +1,163 @@
+<div class="min-h-[82vh] flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 px-4 py-8">
+  <div class="w-full max-w-md">
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-4 shadow-lg">
+        <span class="material-symbols-outlined text-white !text-3xl">eco</span>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-800">Crear Cuenta</h1>
+      <p class="text-gray-500 mt-1">Únete a Vivero Las Torres</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+
+      @if (errorMessage()) {
+        <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 text-sm flex items-center gap-2">
+          <span class="material-symbols-outlined !text-xl">error</span>
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <!-- Nombre -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-xl">person</span>
+            <input
+              type="text"
+              [(ngModel)]="nombre"
+              name="nombre"
+              placeholder="Tu nombre"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition bg-gray-50"
+            />
+          </div>
+        </div>
+
+        <!-- Apellidos -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Apellidos</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-xl">badge</span>
+            <input
+              type="text"
+              [(ngModel)]="apellidos"
+              name="apellidos"
+              placeholder="Tus apellidos"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition bg-gray-50"
+            />
+          </div>
+        </div>
+
+        <!-- Teléfono -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-xl">phone</span>
+            <input
+              type="tel"
+              [(ngModel)]="telefono"
+              name="telefono"
+              placeholder="10 dígitos"
+              maxlength="10"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition bg-gray-50"
+            />
+          </div>
+        </div>
+
+        <!-- Correo -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Correo Electrónico</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-xl">mail</span>
+            <input
+              type="email"
+              [(ngModel)]="correo"
+              name="correo"
+              placeholder="correo&#64;ejemplo.com"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition bg-gray-50"
+            />
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Contraseña</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-xl">lock</span>
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              [(ngModel)]="contrasena"
+              name="contrasena"
+              placeholder="Mínimo 6 caracteres"
+              class="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition bg-gray-50"
+            />
+            <button
+              type="button"
+              (click)="toggleShowPassword()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              <span class="material-symbols-outlined !text-xl">
+                {{ showPassword() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmar Contraseña</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 !text-xl">lock_reset</span>
+            <input
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              [(ngModel)]="confirmarContrasena"
+              name="confirmarContrasena"
+              placeholder="Repite tu contraseña"
+              class="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition bg-gray-50"
+            />
+            <button
+              type="button"
+              (click)="toggleShowConfirmPassword()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              <span class="material-symbols-outlined !text-xl">
+                {{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón Registrarse -->
+        <button
+          type="submit"
+          [disabled]="loading()"
+          class="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:from-green-600 hover:to-emerald-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (loading()) {
+            <span class="material-symbols-outlined animate-spin !text-xl align-middle mr-2">autorenew</span>
+            Registrando...
+          } @else {
+            Crear Cuenta
+          }
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-3 my-2">
+        <div class="flex-1 h-px bg-gray-200"></div>
+        <span class="text-sm text-gray-400">o</span>
+        <div class="flex-1 h-px bg-gray-200"></div>
+      </div>
+
+      <!-- Link a login -->
+      <p class="text-center text-sm text-gray-500">
+        ¿Ya tienes cuenta?
+        <a class="text-green-600 font-semibold hover:underline cursor-pointer"
+           (click)="navigateToLogIn()"
+        >Inicia Sesión</a>
+      </p>
+    </div>
+  </div>
+</div>
