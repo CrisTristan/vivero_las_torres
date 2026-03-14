@@ -1,1 +1,21 @@
+# Dependencias
 node_modules/
+
+# Build output
+dist/
+.angular/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Cobertura de tests
+coverage/

@@ -49,7 +49,7 @@ export class PaymentComponent {
           },
         });
 
-        const paymentElement = this.elements.create('payment', {
+        const paymentElement = (this.elements as any).create('payment', {
           wallets: {
             link: 'never',
           },
