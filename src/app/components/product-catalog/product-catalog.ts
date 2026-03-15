@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { fetchAllPiedras } from '../../controllers/piedras_controller';
 import { fetchAllTierra } from '../../controllers/tierra_controller';
 import { fetchAllPasto } from '../../controllers/pasto_controller';
+import { FilterCategoryService } from '../../services/filter-category-service';
 
 @Component({
   selector: 'app-product-catalog',
@@ -22,7 +23,7 @@ export class ProductCatalog implements OnInit {
   selectedProductId = signal<number | null>(null);
   private sub!: Subscription;
   searchTerm = signal<string>('');
-  selectedCategory = signal<string | null>('plantas');
+  // selectedCategory = signal<string | null>('');
   designService = inject(PlantDesignService);
   shoppingCartService = inject(ShoppingCartService);
   private products = signal<Product[]>([]);
@@ -30,60 +31,15 @@ export class ProductCatalog implements OnInit {
   constructor(
     private searchService: SearchProductEvent,
     private router: Router,
+    private filterCategoryService: FilterCategoryService
   ) {
     this.sub = this.searchService.searchTerm$.subscribe((term) => {
       this.searchTerm.set(term);
     });
-    // effect(() => {
-    //   console.log('Current Category:', this.selectedCategory());
-    //   switch (this.selectedCategory()) {
-    //     case 'plantas':
-    //       fetchAllPlants()
-    //         .then((productos) => {
-    //           this.products.set(productos);
-    //         })
-    //         .catch((error) => {
-    //           console.error('Error fetching plantas in ProductCatalog effect:', error);
-    //         });
-    //       break;
-    //     case 'macetas':
-    //       fetchAllMacetas()
-    //         .then((productos) => {
-    //           this.products.set(productos);
-    //         })
-    //         .catch((error) => {
-    //           console.error('Error fetching macetas in ProductCatalog effect:', error);
-    //         });
-    //       break;
-    //     case 'piedras':
-    //       fetchAllPiedras()
-    //         .then((productos) => {
-    //           this.products.set(productos);
-    //         })
-    //         .catch((error) => {
-    //           console.error('Error fetching piedras in ProductCatalog effect:', error);
-    //         });
-    //       break;
-    //     case 'tierra':
-    //       fetchAllTierra()
-    //         .then((productos) => {
-    //           this.products.set(productos);
-    //         })
-    //         .catch((error) => {
-    //           console.error('Error fetching tierra in ProductCatalog effect:', error);
-    //         });
-    //       break;
-    //     case 'pasto':
-    //       fetchAllPasto()
-    //         .then((productos) => {
-    //           this.products.set(productos);
-    //         })
-    //         .catch((error) => {
-    //           console.error('Error fetching pasto in ProductCatalog effect:', error);
-    //         });
-    //       break;
-    //   }
-    // });
+    effect(() => {
+      const category = this.filterCategoryService.getCurrentCategory();
+      // this.selectedCategory.set(category);
+    });
   }
 
   // products = [
@@ -145,6 +101,14 @@ export class ProductCatalog implements OnInit {
       });
   }
 
+  public getSelectedCategory() {
+    return this.filterCategoryService.getCurrentCategory();
+  }
+
+  public setSelectedCategory(category: string) {
+    this.filterCategoryService.setCurrentCategory(category);
+  }
+
   toggleProduct(productId: number) {
     this.selectedProductId.update((current) => (current === productId ? null : productId));
   }
@@ -155,7 +119,7 @@ export class ProductCatalog implements OnInit {
 
   filteredProducts = computed(() => {
     const term = this.searchTerm().toLowerCase();
-    const category = this.selectedCategory();
+    const category = this.filterCategoryService.getCurrentCategory();
     const products = this.products();
 
     return products.filter((product) => {
@@ -166,12 +130,12 @@ export class ProductCatalog implements OnInit {
   });
 
   filterByCategory(category: string) {
-    this.selectedCategory.set(category);
+    this.filterCategoryService.setCurrentCategory(category);
     this.searchTerm.set('');
   }
 
   clearFilter() {
-    this.selectedCategory.set(null);
+    this.filterCategoryService.setCurrentCategory('plantas');
     this.searchTerm.set('');
   }
 

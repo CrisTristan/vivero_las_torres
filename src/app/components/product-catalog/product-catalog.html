@@ -4,35 +4,35 @@
     <div class="flex flex-row justify-between my-3 font-bold">
       <button
         class="bg-green-400 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="selectedCategory() === 'plantas'"
+        [class.filter-selected]="this.getSelectedCategory() === 'plantas'"
         (click)="filterByCategory('plantas')"
       >
         Plantas
       </button>
       <button
         class="bg-gray-400 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="selectedCategory() === 'macetas'"
+        [class.filter-selected]="this.getSelectedCategory() === 'macetas'"
         (click)="filterByCategory('macetas')"
       >
         Macetas
       </button>
       <button
         class="bg-white px-4 py-2 rounded-lg border-2 border-black filter-button"
-        [class.filter-selected]="selectedCategory() === 'piedras'"
+        [class.filter-selected]="this.getSelectedCategory() === 'piedras'"
         (click)="filterByCategory('piedras')"
       >
         Piedras
       </button>
       <button
         class="bg-amber-600 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="selectedCategory() === 'tierra'"
+        [class.filter-selected]="this.getSelectedCategory() === 'tierra'"
         (click)="filterByCategory('tierra')"
       >
         Tierra
       </button>
       <button
         class="bg-green-600 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="selectedCategory() === 'pasto'"
+        [class.filter-selected]="this.getSelectedCategory() === 'pasto'"
         (click)="filterByCategory('pasto')"
       >
         Pasto
@@ -43,7 +43,7 @@
   <div class="grid grid-cols-2 grid-rows-2 gap-2">
     @for (product of filteredProducts(); track product.id) {
       @if(product.esPiedraSuelta !== true){
-      <div class="border rounded-xl p-4 shadow mb-2.5" (click)="navigateToProductDetails(product.id, selectedCategory()!)">
+      <div class="border rounded-xl p-4 shadow mb-2.5" (click)="navigateToProductDetails(product.id, this.getSelectedCategory())">
         <div class="flex justify-end">
           <h2
             class="p-2 m-2 rounded-full text-xl px-5"
@@ -58,7 +58,7 @@
         <div class="space-y-2 mt-2">
           <h2 class="text-2xl font-bold text-center">{{ product.productos.nombre }}</h2>
           <!-- <h3 class="text-green-600 font-semibold">$ {{ product.price }}</h3> -->
-           @if(this.selectedCategory() === 'plantas') {
+           @if(this.getSelectedCategory() === 'plantas') {
               <p class="text-2xl">Nivel de Cuidado: {{ product.nivel_cuidado }}</p>
            }
           
@@ -67,18 +67,18 @@
           <div class="bg-green-300 border-2 border-green-600 rounded-lg p-4">
           <h3 class="text-xl font-bold">Descripción</h3>
             <p class="text-xl">
-            @if(this.selectedCategory() === 'plantas'){
+            @if(this.getSelectedCategory() === 'plantas'){
               {{ product.descripcion.descripcion }}
-            }@else if(this.selectedCategory() === 'macetas'){
+            }@else if(this.getSelectedCategory() === 'macetas'){
               <ol class="list-disc list-inside">
                 <li>Volumen: {{ product.descripcion.volumen }}</li>
                 <li>Altura: {{ product.descripcion.altura }}</li>
                 <li>Diámetro Superior: {{ product.descripcion.diametro_superior }}</li>
                 <li>Diámetro Inferior: {{ product.descripcion.diametro_inferior }}</li>
               </ol> 
-            }@else if(this.selectedCategory() === 'piedras'){
+            }@else if(this.getSelectedCategory() === 'piedras'){
               {{ product.descripcion.descripcion }}
-            }@else if(this.selectedCategory() === 'tierra'){
+            }@else if(this.getSelectedCategory() === 'tierra'){
               {{ product.descripcion.descripcion }}
             }
             
@@ -86,7 +86,7 @@
           </div>
            <div class="flex justify-between items-center">
               <p>Añadir a favoritos</p>
-            @if (selectedCategory() === 'plantas') {            
+            @if (this.getSelectedCategory() === 'plantas') {            
               <span
                   class="material-symbols-outlined"
                   [class.favorite-selected]="isProductInMyPlantsDesigns(product.id)"
@@ -94,7 +94,7 @@
                 >
                   favorite
                 </span>
-            } @else if (selectedCategory() === 'macetas') {
+            } @else if (this.getSelectedCategory() === 'macetas') {
 
              <span
                   class="material-symbols-outlined"
@@ -103,7 +103,7 @@
                 >
                   favorite
               </span>
-            } @else if(selectedCategory() === 'piedras') {
+            } @else if(this.getSelectedCategory() === 'piedras') {
               <span
                 class="material-symbols-outlined"
                 [class.favorite-selected]="isProductInMyRocksDesigns(product.id)"

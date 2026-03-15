@@ -9,6 +9,7 @@ import { getPiedraById } from '../../models/piedras_model';
 import { Product } from '../../types/product.type';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { ShoppingCartService } from '../../services/shopping-cart-service';
+import { FilterCategoryService } from '../../services/filter-category-service';
 
 @Component({
   selector: 'app-product-details-page',
@@ -22,7 +23,8 @@ export class ProductDetailsPage {
   public productDetails = signal<Product | null>(null);
   public designService = inject(PlantDesignService);
   public shoppingCartService = inject(ShoppingCartService);
-
+  public filterCategoryService = inject(FilterCategoryService);
+  
   constructor() {
     const urlParams = new URLSearchParams(window.location.search);
     this.productId = urlParams.has('id') ? Number(urlParams.get('id')) : null;
