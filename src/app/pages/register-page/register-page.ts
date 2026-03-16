@@ -24,7 +24,7 @@ export class RegisterPage {
   errorMessage = signal('');
   loading = signal(false);
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
   toggleShowPassword() {
     this.showPassword.update(v => !v);
@@ -55,28 +55,15 @@ export class RegisterPage {
     this.loading.set(true);
 
     try {
-      // TODO: Implementar lógica de registro con backend/Supabase
-      console.log('Registro:', {
-        nombre: this.nombre,
-        apellidos: this.apellidos,
-        telefono: this.telefono,
-        correo: this.correo,
-      });
-
-      const userController = new UserController();
-      const newUser: User | null = await userController.registerUser({
+      await this.authService.register({
         nombre: this.nombre,
         apellidos: this.apellidos,
         correo: this.correo,
         telefono: this.telefono,
         password: this.contrasena,
       });
-      if (newUser) {
-        console.log('Usuario registrado:', newUser);
-        this.authService.login(newUser);
-        this.router.navigate(['/']);
-      }
-      
+
+      await this.router.navigate(['/']);
     } catch (error) {
       this.errorMessage.set('Ocurrió un error al registrarse. Intenta de nuevo.');
     } finally {

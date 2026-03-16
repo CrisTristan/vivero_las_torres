@@ -2,15 +2,17 @@ import { Component, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { ProductsPurchasedByCustomer } from '../../components/products-purchased-by-customer/products-purchased-by-customer';
+import { User } from '../../types/user';
 
 @Component({
   selector: 'app-user-account-page',
-  imports: [FormsModule],
+  imports: [FormsModule, ProductsPurchasedByCustomer],
   templateUrl: './user-account-page.html',
   styleUrl: './user-account-page.css',
 })
 export class UserAccountPage implements OnInit {
-  user = signal<{ nombre: string; apellidos: string; correo: string; telefono: string } | null>(null);
+  user = signal<User | null>(null);
 
   currentPassword = '';
   newPassword = '';
@@ -27,6 +29,7 @@ export class UserAccountPage implements OnInit {
 
   async ngOnInit() {
     const profile = await this.authService.getUser();
+    console.log('Perfil del usuario:', profile);
     if (profile) {
       this.user.set(profile);
     } else {
@@ -62,33 +65,7 @@ export class UserAccountPage implements OnInit {
 
     this.passwordLoading.set(true);
 
-    try {
-      // Verificar contraseña actual intentando re-autenticar
-      const user = this.user();
-      if (!user) return;
-
-      const loginCheck = await this.authService.login({...user, password_hashed: this.currentPassword });
-      if (true) {
-        this.passwordError.set('La contraseña actual es incorrecta.');
-        return;
-      }
-
-      // Actualizar contraseña con Supabase Auth
-      
-
-      this.passwordSuccess.set(true);
-      this.currentPassword = '';
-      this.newPassword = '';
-      this.confirmPassword = '';
-
-      // Ocultar mensaje de éxito después de 4 segundos
-      setTimeout(() => this.passwordSuccess.set(false), 4000);
-    } catch (error) {
-      this.passwordError.set('Ocurrió un error inesperado. Intenta de nuevo.');
-      console.error('Error al cambiar contraseña:', error);
-    } finally {
-      this.passwordLoading.set(false);
-    }
+    
   }
 
   async onLogout() {

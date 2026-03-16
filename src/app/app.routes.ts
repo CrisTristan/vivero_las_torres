@@ -11,6 +11,9 @@ import { LogInPage } from './pages/log-in-page/log-in-page';
 import { RegisterPage } from './pages/register-page/register-page';
 import {authGuard} from "./Guards/auth-guard";
 import {UserAccountPage} from "./pages/user-account-page/user-account-page";
+import {authorizationAdminGuard} from "./Guards/authorization-admin-guard";
+import { PanelAdministrador } from './pages/panel-administrador/panel-administrador';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
 
 export const routes: Routes = [
     {
@@ -72,5 +75,16 @@ export const routes: Routes = [
         component: UserAccountPage,
         title: 'Mi Cuenta',
         canActivate: [authGuard]
+    },
+    {
+        path: 'panel-admin',
+        component: PanelAdministrador,
+        title: 'Panel de Administración',
+        canActivate: [authorizationAdminGuard]
+    },
+    {
+        path: 'forgot-password',
+        component: ForgotPassword,
+        title: 'Olvidé mi Contraseña'
     }
 ];
