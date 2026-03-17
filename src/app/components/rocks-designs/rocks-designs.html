@@ -9,7 +9,7 @@
             @if(product.esPiedraSuelta === true) {
               <div
               class="border rounded-xl p-4 shadow cursor-pointer transition"
-              (click)="setSelectedStone(product)"
+              (click)="selectStone(product)"
               [class.selected]="designService.userSelectedStone()?.id === product.id"
             >
               <img

@@ -1,4 +1,4 @@
-import { Component, signal, viewChild, ElementRef,  AfterViewChecked, ViewChild} from '@angular/core';
+import { Component, signal, ElementRef, AfterViewChecked, ViewChild, inject } from '@angular/core';
 import { PlantpotsDesigns } from '../../components/plantpots-designs/plantpots-designs';
 import { PlantsDesigns } from '../../components/plants-designs/plants-designs';
 import { RocksDesigns } from '../../components/rocks-designs/rocks-designs';
@@ -14,23 +14,19 @@ type FilterType = 'plantas' | 'macetas' | 'piedras';
   styleUrl: './plant-design-dashboard.css',
 })
 export class PlantDesignDashboard implements AfterViewChecked {
-
+ 
  selectedFilter = signal<FilterType>('plantas');
-  designService: PlantDesignService;
-
   @ViewChild('previewComponent', {read: ElementRef}) 
   previewComponent!: ElementRef<HTMLDivElement>;
 
   private hasScrolledToPreview = false;
 
- constructor(public plantDesignService: PlantDesignService) {
-  this.designService = plantDesignService;
- }
+  plantDesignService = inject(PlantDesignService);
+
+ constructor() {}
 
   ngAfterViewChecked(): void {
-    if (this.designService.userSelectedPlant() && 
-        this.designService.userSelectedPot() && 
-        this.designService.userSelectedStone() && 
+    if (this.plantDesignService.isComplete() &&
         !this.hasScrolledToPreview
       ) {
         this.ScrollToPlantDesignPreview();

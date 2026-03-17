@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, inject } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
@@ -10,13 +10,14 @@ import { Product } from '../../types/product.type';
   styleUrl: './plantpots-designs.css',
 })
 export class PlantpotsDesigns {
-  designService: any;
+  designService = inject(PlantDesignService);
   currentPage = 0;
   @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
-
-  constructor(private designServiceInstance: PlantDesignService, private router: Router) { 
-    this.designService = designServiceInstance;
-    //Obtener el arreglo selectedPots del localStorage
+  
+  constructor(
+    private router: Router
+  ) { 
+    
     const storedPots = localStorage.getItem('selectedPots');
     if (storedPots) {
       // Si hay datos almacenados, parsearlos y asignarlos a la señal
@@ -24,8 +25,12 @@ export class PlantpotsDesigns {
     }
   }
 
-  setSelectedPlantPot(product: any) {
-    this.designService.userSelectedPot.set(product);
+  // setSelectedPlantPot(product: any) {
+  //   this.designService.userSelectedPot.set(product);
+  // }
+
+  selectPlantPot(plantPot: Product) {
+    this.designService.userSelectedPot.set(plantPot);
   }
 
   navigateToCatalog() {

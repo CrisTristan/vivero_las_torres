@@ -8,7 +8,7 @@
           @for (product of group; track product.id) {
             <div
               class="border rounded-xl p-4 shadow cursor-pointer transition"
-              (click)="setSelectedPlant(product)"
+              (click)="selectPlant(product)"
               [class.selected]="designService.userSelectedPlant()?.id === product.id"
             >
               <img

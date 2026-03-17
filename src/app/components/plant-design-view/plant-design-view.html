@@ -2,9 +2,7 @@
   <div class="flex flex-row justify-between my-10">
     <h2 class="text-xl font-bold">Tu arreglo</h2>
     @if (
-      designService.userSelectedPlant() &&
-      designService.userSelectedPot() &&
-      designService.userSelectedStone()
+      plantDesignService.isComplete()
     ) {
       <button class="bg-red-200 rounded-xl p-2" (click)="resetDesign()">
         <span class="material-symbols-outlined"> replay </span>
@@ -15,16 +13,16 @@
   </div>
   <div class="flex flex-col justify-center">
     <div class="flex flex-row justify-around gap-4 my-20">
-      @if (designService.userSelectedPlant()) {
+      @if (plantDesignService.userSelectedPlant()) {
         <div class="rounded-xl p-4 shadow mb-2.5">
           <img
-            src="{{ designService.userSelectedPlant()?.productos?.imagen }}"
-            alt="{{ designService.userSelectedPlant()?.productos?.nombre }}"
+            src="{{ plantDesignService.userSelectedPlant()?.productos?.imagen }}"
+            alt="{{ plantDesignService.userSelectedPlant()?.productos?.nombre }}"
             class="shadow-2xl shadow-black w-[20vw] plant-img"
             [class.selected]="
-              designService.userSelectedPlant() &&
-              designService.userSelectedPot() &&
-              designService.userSelectedStone()
+              plantDesignService.userSelectedPlant() &&
+              plantDesignService.userSelectedPot() &&
+              plantDesignService.userSelectedStone()
             "
           />
         </div>
@@ -34,16 +32,16 @@
         </div>
       }
 
-      @if (designService.userSelectedPot()) {
+      @if (plantDesignService.userSelectedPot()) {
         <div class="rounded-xl p-4 shadow mb-2.5">
           <img
-            src="{{ designService.userSelectedPot()?.productos?.imagen }}"
-            alt="{{ designService.userSelectedPot()?.productos?.nombre }}"
+            src="{{ plantDesignService.userSelectedPot()?.productos?.imagen }}"
+            alt="{{ plantDesignService.userSelectedPot()?.productos?.nombre }}"
             class="shadow-2xl shadow-black w-[20vw] plantPot-img"
             [class.selected]="
-              designService.userSelectedPlant() &&
-              designService.userSelectedPot() &&
-              designService.userSelectedStone()
+              plantDesignService.userSelectedPlant() &&
+              plantDesignService.userSelectedPot() &&
+              plantDesignService.userSelectedStone()
             "
           />
         </div>
@@ -53,16 +51,16 @@
         </div>
       }
 
-      @if (designService.userSelectedStone()) {
+      @if (plantDesignService.userSelectedStone()) {
         <div class="rounded-xl p-4 shadow mb-2.5">
           <img
-            src="{{ designService.userSelectedStone()?.productos?.imagen }}"
-            alt="{{ designService.userSelectedStone()?.productos?.nombre }}"
+            src="{{ plantDesignService.userSelectedStone()?.productos?.imagen }}"
+            alt="{{ plantDesignService.userSelectedStone()?.productos?.nombre }}"
             class="shadow-2xl w-[20vw] stone-img"
             [class.selected]="
-              designService.userSelectedPlant() &&
-              designService.userSelectedPot() &&
-              designService.userSelectedStone()
+              plantDesignService.userSelectedPlant() &&
+              plantDesignService.userSelectedPot() &&
+              plantDesignService.userSelectedStone()
             "
           />
         </div>
@@ -77,10 +75,10 @@
     <div class="productsResume flex flex-col gap-2.5 text-xl">
       <div class="flex flex-row justify-between">
         <div class="flex">
-        @if (designService.userSelectedPlant()) {
+        @if (plantDesignService.userSelectedPlant()) {
           <img
-            src="{{ designService.userSelectedPlant()?.productos?.imagen }}"
-            alt="{{ designService.userSelectedPlant()?.productos?.nombre }}"
+            src="{{ plantDesignService.userSelectedPlant()?.productos?.imagen }}"
+            alt="{{ plantDesignService.userSelectedPlant()?.productos?.nombre }}"
             class="w-20 h-20 object-cover rounded-lg"
           />
         } @else {
@@ -91,19 +89,19 @@
 
         <div>
           <p>Planta</p>
-          <p>{{ designService.userSelectedPlant()?.productos?.nombre }}</p>
+          <p>{{ plantDesignService.userSelectedPlant()?.productos?.nombre }}</p>
         </div>
         </div>
         <div>
-          <p>${{ designService.userSelectedPlant()?.productos?.precio }}</p>
+          <p>${{ plantDesignService.userSelectedPlant()?.productos?.precio }}</p>
         </div>
       </div>
       <div class="flex flex-row justify-between">
         <div class="flex">
-        @if (designService.userSelectedPot()) {
+        @if (plantDesignService.userSelectedPot()) {
           <img
-            src="{{ designService.userSelectedPot()?.productos?.imagen }}"
-            alt="{{ designService.userSelectedPot()?.productos?.nombre }}"
+            src="{{ plantDesignService.userSelectedPot()?.productos?.imagen }}"
+            alt="{{ plantDesignService.userSelectedPot()?.productos?.nombre }}"
             class="w-20 h-20 object-cover rounded-lg"
           />
         } @else {
@@ -113,19 +111,19 @@
         }
         <div>
           <p>Maceta</p>
-          <p>{{ designService.userSelectedPot()?.productos?.nombre }}</p>
+          <p>{{ plantDesignService.userSelectedPot()?.productos?.nombre }}</p>
         </div>
         </div>
         <div>
-          <p>${{ designService.userSelectedPot()?.productos?.precio }}</p>
+          <p>${{ plantDesignService.userSelectedPot()?.productos?.precio }}</p>
         </div>
       </div>
       <div class="flex flex-row justify-between">
         <div class="flex">
-        @if (designService.userSelectedStone()) {
+        @if (plantDesignService.userSelectedStone()) {
           <img
-            src="{{ designService.userSelectedStone()?.productos?.imagen }}"
-            alt="{{ designService.userSelectedStone()?.productos?.nombre }}"
+            src="{{ plantDesignService.userSelectedStone()?.productos?.imagen }}"
+            alt="{{ plantDesignService.userSelectedStone()?.productos?.nombre }}"
             class="w-20 h-20 object-cover rounded-lg"
           />
         } @else {
@@ -135,11 +133,11 @@
         }
         <div>
           <p>Piedra</p>
-          <p>{{ designService.userSelectedStone()?.productos?.nombre }}</p>
+          <p>{{ plantDesignService.userSelectedStone()?.productos?.nombre }}</p>
         </div>
         </div>
         <div>
-          <p>${{ designService.userSelectedStone()?.productos?.precio }}</p>
+          <p>${{ plantDesignService.userSelectedStone()?.productos?.precio }}</p>
         </div>
       </div>
     </div>
@@ -147,26 +145,24 @@
     <div class="flex flex-row justify-between mt-5">
       <p class="text-2xl">Total: </p>
       <p class="text-2xl font-bold text-green-600">
-        $
-        {{
-          (designService.userSelectedPlant()?.productos?.precio || 0) +
-            (designService.userSelectedPot()?.productos?.precio || 0) +
-            (designService.userSelectedStone()?.productos?.precio || 0)
-        }}
+        ${{ plantDesignService.total() }}
       </p>
     </div>
     <div class="flex justify-center">
-    <button class="bg-green-500 text-white rounded-xl p-2 ml-4 text-2xl my-5 justify-center items-center flex">
+    <button
+      class="bg-green-500 text-white rounded-xl p-2 ml-4 text-2xl my-5 justify-center items-center flex"
+      (click)="plantDesignService.proceedToPayment()"
+    >
       <span class="material-symbols-outlined">
 shopping_cart
 </span>
     
       @if (
-        designService.userSelectedPlant() &&
-        designService.userSelectedPot() &&
-        designService.userSelectedStone()
+        plantDesignService.userSelectedPlant() &&
+        plantDesignService.userSelectedPot() &&
+        plantDesignService.userSelectedStone()
       ) {
-        <span (click)="designService.handleShoppingCart((designService.userSelectedPlant()?.productos?.precio ?? 0) + (designService.userSelectedPot()?.productos?.precio ?? 0) + (designService.userSelectedStone()?.productos?.precio ?? 0))">Comprar</span>
+        <span>Comprar</span>
       }@else {
         Completa tu Arreglo
       }

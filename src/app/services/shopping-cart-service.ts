@@ -7,6 +7,20 @@ import { Product } from '../types/product.type';
 export class ShoppingCartService {
   private cartItems = signal<Product[]>([]);
 
+  private getPersonalizedItemType(item: Product): 'plantas' | 'macetas' | 'piedras' {
+    const category = item.productos.categorias.categoria.trim().toLowerCase();
+
+    if (category === 'plantas') {
+      return 'plantas';
+    }
+
+    if (category === 'macetas') {
+      return 'macetas';
+    }
+
+    return 'piedras';
+  }
+
   constructor() {
     try {
       const stored = localStorage.getItem('cartItems');
@@ -28,6 +42,32 @@ export class ShoppingCartService {
   addToCart(item: Product) {
     this.cartItems.update(current => [...current, item]);
     // Persist cart state after each change.
+    localStorage.setItem('cartItems', JSON.stringify(this.cartItems()));
+  }
+
+  replaceCartWithSingleItem(item: Product) {
+    const personalizedType = this.getPersonalizedItemType(item);
+
+    //creamos una copia del item que se va a agregar al carrito, y le agregamos la propiedad es_arreglo_personalizado en true, para identificarlo como un producto personalizado, 
+    // esto es necesario para que el carrito sepa que este producto es un arreglo personalizado y no un producto normal, y asi poder mostrarlo correctamente en el carrito y en el resumen de compra
+    const personalizedItem: Product = {
+      ...item,
+      es_arreglo_personalizado: true,
+      tipo_arreglo_personalizado: personalizedType,
+    };
+
+    //filtramos todos los productos menos el personalizado del mismo tipo, para conservar planta, maceta y piedra por separado.
+    this.cartItems.update(current => {
+      const remainingItems = current.filter(
+        existingItem =>
+          !existingItem.es_arreglo_personalizado ||
+          existingItem.tipo_arreglo_personalizado !== personalizedType
+      );
+
+      // Retornamos el carrito conservando productos normales y personalizados de otros slots.
+      return [...remainingItems, personalizedItem];
+    });
+
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems()));
   }
 

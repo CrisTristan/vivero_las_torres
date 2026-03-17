@@ -27,6 +27,7 @@ export default class OrderController {
       usuario_id: user.id,
       total: this.shoppingCartService.total,
       estado: 'no entregado',
+      es_arreglo_personalizado: cartItems.some(item => item.es_arreglo_personalizado) ? true : false,
       productos: this.filterRepeatedProductsOnShoppingCart(),
     };
     console.log('Datos de la orden a enviar:', orderData);

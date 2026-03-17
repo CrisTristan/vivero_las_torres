@@ -1,9 +1,7 @@
-import { Component, ViewChild, ElementRef, OnInit, signal, computed } from '@angular/core';
+import { Component, ViewChild, ElementRef, computed, inject } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
-import { fetchAllPiedras } from '../../controllers/piedras_controller';
-
 @Component({
   selector: 'app-rocks-designs',
   imports: [],
@@ -11,13 +9,14 @@ import { fetchAllPiedras } from '../../controllers/piedras_controller';
   styleUrl: './rocks-designs.css',
 })
 export class RocksDesigns {
-  designService: any;
+  designService = inject(PlantDesignService);
  
   currentPage = 0;
     @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
 
-  constructor(private designServiceInstance: PlantDesignService, private router: Router) { 
-    this.designService = designServiceInstance;
+  constructor(
+    private router: Router
+  ) {
     //Obtener el arreglo selectedStones del localStorage
     const storedStones = localStorage.getItem('selectedStones');
     if (storedStones) {
@@ -36,7 +35,7 @@ export class RocksDesigns {
     return groups;
   });
 
-  setSelectedStone(stone: any) {
+  selectStone(stone: any) {
     this.designService.userSelectedStone.set(stone);
   }
 

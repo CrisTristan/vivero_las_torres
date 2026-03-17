@@ -28,4 +28,6 @@ export interface Product extends Piedra{
 	descripcion: ProductDescription;
 	productos: ProductData;
 	quantity?: number; // Nueva propiedad para la cantidad en el carrito
+	es_arreglo_personalizado?: boolean;
+	tipo_arreglo_personalizado?: 'plantas' | 'macetas' | 'piedras';
 }

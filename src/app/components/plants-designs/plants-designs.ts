@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
@@ -10,15 +10,18 @@ import { Product } from '../../types/product.type';
   styleUrl: './plants-designs.css',
 })
 export class PlantsDesigns implements AfterViewInit {
-  designService: any;
+
+  designService = inject(PlantDesignService);
   currentPage = 0;
   @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
+  
 
   constructor(
-    private designServiceInstance: PlantDesignService,
+    // private designServiceInstance: PlantDesignService,
+    // public plantDesignDashboardService: PlantDesignDashboardService,
     private router: Router,
   ) {
-    this.designService = designServiceInstance;
+    // this.designService = designServiceInstance;
     //Obtener el arreglo selectedPlants del localStorage
     const storedPlants = localStorage.getItem('selectedPlants');
     if (storedPlants) {
@@ -36,7 +39,8 @@ export class PlantsDesigns implements AfterViewInit {
       }, 1000);
     }, 1000);
   }
-  setSelectedPlant(plant: any) {
+
+  selectPlant(plant: Product) {
     this.designService.userSelectedPlant.set(plant);
   }
 

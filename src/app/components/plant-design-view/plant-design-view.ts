@@ -1,12 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
-// import { 
-//   trigger, 
-//   state, 
-//   style, 
-//   animate, 
-//   transition 
-// } from '@angular/animations';
+// import { PlantDesignDashboardService } from '../../services/plant-design-dashboard-service';
+
 
 
 @Component({
@@ -16,11 +11,9 @@ import { PlantDesignService } from '../../services/plant-design-service';
   styleUrl: './plant-design-view.css',
 })
 export class PlantDesignView {
-  designService = inject(PlantDesignService);
+  plantDesignService = inject(PlantDesignService);
 
   resetDesign() {
-    this.designService.userSelectedPlant.set(null);
-    this.designService.userSelectedPot.set(null);
-    this.designService.userSelectedStone.set(null);
+    this.plantDesignService.resetDesign();
   }
 }
