@@ -61,7 +61,7 @@ export class NavBar {
   }
 
   navigateToAdminDashboard() {
-    this.router.navigate(['/panel-admin']);
+    this.router.navigate(['/panel-admin-main']);
     this.togleMenu();
   }
 
