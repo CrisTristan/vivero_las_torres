@@ -18,6 +18,10 @@ export class NavBar {
     this.ShoppingCartService = shoppingCartService;
   }
 
+  getUserSession() {
+    return this.authService.getUser();
+  }
+
   logout() {
     this.authService.logout();
   }
@@ -54,6 +58,11 @@ export class NavBar {
     } else {
       this.scrollToElement('aboutUs');
     }
+  }
+
+  navigateToAdminDashboard() {
+    this.router.navigate(['/panel-admin']);
+    this.togleMenu();
   }
 
   private scrollToElement(id: string) {

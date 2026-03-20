@@ -1,68 +1,62 @@
 <div class="bg-green-400 fixed top-0 left-0 right-0 z-20 mb-0">
   <nav class="nav-bar flex flex-row justify-between w-screen">
     <div class="nav-logo">
-      <img
-        src="images/ViveroLasTorresLogo.jpeg"
-        alt="Vivero Las Torres"
-        class="h-30 w-30 inline-block"
-        loading="eager"
-      />
+      <img src="images/ViveroLasTorresLogo.jpeg" alt="Vivero Las Torres" class="h-30 w-30 inline-block"
+        loading="eager" />
     </div>
-    
+
     <button (click)="open = !open" class="md:hidden m-3">
       @if (!open) {
-        <span class="material-symbols-outlined"> menu </span>
+      <span class="material-symbols-outlined"> menu </span>
       } @else {
-        <span class="material-symbols-outlined text-red-500"> close </span>
+      <span class="material-symbols-outlined text-red-500"> close </span>
       }
     </button>
-    <ul
-      class="md:flex gap-6"
-      [class.hidden]="!open"
-      [class.flex]="open"
-      class="absolute md:flex md:justify-end top-16 left-0 w-full md:w-auto bg-white md:bg-transparent flex-col items-center md:flex-row z-10 mt-10 rounded-4xl border-3 divide-y-4 text-green-700 md:text-white"
-    >
+    <ul class="md:flex gap-6" [class.hidden]="!open" [class.flex]="open"
+      class="absolute md:flex md:justify-end top-16 left-0 w-full md:w-auto bg-white md:bg-transparent flex-col items-center md:flex-row z-10 mt-10 rounded-4xl border-3 divide-y-4 text-green-700 md:text-white">
       <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-white hover:shadow-lg menu-text">
+        <!-- <a (click)="this.getUserSession()">Inicio <span class="material-symbols-outlined"> home </span></a> -->
+        @if (this.getUserSession()?.rol_usuario === 'admin') {
+        <a (click)="navigateToAdminDashboard()">Panel Admin <span class="material-symbols-outlined">
+            identity_platform
+          </span></a>
+        } @else {
         <a (click)="navigateToHome()">Inicio <span class="material-symbols-outlined"> home </span></a>
+        }
       </li>
       <!-- <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-white hover:shadow-lg menu-text">
         <a href="#">Catálogo <span class="material-symbols-outlined"> potted_plant </span></a>
       </li> -->
       <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-white hover:shadow-lg menu-text">
         <button>
-      @if (this.isLoggedIn) {
-        <a (click)="navigateToMyAccount()" class="flex items-center gap-2">
-          <p>Mi Cuenta</p>
-          <span class="material-symbols-outlined menu-text"> account_circle </span>
-        </a>
-      } @else {
-        <a (click)="navigateToLogIn()" class="flex items-center gap-2">
-          <p>Iniciar Sesión</p>
-          <span class="material-symbols-outlined menu-text"> login </span>
-        </a>
-      }
-    </button>
+          @if (this.isLoggedIn) {
+          <a (click)="navigateToMyAccount()" class="flex items-center gap-2">
+            <p>Mi Cuenta</p>
+            <span class="material-symbols-outlined menu-text"> account_circle </span>
+          </a>
+          } @else {
+          <a (click)="navigateToLogIn()" class="flex items-center gap-2">
+            <p>Iniciar Sesión</p>
+            <span class="material-symbols-outlined menu-text"> login </span>
+          </a>
+          }
+        </button>
       </li>
       <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-white hover:shadow-lg menu-text">
-        <a (click)="navigateToContact()"
-          >Contacto <span class="material-symbols-outlined"> connect_without_contact </span></a
-        >
+        <a (click)="navigateToContact()">Contacto <span class="material-symbols-outlined"> connect_without_contact
+          </span></a>
       </li>
       <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-white hover:shadow-lg menu-text">
-        <a
-          class="flex"
-          (click)="navigateToShoppingCartPage()"
-          >Carrito <span class="material-symbols-outlined"> shopping_cart </span>
+        <a class="flex" (click)="navigateToShoppingCartPage()">Carrito <span class="material-symbols-outlined">
+            shopping_cart </span>
           <div class="bg-green-200 text-green-700 rounded-full px-2 ml-1 text-xl font-bold">
             {{ shoppingCartService.getCartItems().length }} <!-- Mostrar el número de items en el carrito -->
           </div>
         </a>
       </li>
       <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-white hover:shadow-lg menu-text">
-        <a
-          (click)="navigateToPlantDesignDashboard()"
-          >Arreglo Personalizado <span class="material-symbols-outlined"> yard </span></a
-        >
+        <a (click)="navigateToPlantDesignDashboard()">Arreglo Personalizado <span class="material-symbols-outlined">
+            yard </span></a>
       </li>
     </ul>
     <!-- <div class="nav-cart flex items-center px-5">

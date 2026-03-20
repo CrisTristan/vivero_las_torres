@@ -5,4 +5,5 @@ export interface User {
     correo: string;
     password_hashed: string;
     telefono: string;
+    rol_usuario: 'admin' | 'cliente';
 }
