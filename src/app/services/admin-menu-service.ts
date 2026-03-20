@@ -7,12 +7,12 @@ import { AdminMenuItem } from '../types/admin_menu_item_type';
 export class AdminMenuService {
   
   readonly menuItems: AdminMenuItem[] = [
-    { section: 'Main', route: '/admin/product-management', icon: 'dashboard_2' },
-    { section: 'Productos', route: '/admin/product-management', icon: 'inventory' },
-    { section: 'Pedidos', route: '/admin/order-management', icon: 'shopping_cart' },
-    { section: 'Clientes', route: '/admin/customer-management', icon: 'people' },
-    {section: 'Configuración', route: '/admin/settings', icon: 'settings'},
-    {section: 'Notificaciones', route: '/admin/notifications', icon: 'notifications'},
+    { section: 'Main', route: '/panel-admin-main', icon: 'dashboard_2' },
+    { section: 'Productos', route: '/panel-admin-productos', icon: 'inventory' },
+    { section: 'Pedidos', route: '/panel-admin-pedidos', icon: 'shopping_cart' },
+    { section: 'Clientes', route: '/panel-admin-clientes', icon: 'people' },
+    {section: 'Configuración', route: '/panel-admin-configuración', icon: 'settings'},
+    {section: 'Notificaciones', route: '/panel-admin-notificaciones', icon: 'notifications'},
   ];
 
   readonly currentSection = signal<string>('Main');
