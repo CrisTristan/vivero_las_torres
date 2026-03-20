@@ -12,8 +12,9 @@ import { RegisterPage } from './pages/register-page/register-page';
 import {authGuard} from "./Guards/auth-guard";
 import {UserAccountPage} from "./pages/user-account-page/user-account-page";
 import {authorizationAdminGuard} from "./Guards/authorization-admin-guard";
-import { PanelAdministrador } from './pages/panel-administrador/panel-administrador';
+import { PanelAdministrador } from './pages/panel-admin-main/panel-admin-main';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
+import { PanelAdminProductos } from './pages/panel-admin-productos/panel-admin-productos';
 
 export const routes: Routes = [
     {
@@ -77,7 +78,7 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
-        path: 'panel-admin',
+        path: 'panel-admin-main',
         component: PanelAdministrador,
         title: 'Panel de Administración',
         canActivate: [authorizationAdminGuard]
@@ -86,5 +87,11 @@ export const routes: Routes = [
         path: 'forgot-password',
         component: ForgotPassword,
         title: 'Olvidé mi Contraseña'
+    },
+    {
+        path: 'panel-admin-productos',
+        component: PanelAdminProductos,
+        title: 'Panel de Administración - Productos',
+        canActivate: [authorizationAdminGuard]
     }
 ];

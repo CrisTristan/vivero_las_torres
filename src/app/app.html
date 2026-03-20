@@ -1,7 +1,7 @@
 <main class="main">
   <div class="w-full h-screen flex flex-col">
     <app-nav-bar class="h-[10%]"></app-nav-bar>
-    @if(this.getCurrentRoute() === '/panel-admin'){
+    @if(this.getCurrentRoute() === '/panel-admin-main' || this.getCurrentRoute() === '/panel-admin-productos') {
     @if (adminMenuService.toggleMenuVisible()) {
     <app-admin-menu #adminMenuHost [customClass]="'fixed top-[13vh] left-0 w-[40vw]'"></app-admin-menu>
     }@else{

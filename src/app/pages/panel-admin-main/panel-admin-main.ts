@@ -1,14 +1,13 @@
 import { Component, ElementRef, HostListener, ViewChild, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
-import { AdminMenu } from '../../components/admin-menu/admin-menu';
 import { AdminMenuService } from '../../services/admin-menu-service';
 
 @Component({
   selector: 'app-panel-administrador',
-  imports: [AdminMenu],
-  templateUrl: './panel-administrador.html',
-  styleUrl: './panel-administrador.css',
+  imports: [],
+  templateUrl: './panel-admin-main.html',
+  styleUrl: './panel-admin-main.css',
 })
 export class PanelAdministrador implements OnInit, OnDestroy {
   private expiryTimeoutId: ReturnType<typeof setTimeout> | null = null;
