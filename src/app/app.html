@@ -1,10 +1,22 @@
 <main class="main">
   <div class="w-full h-screen flex flex-col">
     <app-nav-bar class="h-[10%]"></app-nav-bar>
-    <router-outlet class="h-[10%]"/>
+    @if(this.getCurrentRoute() === '/panel-admin'){
+    @if (adminMenuService.toggleMenuVisible()) {
+    <app-admin-menu #adminMenuHost [customClass]="'fixed top-[13vh] left-0 w-[40vw]'"></app-admin-menu>
+    }@else{
+    <div class="fixed top-[13vh] left-0">
+      <button (click)="adminMenuService.toggleMenuVisible.set(true)"
+        class="bg-green-700 text-white p-2 rounded-lg hover:bg-green-800 transition-colors z-40">
+        <span class="material-symbols-outlined">
+          menu_open
+        </span>
+      </button>
+    </div>
+    }
+    }
+    <router-outlet class="h-[10%]" />
     <!-- <div id="n8n-chat"></div> -->
     <app-bottom-nav-bar class="h-[10%]"></app-bottom-nav-bar>
   </div>
 </main>
-
-

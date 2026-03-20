@@ -1,1 +1,56 @@
-<p>admin-menu works!</p>
+<aside [class]="'height-menu width-menu bg-[#dce5dc] text-[#4a4f53] font-[ui-sans-serif] border-r border-[#c6d0c7] flex flex-col ' + customClass">
+	<div class="px-5 pt-6 pb-5 border-b border-[#c6d0c7]">
+		<div class="flex items-center gap-3">
+			<div class="h-8 w-8 rounded-[8px] bg-[#0a7408] flex items-center justify-center">
+				<svg viewBox="0 0 24 24" fill="none" class="h-5 w-5 text-white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M18 7c-1.2-.8-2.7-1-4.1-.6-1.3.4-2.5 1.4-3.1 2.7-.5 1-.6 2.1-.4 3.1" />
+					<path d="M7 17c1.2.8 2.7 1 4.1.6 1.3-.4 2.5-1.4 3.1-2.7.5-1 .6-2.1.4-3.1" />
+					<path d="M9.2 6.8C9.5 5.1 10.8 4 12 4s2.5 1.1 2.8 2.8" />
+					<path d="M14.8 17.2c-.3 1.7-1.6 2.8-2.8 2.8s-2.5-1.1-2.8-2.8" />
+				</svg>
+			</div>
+			<span class="text-[31px] font-semibold tracking-tight text-[#1b1f1c] leading-none">Verde Jardín</span>
+		</div>
+	</div>
+
+	<nav class="px-4 pt-4">
+		<ul class="space-y-2 flex flex-col gap-2">
+			@for (section of this.menuSections; track $index) {
+				<li
+                    class="p-2 rounded-2xl text-md text-black cursor-pointer transition-all hover:bg-[#0a7408] hover:text-white"
+                    [class.isActiveSection]="this.adminMenuService.currentSection() === section.section"
+                >
+					<button (click)="this.adminMenuService.changeSection(section.section)">
+                        <span>{{ section.section }} <span class="material-symbols-outlined">{{ section.icon }}</span></span>
+                    </button>
+				</li>
+			}
+		</ul>
+	</nav>
+
+	<div class="mt-auto border-t border-[#c6d0c7] px-5 py-4">
+		<div class="flex items-center gap-3 pb-4">
+			<div class="h-9 w-9 rounded-full bg-[#c6dfb8] text-[#135d10] text-[18px] font-semibold flex items-center justify-center">AJ</div>
+			<div class="flex-1 min-w-0">
+				<p class="text-[27px] leading-none font-semibold text-[#1f2421]">Admin Juan</p>
+				<p class="text-[22px] text-[#5d6662] truncate">admin@verdejardin...</p>
+			</div>
+			<button type="button" class="h-8 w-8 flex items-center justify-center text-[#4a4f53]">
+				<svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+					<path d="M13.7 21a2 2 0 0 1-3.4 0" />
+				</svg>
+			</button>
+		</div>
+
+		<button type="button" class="w-full flex items-center text-[31px] font-medium text-[#3f4549] py-2">
+			<svg viewBox="0 0 24 24" fill="none" class="h-5 w-5 mr-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+				<path d="M10 17l-5-5 5-5" />
+				<path d="M5 12h12" />
+			</svg>
+			<span>Cerrar sesión</span>
+			<span class="ml-auto text-[27px]">&#8249;</span>
+		</button>
+	</div>
+</aside>

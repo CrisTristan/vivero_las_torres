@@ -1,15 +1,19 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { AdminMenu } from '../../components/admin-menu/admin-menu';
+import { AdminMenuService } from '../../services/admin-menu-service';
 
 @Component({
   selector: 'app-panel-administrador',
-  imports: [],
+  imports: [AdminMenu],
   templateUrl: './panel-administrador.html',
   styleUrl: './panel-administrador.css',
 })
 export class PanelAdministrador implements OnInit, OnDestroy {
   private expiryTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  public adminMenuService = inject(AdminMenuService);
+  @ViewChild('adminMenuHost', { read: ElementRef }) adminMenuHost?: ElementRef<HTMLElement>;
 
   constructor(
     private readonly authService: AuthService,
@@ -17,6 +21,7 @@ export class PanelAdministrador implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.adminMenuService.toggleMenuVisible.set(true);
     void this.startTokenExpiryWatcher();
   }
 
@@ -58,6 +63,11 @@ export class PanelAdministrador implements OnInit, OnDestroy {
     if (this.router.url !== '/login') {
       await this.router.navigate(['/login']);
     }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    this.adminMenuService.closeMenuIfClickedOutside(event, this.adminMenuHost?.nativeElement ?? null);
   }
 
 }
