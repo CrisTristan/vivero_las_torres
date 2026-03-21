@@ -2,16 +2,93 @@ import { Component, ElementRef, HostListener, ViewChild, inject, OnDestroy, OnIn
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { AdminMenuService } from '../../services/admin-menu-service';
+import { LineChart } from '../../components/line-chart/line-chart';
+import { HeaderSection } from '../../components/header-section/header-section';
+import { SummaryCardItem, SummaryCards } from '../../components/summary-cards/summary-cards';
+import { TopProductItem, TopProductsCard } from '../../components/top-products-card/top-products-card';
 
 @Component({
   selector: 'app-panel-administrador',
-  imports: [],
+  imports: [LineChart, HeaderSection, SummaryCards, TopProductsCard],
   templateUrl: './panel-admin-main.html',
   styleUrl: './panel-admin-main.css',
 })
 export class PanelAdministrador implements OnInit, OnDestroy {
   private expiryTimeoutId: ReturnType<typeof setTimeout> | null = null;
   public adminMenuService = inject(AdminMenuService);
+  public dashboardCards: SummaryCardItem[] = [
+    {
+      title: 'Ingresos Totales',
+      value: '$12,450',
+      change: '+12.5%',
+      changeLabel: 'vs. mes anterior',
+      icon: 'attach_money',
+      trend: 'up',
+    },
+    {
+      title: 'Pedidos',
+      value: '156',
+      change: '+8.2%',
+      changeLabel: 'este mes',
+      icon: 'shopping_cart',
+      trend: 'up',
+    },
+    {
+      title: 'Productos',
+      value: '24',
+      change: '+2',
+      changeLabel: 'activos',
+      icon: 'deployed_code',
+      trend: 'up',
+    },
+    {
+      title: 'Clientes',
+      value: '1,234',
+      change: '-2.1%',
+      changeLabel: 'nuevos este mes',
+      icon: 'group',
+      trend: 'down',
+    },
+  ];
+
+  public topProducts: TopProductItem[] = [
+    {
+      rank: 1,
+      name: 'Monstera Deliciosa',
+      price: '$7,020',
+      salesText: '156 ventas',
+      progress: 100,
+    },
+    {
+      rank: 2,
+      name: 'Golden Pothos',
+      price: '$3,472',
+      salesText: '124 ventas',
+      progress: 80,
+    },
+    {
+      rank: 3,
+      name: 'Suculenta Echeveria',
+      price: '$1,470',
+      salesText: '98 ventas',
+      progress: 64,
+    },
+    {
+      rank: 4,
+      name: 'Maceta Terracota',
+      price: '$1,914',
+      salesText: '87 ventas',
+      progress: 56,
+    },
+    {
+      rank: 5,
+      name: 'Arreglo Personalizado',
+      price: '$5,040',
+      salesText: '72 ventas',
+      progress: 48,
+    },
+  ];
+
   @ViewChild('adminMenuHost', { read: ElementRef }) adminMenuHost?: ElementRef<HTMLElement>;
 
   constructor(
@@ -67,6 +144,11 @@ export class PanelAdministrador implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     this.adminMenuService.closeMenuIfClickedOutside(event, this.adminMenuHost?.nativeElement ?? null);
+  }
+
+  get adminName(): string {
+    const user = this.authService.getUser()?.nombre + ' ' + this.authService.getUser()?.apellidos;
+    return user ? user : 'Admin';
   }
 
 }

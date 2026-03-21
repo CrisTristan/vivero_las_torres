@@ -1,0 +1,24 @@
+<section [class]="'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 ' + customClass">
+  @for (card of cards; track trackByTitle($index, card)) {
+    <article class="bg-[#dce5dc] border border-[#c6d0c7] rounded-2xl p-6 min-h-[145px]">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-[#6b7280] text-[19px] font-semibold leading-tight">{{ card.title }}</p>
+          <p class="text-[#1f2937] text-[40px] font-bold leading-none mt-3">{{ card.value }}</p>
+        </div>
+        <div class="h-10 w-10 rounded-xl bg-[#c6dfb8] text-[#1e7f28] flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-[22px] leading-none">{{ card.icon }}</span>
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-start gap-2 text-[17px] leading-tight">
+        @if (card.trend === 'up') {
+          <span class="text-[#15803d] font-semibold whitespace-nowrap">↗ {{ card.change }}</span>
+        } @else {
+          <span class="text-[#dc2626] font-semibold whitespace-nowrap">↘ {{ card.change }}</span>
+        }
+        <span class="text-[#6b7280] font-medium">{{ card.changeLabel }}</span>
+      </div>
+    </article>
+  }
+</section>

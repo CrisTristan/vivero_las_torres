@@ -1,1 +1,84 @@
-<p>panel-admin-productos works!</p>
+<app-header-section
+	[title]="adminMenuService.currentSection()"
+	[subtitle]="'Gestiona tus productos'"
+	[customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'"
+></app-header-section>
+
+<section class="pt-[21vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
+	<div class="flex flex-col gap-4 mb-5">
+		<div class="grid grid-cols-1 lg:grid-cols-[1fr_160px_40px_92px] gap-3 items-center">
+			<div class="h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] flex items-center px-3 gap-2">
+				<span class="material-symbols-outlined text-[#8a958a] text-[20px] leading-none">search</span>
+				<input
+					type="text"
+					placeholder="Buscar productos..."
+					[(ngModel)]="searchTerm"
+					class="bg-transparent w-full outline-none text-[15px] text-[#4b5563] placeholder:text-[#8a958a]"
+				/>
+			</div>
+
+			<div class="relative h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] text-[#4b5563] text-[16px] font-medium overflow-hidden">
+				<select
+					[(ngModel)]="selectedFilter"
+					class="appearance-none h-full w-full bg-transparent px-4 pr-10 outline-none cursor-pointer"
+				>
+					@for (option of filterOptions; track option) {
+						<option [ngValue]="option">{{ option }}</option>
+					}
+				</select>
+				<span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[20px] leading-none text-[#7b857b]">expand_more</span>
+			</div>
+
+			<button type="button" class="h-11 w-11 rounded-xl bg-white border border-[#d8e0d8] flex items-center justify-center text-[#5f695f]">
+				<span class="material-symbols-outlined text-[20px] leading-none">tune</span>
+			</button>
+
+			<div class="h-11 rounded-xl bg-[#e6ebe6] px-2 flex items-center justify-center gap-2">
+				<button
+					type="button"
+					(click)="setGridView()"
+					[class]="'h-8 w-8 rounded-lg flex items-center justify-center transition-colors ' + (isGridView ? 'bg-white border border-[#d3dcd3] text-[#4f5b4f]' : 'text-[#5f695f]')"
+				>
+					<span class="material-symbols-outlined text-[18px] leading-none">grid_view</span>
+				</button>
+				<button
+					type="button"
+					(click)="setListView()"
+					[class]="'h-8 w-8 rounded-lg flex items-center justify-center transition-colors ' + (!isGridView ? 'bg-white border border-[#d3dcd3] text-[#4f5b4f]' : 'text-[#5f695f]')"
+				>
+					<span class="material-symbols-outlined text-[18px] leading-none">list</span>
+				</button>
+			</div>
+		</div>
+
+		<div class="flex flex-wrap gap-2">
+			<span class="inline-flex items-center gap-2 rounded-full bg-[#e4ebe4] border border-[#d5dfd5] px-4 py-1.5 text-[#526152] text-[16px]">
+				<span class="h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span>
+				Activos:
+				<strong>18</strong>
+			</span>
+			<span class="inline-flex items-center gap-2 rounded-full bg-[#e4ebe4] border border-[#d5dfd5] px-4 py-1.5 text-[#526152] text-[16px]">
+				<span class="h-2.5 w-2.5 rounded-full bg-[#f59e0b]"></span>
+				Stock Bajo:
+				<strong>4</strong>
+			</span>
+			<span class="inline-flex items-center gap-2 rounded-full bg-[#e4ebe4] border border-[#d5dfd5] px-4 py-1.5 text-[#526152] text-[16px]">
+				<span class="h-2.5 w-2.5 rounded-full bg-[#ef4444]"></span>
+				Sin Stock:
+				<strong>2</strong>
+			</span>
+		</div>
+	</div>
+
+	<div [class]="productsGridClass">
+		@for (product of filteredProducts; track product.id) {
+			<app-card-product
+				[product]="product"
+				[menuOpen]="selectedMenuProductId === product.id"
+				(toggleMenu)="toggleCardMenu($event)"
+				(edit)="onEditProduct($event)"
+				(remove)="onDeleteProduct($event)"
+			></app-card-product>
+		}
+	</div>
+</section>

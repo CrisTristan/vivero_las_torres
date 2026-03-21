@@ -3,11 +3,11 @@
     <app-nav-bar class="h-[10%]"></app-nav-bar>
     @if(this.adminMenuService.menuItems.map(item => item.route).includes(this.currentRoute())) {
     @if (adminMenuService.toggleMenuVisible()) {
-    <app-admin-menu #adminMenuHost [customClass]="'fixed top-[13vh] left-0 w-[40vw]'"></app-admin-menu>
+    <app-admin-menu #adminMenuHost [customClass]="'fixed top-[13vh] left-0 w-[40vw] z-[70] h-[82vh]'"></app-admin-menu>
     }@else{
-    <div class="fixed top-[13vh] left-0">
+    <div class="fixed top-[13vh] left-0 z-[70]">
       <button (click)="adminMenuService.toggleMenuVisible.set(true)"
-        class="bg-green-700 text-white p-2 rounded-lg hover:bg-green-800 transition-colors z-40">
+        class="bg-green-700 text-white p-2 rounded-lg hover:bg-green-800 transition-colors">
         <span class="material-symbols-outlined">
           menu_open
         </span>

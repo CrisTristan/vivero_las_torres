@@ -1,0 +1,45 @@
+<article class="rounded-2xl border border-[#d6e0d6] bg-[#e4ece4] overflow-hidden relative">
+  <div class="relative h-56 bg-[#eef2ee]">
+    @if (product.imageUrl) {
+      <img [src]="product.imageUrl" [alt]="product.name" class="h-full w-full object-cover" />
+    } @else {
+      <div class="h-full w-full flex items-center justify-center text-[#96a196]">
+        <span class="material-symbols-outlined text-[48px]">potted_plant</span>
+      </div>
+    }
+
+    <button
+      type="button"
+      (click)="onToggleMenu($event)"
+      class="absolute top-3 right-3 h-9 w-9 rounded-lg bg-white/90 text-[#5b635b] flex items-center justify-center hover:bg-white transition-colors"
+      aria-label="Abrir acciones"
+    >
+      <span class="material-symbols-outlined text-[20px] leading-none">more_vert</span>
+    </button>
+
+    @if (menuOpen) {
+      <div class="absolute top-14 right-3 w-32 rounded-lg border border-[#d6e0d6] bg-white shadow-md overflow-hidden z-20">
+        <button type="button" (click)="onEdit($event)" class="w-full px-3 py-2 text-left text-sm text-[#374151] hover:bg-[#f3f7f3] transition-colors">
+          Editar
+        </button>
+        <button type="button" (click)="onRemove($event)" class="w-full px-3 py-2 text-left text-sm text-[#b42318] hover:bg-[#fff1f1] transition-colors">
+          Eliminar
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="p-4">
+    <div class="flex items-center justify-between gap-3">
+      <h3 class="text-[20px] font-semibold text-[#1f2937] leading-tight">{{ product.name }}</h3>
+      <span class="px-2 py-0.5 rounded-lg border border-[#97e2b2] text-[#1ea65d] text-[14px] font-semibold">{{ product.statusLabel }}</span>
+    </div>
+
+    <p class="text-[16px] text-[#677182] mt-1">{{ product.category }}</p>
+
+    <div class="mt-3 flex items-center justify-between">
+      <p class="text-[35px] font-bold text-[#1f2937] leading-none">${{ product.price.toFixed(2) }}</p>
+      <p class="text-[16px] text-[#5f6877] font-medium">{{ product.stockText }}</p>
+    </div>
+  </div>
+</article>
