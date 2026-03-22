@@ -13,19 +13,27 @@ import { fetchAllTierra } from '../../controllers/tierra_controller';
 import { fetchAllPasto } from '../../controllers/pasto_controller';
 import { Product } from '../../types/product.type';
 import { sign } from 'crypto';
+import { fetchAllFertilizantes } from '../../controllers/fertilizante_controller';
+import { fetchAllPlaguicidas } from '../../controllers/plaguicidas_controller';
+import { fetchAllHerbicidas } from '../../controllers/herbicidas_controller';
+import { updatePlantById } from '../../controllers/planta_controller';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-panel-admin-productos',
   standalone: true,
-  imports: [CardProduct, HeaderSection, FormsModule, EditModalProduct],
+  imports: [CardProduct, HeaderSection, FormsModule, EditModalProduct, ToastModule],
+  providers: [MessageService],
   templateUrl: './panel-admin-productos.html',
   styleUrl: './panel-admin-productos.css',
 })
 export class PanelAdminProductos implements OnInit {
   public adminMenuService = inject(AdminMenuService);
   public searchService = inject(SearchProductEvent);
+  public messageService = inject(MessageService);
 
-  public readonly categoryOptions: ProductCategoryType[] = ['Plantas', 'Macetas', 'Piedras', 'Tierra', 'Pasto'];
+  public readonly categoryOptions: ProductCategoryType[] = ['Plantas', 'Macetas', 'Piedras', 'Tierra', 'Pasto', 'Fertilizantes', 'Plaguicidas', 'Herbicidas'];
   public selectedCategory = signal<ProductCategoryType>('Plantas');
   public searchTerm = '';
   public selectedMenuProductId: number | null = null;
@@ -115,6 +123,18 @@ export class PanelAdminProductos implements OnInit {
         fetchAllPasto().then((pastos) => {
           this.products.set(pastos);
         });
+      } else if(this.selectedCategory() === 'Fertilizantes') {
+        fetchAllFertilizantes().then((fertilizantes) => {
+          this.products.set(fertilizantes);
+        });
+      } else if(this.selectedCategory() === 'Plaguicidas') {
+        fetchAllPlaguicidas().then((plaguicidas) => {
+          this.products.set(plaguicidas);
+        });
+      } else if(this.selectedCategory() === 'Herbicidas') {
+        fetchAllHerbicidas().then((herbicidas) => {
+          this.products.set(herbicidas);
+        });
       }
     });
   }
@@ -192,11 +212,17 @@ export class PanelAdminProductos implements OnInit {
     this.editingProductId = null;
   }
 
-  onProductEdited(updatedProduct: Product): void {
+  async onProductEdited(updatedProduct: Product): Promise<void> {
+    console.log('Producto editado:', updatedProduct);
     this.products.update((current) =>
       current.map((product) => (product.id === updatedProduct.id ? updatedProduct : product)),
     );
+
+    console.log('Productos actualizados:', this.products());
     this.lastEditedProductState.set(updatedProduct);
+    console.log('filteredProducts', this.filteredProducts);
+    const result = await updatePlantById(updatedProduct.id, updatedProduct);
+    this.showMessage(result.status);
     this.closeEditModal();
   }
 
@@ -211,6 +237,14 @@ export class PanelAdminProductos implements OnInit {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .trim();
+  }
+
+  showMessage(status: number){
+    if(status >= 200 && status < 300) {
+      this.messageService.add({severity:'success', summary: 'Éxito', detail: 'Producto actualizado correctamente'});
+    } else {
+      this.messageService.add({severity:'error', summary: 'Error', detail: 'Hubo un error al actualizar el producto'});
+    }
   }
 
   @HostListener('document:click')

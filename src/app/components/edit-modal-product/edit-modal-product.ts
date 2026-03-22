@@ -6,7 +6,7 @@ import { Product } from '../../types/product.type';
 interface EditPlantForm {
   imageUrl: string;
   name: string;
-  type: PlantType;
+  type: string;
   careLevel: CareLevel;
   description: string;
   price: number;
@@ -35,7 +35,7 @@ export class EditModalProduct implements OnChanges {
       this.formState.set({
         imageUrl: this.product.productos.imagen ?? '',
         name: this.product.productos.nombre,
-        type: this.product.productos.categorias.categoria === 'Plantas de Interior' ? 'Interior' : 'Exterior',
+        type: this.product.tipo,
         careLevel: this.normalizeCareLevel(this.product.nivel_cuidado),
         description: this.product.descripcion.descripcion,
         price: this.product.productos.precio,
@@ -95,7 +95,7 @@ export class EditModalProduct implements OnChanges {
     const updatedProduct: Product = {
       ...this.product,
       nivel_cuidado: state.careLevel.toLowerCase(),
-      tipo: state.type === 'Interior' ? 'interior' : 'exterior',
+      tipo: state.type === 'interior' ? 'interior' : 'exterior',
       descripcion: {
         ...this.product.descripcion,
         descripcion: state.description.trim(),
@@ -108,7 +108,6 @@ export class EditModalProduct implements OnChanges {
         stock,
         categorias: {
           ...this.product.productos.categorias,
-          categoria: state.type === 'Interior' ? 'Plantas de Interior' : 'Plantas de Exterior',
         },
       },
     };

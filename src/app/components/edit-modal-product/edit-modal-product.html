@@ -31,14 +31,14 @@
             >
               Cambiar imagen
             </button>
-            <input
+            <!-- <input
               type="url"
               name="imageUrl"
               [ngModel]="formState().imageUrl"
               (ngModelChange)="updateField('imageUrl', $event)"
               placeholder="O pega la URL de la imagen"
               class="w-full h-10 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-            />
+            /> -->
           </div>
         </div>
 
@@ -71,8 +71,8 @@
             (ngModelChange)="updateField('type', $event)"
             class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
           >
-            <option value="Interior">Interior</option>
-            <option value="Exterior">Exterior</option>
+            <option [value]="'interior'">Interior</option>
+            <option [value]="'exterior'">Exterior</option>
           </select>
         </div>
 

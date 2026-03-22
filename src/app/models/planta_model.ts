@@ -1,5 +1,11 @@
 import { supabase } from "../DataBase/SupaBase/SupaBaseConnectionDB";
 import { Product } from "../types/product.type";
+import { environment } from "../../environments/environment";
+
+export interface UpdatePlantResponse {
+  status: number;
+  product: Product | null;
+}
 
 export  async function getAllPlants(): Promise<Product[]> {
     try {
@@ -33,4 +39,55 @@ export async function getPlantById(id: number): Promise<Product | null> {
         console.error('Error fetching planta by ID from Supabase:', error);
         return null;
     }
+}
+
+export async function updatePlant(id: number, updatedData: Partial<Product>): Promise<UpdatePlantResponse> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/plantas/updatePlantById/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.status === 204) {
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`Error updating planta: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    const result = await response.json();
+
+    let product: Product | null = null;
+
+    if (result?.planta) {
+      product = result.planta as Product;
+    } else if (result?.data) {
+      product = result.data as Product;
+    } else {
+      // retorna tambien la respuesta completa por si el formato de la respuesta cambia en el futuro
+      product = result as Product;
+    }
+
+    return {
+      status: response.status,
+      product,
+    };
+  } catch (error) {
+    console.error('Error updating planta through backend API:', error);
+    return {
+      status: 0,
+      product: null,
+    };
+  }
 }
