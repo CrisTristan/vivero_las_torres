@@ -34,11 +34,11 @@ export class EditModalProduct implements OnChanges {
     if (changes['product'] && this.product) {
       this.formState.set({
         imageUrl: this.product.productos.imagen ?? '',
-        name: this.product.productos.nombre,
-        type: this.product.tipo,
+        name: this.product.productos.nombre ?? '',
+        type: this.product.tipo ?? '',
         careLevel: this.normalizeCareLevel(this.product.nivel_cuidado),
-        description: this.product.descripcion.descripcion,
-        price: this.product.productos.precio,
+        description: this.stringifyDescription(this.product.descripcion),
+        price: Number(this.product.productos.precio) || 0,
         stock: this.extractStockValue(String(this.product.productos.stock)),
       });
     }
@@ -91,15 +91,13 @@ export class EditModalProduct implements OnChanges {
     const state = this.formState();
     const stock = Math.max(0, Number(state.stock) || 0);
     const price = Math.max(0, Number(state.price) || 0);
+    const parsedDescription = this.parseDescription(state.description, this.product.descripcion);
 
     const updatedProduct: Product = {
       ...this.product,
-      nivel_cuidado: state.careLevel.toLowerCase(),
-      tipo: state.type === 'interior' ? 'interior' : 'exterior',
-      descripcion: {
-        ...this.product.descripcion,
-        descripcion: state.description.trim(),
-      },
+      nivel_cuidado: (state.careLevel ?? 'Bajo').toLowerCase(),
+      tipo: state.type.trim() || this.product.tipo,
+      descripcion: parsedDescription,
       productos: {
         ...this.product.productos,
         imagen: state.imageUrl.trim(),
@@ -134,11 +132,50 @@ export class EditModalProduct implements OnChanges {
     return 'Bajo';
   }
 
+  private stringifyDescription(value: unknown): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return '';
+    }
+  }
+
+  private parseDescription(value: string, fallback: unknown): Product['descripcion'] {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      return (fallback ?? {}) as Product['descripcion'];
+    }
+
+    try {
+      const parsed = JSON.parse(trimmed);
+
+      if (parsed && typeof parsed === 'object') {
+        return parsed as Product['descripcion'];
+      }
+    } catch {
+      // Si el admin escribe texto plano, se conserva en la propiedad descripcion.
+    }
+
+    return {
+      ...(typeof fallback === 'object' && fallback !== null ? fallback : {}),
+      descripcion: trimmed,
+    } as Product['descripcion'];
+  }
+
   private getEmptyForm(): EditPlantForm {
     return {
       imageUrl: '',
       name: '',
-      type: 'Interior',
+      type: 'interior',
       careLevel: 'Bajo',
       description: '',
       price: 0,

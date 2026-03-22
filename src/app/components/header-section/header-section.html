@@ -12,9 +12,21 @@
         </div> -->
         <app-search-bar></app-search-bar>
 
-        <button type="button" class="relative h-9 w-9 flex items-center justify-center text-[#6b7280]">
-            <span class="material-symbols-outlined text-[22px] leading-none">notifications</span>
-            <span class="absolute -right-1 -top-1 h-5 min-w-[20px] px-1 rounded-full bg-[#178a2d] text-white text-[11px] font-semibold leading-5 text-center">3</span>
-        </button>
+        <div class="flex items-center gap-3">
+            @if (showCreateButton) {
+                <button
+                    type="button"
+                    (click)="onCreateButtonClick()"
+                    class="h-10 px-4 rounded-xl bg-[#0f766e] text-white text-[14px] font-semibold hover:bg-[#115e59] transition-colors"
+                >
+                    {{ createButtonLabel }}
+                </button>
+            }
+
+            <button type="button" class="relative h-9 w-9 flex items-center justify-center text-[#6b7280]">
+                <span class="material-symbols-outlined text-[22px] leading-none">notifications</span>
+                <span class="absolute -right-1 -top-1 h-5 min-w-5 px-1 rounded-full bg-[#178a2d] text-white text-[11px] font-semibold leading-5 text-center">3</span>
+            </button>
+        </div>
     </div>
 </div>

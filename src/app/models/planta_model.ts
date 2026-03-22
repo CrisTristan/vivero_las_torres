@@ -7,6 +7,11 @@ export interface UpdatePlantResponse {
   product: Product | null;
 }
 
+export interface CreatePlantResponse {
+  status: number;
+  product: Product | null;
+}
+
 export  async function getAllPlants(): Promise<Product[]> {
     try {
   const { data: plantas, error } = await supabase
@@ -85,6 +90,60 @@ export async function updatePlant(id: number, updatedData: Partial<Product>): Pr
     };
   } catch (error) {
     console.error('Error updating planta through backend API:', error);
+    return {
+      status: 0,
+      product: null,
+    };
+  }
+}
+
+export async function createNewPlant(payload: Record<string, unknown>): Promise<CreatePlantResponse> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/plantas/createNew/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 204) {
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`Error creating planta: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    const result = await response.json();
+
+    if (result?.planta) {
+      return {
+        status: response.status,
+        product: result.planta as Product,
+      };
+    }
+
+    if (result?.data) {
+      return {
+        status: response.status,
+        product: result.data as Product,
+      };
+    }
+
+    return {
+      status: response.status,
+      product: result as Product,
+    };
+  } catch (error) {
+    console.error('Error creating planta through backend API:', error);
     return {
       status: 0,
       product: null,

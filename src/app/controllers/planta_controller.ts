@@ -1,4 +1,4 @@
-import { getAllPlants, updatePlant, UpdatePlantResponse } from "../models/planta_model";
+import { CreatePlantResponse, createNewPlant, getAllPlants, updatePlant, UpdatePlantResponse } from "../models/planta_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllPlants(): Promise<Product[]> {
@@ -19,6 +19,17 @@ export async function updatePlantById(id: number, updatedData: Partial<Product>)
         return updatedPlant;
     } catch (error) {
         console.error("Error updating planta in controller:", error);
+        throw error;
+    }
+}
+
+export async function createPlant(payload: Record<string, unknown>): Promise<CreatePlantResponse> {
+    try {
+        const createdPlant = await createNewPlant(payload);
+        console.log("Planta creada en controller:", createdPlant);
+        return createdPlant;
+    } catch (error) {
+        console.error("Error creating planta in controller:", error);
         throw error;
     }
 }

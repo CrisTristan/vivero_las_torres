@@ -1,6 +1,6 @@
 export type PlantType = 'Interior' | 'Exterior';
 export type CareLevel = 'Bajo' | 'Medio' | 'Alto';
-export type ProductCategoryType = 'Plantas' | 'Macetas' | 'Piedras' | 'Tierra' | 'Pasto' | 'Fertilizantes' | 'Plaguicidas' | 'Herbicidas';
+export type ProductCategoryType = 'plantas' | 'macetas' | 'piedras' | 'tierra' | 'pasto' | 'fertilizantes' | 'plaguicidas' | 'herbicidas';
 
 export interface AdminPlantProduct {
   id: number;

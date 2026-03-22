@@ -2,6 +2,9 @@
 	[title]="adminMenuService.currentSection()"
 	[subtitle]="'Gestiona tus productos'"
 	[customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'"
+	[showCreateButton]="true"
+	[createButtonLabel]="createButtonLabel"
+	(createButtonClick)="openCreateModal()"
 ></app-header-section>
 
 <p-toast position="top-right"></p-toast>
@@ -95,3 +98,146 @@
 	(closeModal)="closeEditModal()"
 	(saveProduct)="onProductEdited($event)"
 ></app-edit-modal-product>
+
+@if (isCreateModalOpen) {
+	<div class="fixed inset-0 z-80 bg-black/45 flex items-center justify-center p-4" (click)="closeCreateModal()">
+		<div class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
+				<h2 class="text-[24px] font-bold text-[#1f2937]">{{ createButtonLabel }}</h2>
+				<button
+					type="button"
+					(click)="closeCreateModal()"
+					class="h-9 w-9 rounded-full flex items-center justify-center text-[#6b7280] hover:bg-[#f3f4f6]"
+					aria-label="Cerrar modal"
+				>
+					<span class="material-symbols-outlined text-[20px] leading-none">close</span>
+				</button>
+			</div>
+
+			<form class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="onCreateProduct()">
+				<!-- <div class="sm:col-span-2">
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Imagen del producto</label>
+					<input
+						#createFileInput
+						type="file"
+						accept="image/*"
+						class="hidden"
+						(change)="onCreateImageFileSelected($event)"
+					/>
+					<button
+						type="button"
+						(click)="openCreateFilePicker(createFileInput)"
+						class="h-10 px-4 rounded-xl border border-[#d1d5db] text-[#374151] hover:bg-[#f8fafc]"
+					>
+						Subir imagen
+					</button>
+				</div>
+
+				<div class="sm:col-span-2">
+					<img
+						[src]="createFormState().imageUrl || 'https://placehold.co/800x500?text=Sin+imagen'"
+						alt="Vista previa de producto"
+						class="w-full h-44 object-cover rounded-xl border border-[#e5e7eb]"
+					/>
+				</div> -->
+				<app-image-uploader-cloudinary [currectCategory]="this.selectedCategory()" [tipoProducto]="createFormState().type.toLowerCase()"></app-image-uploader-cloudinary>
+				<div>
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Nombre</label>
+					<input
+						type="text"
+						name="createName"
+						required
+						[ngModel]="createFormState().name"
+						(ngModelChange)="updateCreateField('name', $event)"
+						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
+					/>
+				</div>
+
+				<div>
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Tipo</label>
+					<select
+						name="createType"
+						required
+						[ngModel]="createFormState().type"
+						(ngModelChange)="updateCreateField('type', $event)"
+						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
+					>
+						<option [value]="'interior'">Interior</option>
+						<option [value]="'exterior'">Exterior</option>
+					</select>
+				</div>
+
+				<div>
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Nivel de cuidado</label>
+					<select
+						name="createCareLevel"
+						required
+						[ngModel]="createFormState().careLevel"
+						(ngModelChange)="updateCreateField('careLevel', $event)"
+						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
+					>
+						@for (level of careLevelOptions; track level) {
+							<option [value]="level">{{ level }}</option>
+						}
+					</select>
+				</div>
+
+				<div>
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Precio</label>
+					<input
+						type="number"
+						name="createPrice"
+						required
+						min="0"
+						step="0.01"
+						[ngModel]="createFormState().price"
+						(ngModelChange)="updateCreateField('price', $event)"
+						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
+					/>
+				</div>
+
+				<div>
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Stock</label>
+					<input
+						type="number"
+						name="createStock"
+						required
+						min="0"
+						step="1"
+						[ngModel]="createFormState().stock"
+						(ngModelChange)="updateCreateField('stock', $event)"
+						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
+					/>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Descripcion</label>
+					<textarea
+						name="createDescription"
+						required
+						rows="4"
+						[ngModel]="createFormState().description"
+						(ngModelChange)="updateCreateField('description', $event)"
+						class="w-full px-3 py-2 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f] resize-none"
+					></textarea>
+				</div>
+
+				<div class="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
+					<button
+						type="button"
+						(click)="closeCreateModal()"
+						class="h-11 px-5 rounded-xl border border-[#d1d5db] text-[#4b5563] hover:bg-[#f3f4f6]"
+					>
+						Cancelar
+					</button>
+					<button
+						type="submit"
+						class="h-11 px-5 rounded-xl bg-[#0f766e] text-white font-semibold hover:bg-[#115e59]"
+					>
+						Crear producto
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}

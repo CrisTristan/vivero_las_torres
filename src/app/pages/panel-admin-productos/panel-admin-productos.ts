@@ -4,134 +4,120 @@ import { AdminMenuService } from '../../services/admin-menu-service';
 import { CardProduct } from '../../components/card-product/card-product';
 import { HeaderSection } from '../../components/header-section/header-section';
 import { EditModalProduct } from '../../components/edit-modal-product/edit-modal-product';
-import { AdminPlantProduct, ProductCategoryType } from '../../types/admin-plant-product.type';
+import { CareLevel, ProductCategoryType } from '../../types/admin-plant-product.type';
 import { SearchProductEvent } from '../../services/search-product-event';
-import { fetchAllPlants } from '../../controllers/planta_controller';
+import { createPlant, fetchAllPlants } from '../../controllers/planta_controller';
 import { fetchAllMacetas } from '../../controllers/maceta_controller';
 import { fetchAllPiedras } from '../../controllers/piedras_controller';
 import { fetchAllTierra } from '../../controllers/tierra_controller';
 import { fetchAllPasto } from '../../controllers/pasto_controller';
 import { Product } from '../../types/product.type';
-import { sign } from 'crypto';
 import { fetchAllFertilizantes } from '../../controllers/fertilizante_controller';
 import { fetchAllPlaguicidas } from '../../controllers/plaguicidas_controller';
 import { fetchAllHerbicidas } from '../../controllers/herbicidas_controller';
 import { updatePlantById } from '../../controllers/planta_controller';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ImageUploaderCloudinary } from '../../components/image-uploader-cloudinary/image-uploader-cloudinary';
+import { ImageUploaderService } from '../../services/image-uploader-service';
+import { ImageUploaderController } from '../../controllers/image_uploader_controller';
+
+interface CreateProductPayload {
+  nombre: string;
+  precio: number;
+  imagen: string;
+  stock: number;
+  categoriaSeleccionada: { 
+    id: number;  
+    categoria: ProductCategoryType 
+  };
+  tipo: string;
+  nivel_cuidado: string;
+  descripcion: string;
+}
+
+interface CreateProductForm {
+  imageUrl: string;
+  name: string;
+  type: string;
+  careLevel: CareLevel;
+  description: string;
+  price: number;
+  stock: number;
+}
 
 @Component({
   selector: 'app-panel-admin-productos',
   standalone: true,
-  imports: [CardProduct, HeaderSection, FormsModule, EditModalProduct, ToastModule],
+  imports: [CardProduct, HeaderSection, FormsModule, EditModalProduct, ToastModule, ImageUploaderCloudinary],
   providers: [MessageService],
   templateUrl: './panel-admin-productos.html',
   styleUrl: './panel-admin-productos.css',
 })
 export class PanelAdminProductos implements OnInit {
+  private readonly MAX_BASE64_IMAGE_LENGTH = 380_000;
   public adminMenuService = inject(AdminMenuService);
   public searchService = inject(SearchProductEvent);
   public messageService = inject(MessageService);
+  private imageUploaderService = inject(ImageUploaderService);
 
-  public readonly categoryOptions: ProductCategoryType[] = ['Plantas', 'Macetas', 'Piedras', 'Tierra', 'Pasto', 'Fertilizantes', 'Plaguicidas', 'Herbicidas'];
-  public selectedCategory = signal<ProductCategoryType>('Plantas');
+  public readonly categoryOptions: ProductCategoryType[] = ['plantas', 'macetas', 'piedras', 'tierra', 'pasto', 'plaguicidas', 'herbicidas', 'fertilizantes'];
+  public selectedCategory = signal<ProductCategoryType>('plantas');
   public searchTerm = '';
   public selectedMenuProductId: number | null = null;
   public isGridView = true;
   public isMobileViewport = window.innerWidth < 640;
   public isEditModalOpen = false;
+  public isCreateModalOpen = false;
+  public readonly careLevelOptions: CareLevel[] = ['Bajo', 'Medio', 'Alto'];
+  public readonly createFormState = signal<CreateProductForm>(this.getEmptyCreateForm());
   public editingProductId: number | null = null;
   public readonly lastEditedProductState = signal<Product | null>(null);
   @ViewChild('adminMenuHost', { read: ElementRef }) adminMenuHost?: ElementRef<HTMLElement>;
 
-  public readonly products = signal<Product[]>([
-    // {
-    //   id: 1,
-    //   productos: 'Monstera Deliciosa',
-    //   productCategory: 'Plantas',
-    //   category: 'Plantas de Interior',
-    //   price: 45,
-    //   statusLabel: 'Activo',
-    //   stockText: '12 en stock',
-    //   location: 'Interior',
-    //   careLevel: 'Medio',
-    //   description: 'Planta tropical de hojas grandes que aporta frescura y elegancia a interiores luminosos.',
-    //   imageUrl: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=900&q=80',
-    // },
-    // {
-    //   id: 2,
-    //   productos.nombre: 'Golden Pothos',
-    //   productCategory: 'Plantas',
-    //   category: 'Plantas Colgantes',
-    //   price: 28,
-    //   statusLabel: 'Activo',
-    //   stockText: '18 en stock',
-    //   location: 'Interior',
-    //   careLevel: 'Bajo',
-    //   description: 'Planta colgante resistente y facil de mantener, ideal para oficinas y salas.',
-    //   imageUrl: 'https://images.unsplash.com/photo-1632207691143-643e2a63c3ef?auto=format&fit=crop&w=900&q=80',
-    // },
-    // {
-    //   id: 3,
-    //   name: 'Suculenta Echeveria',
-    //   productCategory: 'Plantas',
-    //   category: 'Suculentas',
-    //   price: 15,
-    //   statusLabel: 'Activo',
-    //   stockText: '35 en stock',
-    //   location: 'Exterior',
-    //   careLevel: 'Bajo',
-    //   description: 'Suculenta compacta de crecimiento lento, perfecta para balcones y terrazas.',
-    //   imageUrl: 'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?auto=format&fit=crop&w=900&q=80',
-    // },
-    // {
-    //   id: 4,
-    //   name: 'Cactus Redondo',
-    //   productCategory: 'Plantas',
-    //   category: 'Cactus',
-    //   price: 12,
-    //   statusLabel: 'Activo',
-    //   stockText: '22 en stock',
-    //   location: 'Exterior',
-    //   careLevel: 'Bajo',
-    //   description: 'Cactus ornamental de bajo consumo de agua, excelente para exteriores soleados.',
-    //   imageUrl: 'https://images.unsplash.com/photo-1459156212016-c812468e2115?auto=format&fit=crop&w=900&q=80',
-    // },
-  ]);
+  public readonly products = signal<Product[]>([]);
 
   constructor() {
     effect(() => {
       const onChangeCategory = this.selectedCategory();
       console.log('Categoría seleccionada:', onChangeCategory);
-      if(this.selectedCategory() === 'Plantas') {
+      if(this.selectedCategory() === 'plantas') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('plantas'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllPlants().then((plants) => {
           this.products.set(plants);
         });
-      } else if(this.selectedCategory() === 'Macetas') {
+      } else if(this.selectedCategory() === 'macetas') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('macetas'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllMacetas().then((macetas) => {
           this.products.set(macetas);
         });
-      } else if(this.selectedCategory() === 'Piedras') {
+      } else if(this.selectedCategory() === 'piedras') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('piedras'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllPiedras().then((piedras) => {
           this.products.set(piedras);
         });
-      } else if(this.selectedCategory() === 'Tierra') {
+      } else if(this.selectedCategory() === 'tierra') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('tierra'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllTierra().then((tierras) => {
           this.products.set(tierras);
         });
-      } else if(this.selectedCategory() === 'Pasto') {
+      } else if(this.selectedCategory() === 'pasto') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('pasto'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllPasto().then((pastos) => {
           this.products.set(pastos);
         });
-      } else if(this.selectedCategory() === 'Fertilizantes') {
+      } else if(this.selectedCategory() === 'fertilizantes') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('fertilizantes'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllFertilizantes().then((fertilizantes) => {
           this.products.set(fertilizantes);
         });
-      } else if(this.selectedCategory() === 'Plaguicidas') {
+      } else if(this.selectedCategory() === 'plaguicidas') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('plaguicidas'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllPlaguicidas().then((plaguicidas) => {
           this.products.set(plaguicidas);
         });
-      } else if(this.selectedCategory() === 'Herbicidas') {
+      } else if(this.selectedCategory() === 'herbicidas') {
+        this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('herbicidas'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllHerbicidas().then((herbicidas) => {
           this.products.set(herbicidas);
         });
@@ -183,6 +169,21 @@ export class PanelAdminProductos implements OnInit {
     this.selectedCategory.set(category);
   }
 
+  get createButtonLabel(): string {
+    const categoryNounMap: Record<ProductCategoryType, string> = {
+      plantas: 'planta',
+      macetas: 'maceta',
+      piedras: 'piedra',
+      tierra: 'tierra',
+      pasto: 'pasto',
+      fertilizantes: 'fertilizante',
+      plaguicidas: 'plaguicida',
+      herbicidas: 'herbicida',
+    };
+
+    return `Crear ${categoryNounMap[this.selectedCategory()]}`;
+  }
+
   get productsGridClass(): string {
     if (!this.isGridView) {
       return 'grid grid-cols-1 gap-4';
@@ -212,6 +213,15 @@ export class PanelAdminProductos implements OnInit {
     this.editingProductId = null;
   }
 
+  openCreateModal(): void {
+    this.isCreateModalOpen = true;
+  }
+
+  closeCreateModal(): void {
+    this.isCreateModalOpen = false;
+    this.createFormState.set(this.getEmptyCreateForm());
+  }
+
   async onProductEdited(updatedProduct: Product): Promise<void> {
     console.log('Producto editado:', updatedProduct);
     this.products.update((current) =>
@@ -224,6 +234,110 @@ export class PanelAdminProductos implements OnInit {
     const result = await updatePlantById(updatedProduct.id, updatedProduct);
     this.showMessage(result.status);
     this.closeEditModal();
+  }
+
+  updateCreateField<K extends keyof CreateProductForm>(field: K, value: CreateProductForm[K]): void {
+    this.createFormState.update((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  }
+
+  openCreateFilePicker(fileInput: HTMLInputElement): void {
+    fileInput.click();
+  }
+
+  async onCreateImageFileSelected(event: Event): Promise<void> {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const compressedImageUrl = await this.compressImageToDataUrl(file, 900, 900, 0.72);
+
+    if (!compressedImageUrl) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo procesar la imagen seleccionada',
+      });
+      target.value = '';
+      return;
+    }
+
+    if (compressedImageUrl.length > this.MAX_BASE64_IMAGE_LENGTH) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Imagen muy grande',
+        detail: 'Selecciona una imagen mas ligera para evitar errores al crear el producto',
+      });
+      target.value = '';
+      return;
+    }
+
+    this.createFormState.update((current) => ({
+      ...current,
+      imageUrl: compressedImageUrl,
+    }));
+    this.imageUploaderService.setFileImage = file;
+    target.value = '';
+  }
+
+  async onCreateProduct(): Promise<void> {
+
+    //necesitamos guardar la imagen en cloudinary antes de crear el producto para obtener la url y enviarla al backend
+    const imageFile = this.imageUploaderService.getFileImage;
+    if (!imageFile) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Imagen requerida',
+        detail: 'Selecciona una imagen antes de crear el producto',
+      });
+      return;
+    }
+
+    const uploadedImageUrl = await this.saveImageOnCloudinary(
+      imageFile,
+      `ViveroLasTorres/${this.selectedCategory()}/${this.createFormState().type.toLowerCase()}`,
+    );
+
+    if (!uploadedImageUrl) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo subir la imagen a Cloudinary',
+      });
+      return;
+    }
+
+    const state = this.createFormState();
+    const payload: CreateProductPayload = {
+      nombre: state.name.trim(),
+      precio: Math.max(0, Number(state.price) || 0),
+      imagen: uploadedImageUrl,
+      stock: Math.max(0, Number(state.stock) || 0),
+      categoriaSeleccionada: {
+        //el id depende de la categoria seleccionada: plantas = 1, macetas = 2, piedras = 3, tierra = 4, pasto = 5, plaguicidas = 6, herbicidas = 7, fertilizantes = 8
+        id: this.categoryOptions.indexOf(this.selectedCategory()) + 1,
+        categoria: this.selectedCategory()
+      },
+      tipo: state.type,
+      nivel_cuidado: state.careLevel.toLowerCase(),
+      descripcion: state.description.trim(),
+    };
+
+    console.log('Payload para crear producto:', payload);
+    
+    const result = await createPlant(payload as unknown as Record<string, unknown>);
+
+    this.showMessage(result.status, 'crear');
+
+    if (result.status >= 200 && result.status < 300) {
+      this.reloadProductsBySelectedCategory();
+      this.closeCreateModal();
+    }
   }
 
   onDeleteProduct(productId: number): void {
@@ -239,12 +353,142 @@ export class PanelAdminProductos implements OnInit {
       .trim();
   }
 
-  showMessage(status: number){
+  showMessage(status: number, action: 'actualizar' | 'crear' = 'actualizar'){
+    const successDetail = action === 'crear'
+      ? 'Producto creado correctamente'
+      : 'Producto actualizado correctamente';
+
+    const errorDetail = status === 413
+      ? 'La imagen es demasiado pesada para enviarla al servidor'
+      : action === 'crear'
+        ? 'Hubo un error al crear el producto'
+        : 'Hubo un error al actualizar el producto';
+
     if(status >= 200 && status < 300) {
-      this.messageService.add({severity:'success', summary: 'Éxito', detail: 'Producto actualizado correctamente'});
+      this.messageService.add({severity:'success', summary: 'Éxito', detail: successDetail});
     } else {
-      this.messageService.add({severity:'error', summary: 'Error', detail: 'Hubo un error al actualizar el producto'});
+      this.messageService.add({severity:'error', summary: 'Error', detail: errorDetail});
     }
+  }
+
+  private async compressImageToDataUrl(
+    file: File,
+    maxWidth: number,
+    maxHeight: number,
+    quality: number,
+  ): Promise<string | null> {
+    const imageDataUrl = await this.readFileAsDataUrl(file);
+
+    if (!imageDataUrl) {
+      return null;
+    }
+
+    const image = await this.loadImage(imageDataUrl);
+
+    if (!image) {
+      return null;
+    }
+
+    const ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
+    const targetWidth = Math.max(1, Math.round(image.width * ratio));
+    const targetHeight = Math.max(1, Math.round(image.height * ratio));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    const context = canvas.getContext('2d');
+    if (!context) {
+      return null;
+    }
+
+    context.drawImage(image, 0, 0, targetWidth, targetHeight);
+    return canvas.toDataURL('image/jpeg', quality);
+  }
+
+  private readFileAsDataUrl(file: File): Promise<string | null> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private loadImage(dataUrl: string): Promise<HTMLImageElement | null> {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => resolve(null);
+      image.src = dataUrl;
+    });
+  }
+
+  private reloadProductsBySelectedCategory(): void {
+    if (this.selectedCategory() === 'plantas') {
+      fetchAllPlants().then((plants) => this.products.set(plants));
+      return;
+    }
+
+    if (this.selectedCategory() === 'macetas') {
+      fetchAllMacetas().then((macetas) => this.products.set(macetas));
+      return;
+    }
+
+    if (this.selectedCategory() === 'piedras') {
+      fetchAllPiedras().then((piedras) => this.products.set(piedras));
+      return;
+    }
+
+    if (this.selectedCategory() === 'tierra') {
+      fetchAllTierra().then((tierras) => this.products.set(tierras));
+      return;
+    }
+
+    if (this.selectedCategory() === 'pasto') {
+      fetchAllPasto().then((pastos) => this.products.set(pastos));
+      return;
+    }
+
+    if (this.selectedCategory() === 'fertilizantes') {
+      fetchAllFertilizantes().then((fertilizantes) => this.products.set(fertilizantes));
+      return;
+    }
+
+    if (this.selectedCategory() === 'plaguicidas') {
+      fetchAllPlaguicidas().then((plaguicidas) => this.products.set(plaguicidas));
+      return;
+    }
+
+    if (this.selectedCategory() === 'herbicidas') {
+      fetchAllHerbicidas().then((herbicidas) => this.products.set(herbicidas));
+    }
+  }
+
+  async saveImageOnCloudinary(file: File, folder: string): Promise<string | null> {
+    const controller = new ImageUploaderController(this.imageUploaderService);
+    const imageUrl = await controller.onCreateImageFileSelected(file, folder);
+
+    if (imageUrl) {
+      this.createFormState.update((current) => ({
+        ...current,
+        imageUrl,
+      }));
+    }
+
+    return imageUrl;
+  }
+
+  private getEmptyCreateForm(): CreateProductForm {
+    return {
+      imageUrl: '',
+      name: '',
+      type: 'interior',
+      careLevel: 'Bajo',
+      description: '',
+      price: 0,
+      stock: 0,
+    };
   }
 
   @HostListener('document:click')
