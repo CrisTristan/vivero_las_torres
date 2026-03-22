@@ -11,4 +11,9 @@ export class SearchProductEvent {
   emitSearch(term: string) {
     this.searchTermSource.next(term);
   }
+
+  getCurrentSearchTerm(): string {
+    return this.searchTermSource.getValue();
+  }
+
 }

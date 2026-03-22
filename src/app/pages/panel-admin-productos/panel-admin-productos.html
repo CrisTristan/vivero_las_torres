@@ -6,8 +6,20 @@
 
 <section class="pt-[21vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
 	<div class="flex flex-col gap-4 mb-5">
+		<div class="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#d4dae4] p-1 w-fit border border-[#bcc6d3]">
+			@for (category of categoryOptions; track category) {
+				<button
+					type="button"
+					(click)="setCategory(category)"
+					[class]="'h-10 px-5 rounded-lg text-[20px] font-semibold transition-colors ' + (selectedCategory() === category ? 'bg-[#16f27a] text-[#0f172a]' : 'bg-[#f3f4f6] text-[#111827] hover:bg-[#e5e7eb]')"
+				>
+					{{ category }}
+				</button>
+			}
+		</div>
+
 		<div class="grid grid-cols-1 lg:grid-cols-[1fr_160px_40px_92px] gap-3 items-center">
-			<div class="h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] flex items-center px-3 gap-2">
+			<!-- <div class="h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] flex items-center px-3 gap-2">
 				<span class="material-symbols-outlined text-[#8a958a] text-[20px] leading-none">search</span>
 				<input
 					type="text"
@@ -15,18 +27,10 @@
 					[(ngModel)]="searchTerm"
 					class="bg-transparent w-full outline-none text-[15px] text-[#4b5563] placeholder:text-[#8a958a]"
 				/>
-			</div>
+			</div> -->
 
-			<div class="relative h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] text-[#4b5563] text-[16px] font-medium overflow-hidden">
-				<select
-					[(ngModel)]="selectedFilter"
-					class="appearance-none h-full w-full bg-transparent px-4 pr-10 outline-none cursor-pointer"
-				>
-					@for (option of filterOptions; track option) {
-						<option [ngValue]="option">{{ option }}</option>
-					}
-				</select>
-				<span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[20px] leading-none text-[#7b857b]">expand_more</span>
+			<div class="h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] flex items-center px-4 text-[#4b5563] text-[16px] font-medium">
+				{{ selectedCategory() }}
 			</div>
 
 			<button type="button" class="h-11 w-11 rounded-xl bg-white border border-[#d8e0d8] flex items-center justify-center text-[#5f695f]">
@@ -82,3 +86,10 @@
 		}
 	</div>
 </section>
+
+<app-edit-modal-product
+	[isOpen]="isEditModalOpen"
+	[product]="editingProduct"
+	(closeModal)="closeEditModal()"
+	(saveProduct)="onProductEdited($event)"
+></app-edit-modal-product>

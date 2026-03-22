@@ -24,5 +24,14 @@ export class SearchBar {
         //Agregar logica para filtrar los productos en el catálogo según el valor de búsqueda
     }
 
+    // onEnterPressed(event: KeyboardEvent): void {
+    //   event.preventDefault();
+    //   console.log('Enter detectado. Valor local:', this.searchProduct());
+    //   this.searchService.emitSearch(this.searchProduct());
+    //   console.log('Current Search Term:', this.searchService.getCurrentSearchTerm());
+    // }
+
+    
+
 
 }

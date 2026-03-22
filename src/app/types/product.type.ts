@@ -18,6 +18,7 @@ export interface ProductData {
 	imagen: string;
 	stock: number;
 	categorias: ProductCategory;
+	statusLabel?: string;
 }
 
 export interface Product extends Piedra{

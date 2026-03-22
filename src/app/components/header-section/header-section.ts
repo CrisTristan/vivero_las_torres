@@ -1,9 +1,10 @@
 import { Component, inject, Input } from '@angular/core';
 import { AdminMenuService } from '../../services/admin-menu-service';
+import { SearchBar } from '../search-bar/search-bar';
 
 @Component({
   selector: 'app-header-section',
-  imports: [],
+  imports: [SearchBar],
   templateUrl: './header-section.html',
   styleUrl: './header-section.css',
 })
