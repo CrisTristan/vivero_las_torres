@@ -1,4 +1,4 @@
-import { getAllMacetas } from "../models/macetas_mode";
+import { CreateMacetaResponse, createNewMaceta, getAllMacetas, updateMaceta, UpdateMacetaResponse } from "../models/macetas_mode";
 import { Product } from "../types/product.type";
 
 export async function fetchAllMacetas(): Promise<Product[]> {
@@ -8,6 +8,28 @@ export async function fetchAllMacetas(): Promise<Product[]> {
         return macetas;
     } catch (error) {
         console.error("Error fetching macetas in controller:", error);
+        throw error;
+    }
+}
+
+export async function updateMacetaById(id: number, updatedData: Partial<Product>): Promise<UpdateMacetaResponse> {
+    try {
+        const updatedMaceta = await updateMaceta(id, updatedData);
+        console.log("Maceta actualizada en controller:", updatedMaceta);
+        return updatedMaceta;
+    } catch (error) {
+        console.error("Error updating maceta in controller:", error);
+        throw error;
+    }
+}
+
+export async function createMaceta(payload: Record<string, unknown>): Promise<CreateMacetaResponse> {
+    try {
+        const createdMaceta = await createNewMaceta(payload);
+        console.log("Maceta creada en controller:", createdMaceta);
+        return createdMaceta;
+    } catch (error) {
+        console.error("Error creating maceta in controller:", error);
         throw error;
     }
 }

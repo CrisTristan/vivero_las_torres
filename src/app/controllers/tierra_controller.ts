@@ -1,4 +1,4 @@
-import { getAllTierra } from "../models/tierra_model";
+import { CreateTierraResponse, createNewTierra, getAllTierra, updateTierra, UpdateTierraResponse } from "../models/tierra_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllTierra(): Promise<Product[]> {
@@ -8,6 +8,28 @@ export async function fetchAllTierra(): Promise<Product[]> {
         return tierra;
     } catch (error) {
         console.error("Error fetching tierra in controller:", error);
+        throw error;
+    }
+}
+
+export async function updateTierraById(id: number, updatedData: Partial<Product>): Promise<UpdateTierraResponse> {
+    try {
+        const updatedTierra = await updateTierra(id, updatedData);
+        console.log("Tierra actualizada en controller:", updatedTierra);
+        return updatedTierra;
+    } catch (error) {
+        console.error("Error updating tierra in controller:", error);
+        throw error;
+    }
+}
+
+export async function createTierra(payload: Record<string, unknown>): Promise<CreateTierraResponse> {
+    try {
+        const createdTierra = await createNewTierra(payload);
+        console.log("Tierra creada en controller:", createdTierra);
+        return createdTierra;
+    } catch (error) {
+        console.error("Error creating tierra in controller:", error);
         throw error;
     }
 }

@@ -1,5 +1,16 @@
 import { supabase } from '../DataBase/SupaBase/SupaBaseConnectionDB';
 import { Product } from '../types/product.type';
+import { environment } from '../../environments/environment';
+
+export interface UpdateFertilizanteResponse {
+  status: number;
+  product: Product | null;
+}
+
+export interface CreateFertilizanteResponse {
+  status: number;
+  product: Product | null;
+}
 
 export async function getAllFertilizantes(): Promise<Product[]> {
   try {
@@ -32,5 +43,109 @@ export async function getFertilizanteById(id: number): Promise<Product | null> {
   } catch (error) {
     console.error('Error fetching fertilizante by ID from Supabase:', error);
     return null;
+  }
+}
+
+export async function updateFertilizante(id: number, updatedData: Partial<Product>): Promise<UpdateFertilizanteResponse> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/fertilizantes/updateFertilizanteById/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.status === 204) {
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`Error updating fertilizante: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    const result = await response.json();
+
+    let product: Product | null = null;
+
+    if (result?.fertilizante) {
+      product = result.fertilizante as Product;
+    } else if (result?.data) {
+      product = result.data as Product;
+    } else {
+      product = result as Product;
+    }
+
+    return {
+      status: response.status,
+      product,
+    };
+  } catch (error) {
+    console.error('Error updating fertilizante through backend API:', error);
+    return {
+      status: 0,
+      product: null,
+    };
+  }
+}
+
+export async function createNewFertilizante(payload: Record<string, unknown>): Promise<CreateFertilizanteResponse> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/fertilizantes/createNew`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 204) {
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`Error creating fertilizante: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    const result = await response.json();
+
+    if (result?.fertilizante) {
+      return {
+        status: response.status,
+        product: result.fertilizante as Product,
+      };
+    }
+
+    if (result?.data) {
+      return {
+        status: response.status,
+        product: result.data as Product,
+      };
+    }
+
+    return {
+      status: response.status,
+      product: result as Product,
+    };
+  } catch (error) {
+    console.error('Error creating fertilizante through backend API:', error);
+    return {
+      status: 0,
+      product: null,
+    };
   }
 }

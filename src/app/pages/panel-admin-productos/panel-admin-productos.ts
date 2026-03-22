@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, inject, signal, ViewChild, OnInit, effect } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal, ViewChild, OnInit, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminMenuService } from '../../services/admin-menu-service';
 import { CardProduct } from '../../components/card-product/card-product';
@@ -6,16 +6,15 @@ import { HeaderSection } from '../../components/header-section/header-section';
 import { EditModalProduct } from '../../components/edit-modal-product/edit-modal-product';
 import { CareLevel, ProductCategoryType } from '../../types/admin-plant-product.type';
 import { SearchProductEvent } from '../../services/search-product-event';
-import { createPlant, fetchAllPlants } from '../../controllers/planta_controller';
-import { fetchAllMacetas } from '../../controllers/maceta_controller';
-import { fetchAllPiedras } from '../../controllers/piedras_controller';
-import { fetchAllTierra } from '../../controllers/tierra_controller';
-import { fetchAllPasto } from '../../controllers/pasto_controller';
+import { createPlant, fetchAllPlants, updatePlantById } from '../../controllers/planta_controller';
+import { createMaceta, fetchAllMacetas, updateMacetaById } from '../../controllers/maceta_controller';
+import { createPiedra, fetchAllPiedras, updatePiedraById } from '../../controllers/piedras_controller';
+import { createTierra, fetchAllTierra, updateTierraById } from '../../controllers/tierra_controller';
+import { createPasto, fetchAllPasto, updatePastoById } from '../../controllers/pasto_controller';
 import { Product } from '../../types/product.type';
-import { fetchAllFertilizantes } from '../../controllers/fertilizante_controller';
-import { fetchAllPlaguicidas } from '../../controllers/plaguicidas_controller';
-import { fetchAllHerbicidas } from '../../controllers/herbicidas_controller';
-import { updatePlantById } from '../../controllers/planta_controller';
+import { createFertilizante, fetchAllFertilizantes, updateFertilizanteById } from '../../controllers/fertilizante_controller';
+import { createPlaguicida, fetchAllPlaguicidas, updatePlaguicidaById } from '../../controllers/plaguicidas_controller';
+import { createHerbicida, fetchAllHerbicidas, updateHerbicidaById } from '../../controllers/herbicidas_controller';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ImageUploaderCloudinary } from '../../components/image-uploader-cloudinary/image-uploader-cloudinary';
@@ -31,8 +30,21 @@ interface CreateProductPayload {
     id: number;  
     categoria: ProductCategoryType 
   };
-  tipo: string;
-  nivel_cuidado: string;
+  tipo?: string;
+  nivel_cuidado?: string;
+  descripcion: string;
+  esPiedraSuelta?: boolean;
+}
+
+interface CreateBasePayload {
+  nombre: string;
+  precio: number;
+  imagen: string;
+  stock: number;
+  categoriaSeleccionada: {
+    id: number;
+    categoria: ProductCategoryType;
+  };
   descripcion: string;
 }
 
@@ -40,6 +52,7 @@ interface CreateProductForm {
   imageUrl: string;
   name: string;
   type: string;
+  esPiedraSuelta: boolean;
   careLevel: CareLevel;
   description: string;
   price: number;
@@ -62,6 +75,16 @@ export class PanelAdminProductos implements OnInit {
   private imageUploaderService = inject(ImageUploaderService);
 
   public readonly categoryOptions: ProductCategoryType[] = ['plantas', 'macetas', 'piedras', 'tierra', 'pasto', 'plaguicidas', 'herbicidas', 'fertilizantes'];
+  private readonly typeOptionsByCategory: Record<ProductCategoryType, string[]> = {
+    plantas: ['interior', 'exterior'],
+    macetas: ['barro', 'plastico', 'fibra_vidreo'],
+    piedras: ['blanca marmol', 'negra mamol', 'rio'],
+    tierra: ['general'],
+    pasto: ['general'],
+    plaguicidas: ['general'],
+    herbicidas: ['general'],
+    fertilizantes: ['general'],
+  };
   public selectedCategory = signal<ProductCategoryType>('plantas');
   public searchTerm = '';
   public selectedMenuProductId: number | null = null;
@@ -80,6 +103,7 @@ export class PanelAdminProductos implements OnInit {
   constructor() {
     effect(() => {
       const onChangeCategory = this.selectedCategory();
+      this.ensureCreateTypeDefaultByCategory(onChangeCategory);
       console.log('Categoría seleccionada:', onChangeCategory);
       if(this.selectedCategory() === 'plantas') {
         this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('plantas'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
@@ -123,6 +147,19 @@ export class PanelAdminProductos implements OnInit {
         });
       }
     });
+  }
+
+  get createTypeOptions(): string[] {
+    return this.getTypeOptionsByCategory(this.selectedCategory());
+  }
+
+  get isPiedrasCategorySelected(): boolean {
+    return this.selectedCategory() === 'piedras';
+  }
+
+  formatTypeLabel(value: string): string {
+    const normalized = value.replace(/_/g, ' ');
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   }
 
   ngOnInit(): void {
@@ -219,7 +256,7 @@ export class PanelAdminProductos implements OnInit {
 
   closeCreateModal(): void {
     this.isCreateModalOpen = false;
-    this.createFormState.set(this.getEmptyCreateForm());
+    this.createFormState.set(this.getEmptyCreateForm(this.selectedCategory()));
   }
 
   async onProductEdited(updatedProduct: Product): Promise<void> {
@@ -231,7 +268,7 @@ export class PanelAdminProductos implements OnInit {
     console.log('Productos actualizados:', this.products());
     this.lastEditedProductState.set(updatedProduct);
     console.log('filteredProducts', this.filteredProducts);
-    const result = await updatePlantById(updatedProduct.id, updatedProduct);
+    const result = await this.updateProductBySelectedCategory(updatedProduct);
     this.showMessage(result.status);
     this.closeEditModal();
   }
@@ -243,49 +280,59 @@ export class PanelAdminProductos implements OnInit {
     }));
   }
 
-  openCreateFilePicker(fileInput: HTMLInputElement): void {
-    fileInput.click();
-  }
+  // openCreateFilePicker(fileInput: HTMLInputElement): void {
+  //   fileInput.click();
+  // }
 
-  async onCreateImageFileSelected(event: Event): Promise<void> {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
+  // async onCreateImageFileSelected(event: Event): Promise<void> {
+  //   const target = event.target as HTMLInputElement;
+  //   const file = target.files?.[0];
 
-    if (!file) {
-      return;
-    }
+  //   if (!file) {
+  //     return;
+  //   }
 
-    const compressedImageUrl = await this.compressImageToDataUrl(file, 900, 900, 0.72);
+  //   const compressedImageUrl = await this.compressImageToDataUrl(file, 900, 900, 0.72);
 
-    if (!compressedImageUrl) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo procesar la imagen seleccionada',
-      });
-      target.value = '';
-      return;
-    }
+  //   if (!compressedImageUrl) {
+  //     this.messageService.add({
+  //       severity: 'error',
+  //       summary: 'Error',
+  //       detail: 'No se pudo procesar la imagen seleccionada',
+  //     });
+  //     target.value = '';
+  //     return;
+  //   }
 
-    if (compressedImageUrl.length > this.MAX_BASE64_IMAGE_LENGTH) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Imagen muy grande',
-        detail: 'Selecciona una imagen mas ligera para evitar errores al crear el producto',
-      });
-      target.value = '';
-      return;
-    }
+  //   if (compressedImageUrl.length > this.MAX_BASE64_IMAGE_LENGTH) {
+  //     this.messageService.add({
+  //       severity: 'warn',
+  //       summary: 'Imagen muy grande',
+  //       detail: 'Selecciona una imagen mas ligera para evitar errores al crear el producto',
+  //     });
+  //     target.value = '';
+  //     return;
+  //   }
 
-    this.createFormState.update((current) => ({
-      ...current,
-      imageUrl: compressedImageUrl,
-    }));
-    this.imageUploaderService.setFileImage = file;
-    target.value = '';
-  }
+  //   this.createFormState.update((current) => ({
+  //     ...current,
+  //     imageUrl: compressedImageUrl,
+  //   }));
+  //   this.imageUploaderService.setFileImage = file;
+  //   target.value = '';
+  // }
 
   async onCreateProduct(): Promise<void> {
+    const state = this.createFormState();
+
+    if (!state.name.trim() || !state.description.trim()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos requeridos',
+        detail: 'Nombre y descripcion son obligatorios',
+      });
+      return;
+    }
 
     //necesitamos guardar la imagen en cloudinary antes de crear el producto para obtener la url y enviarla al backend
     const imageFile = this.imageUploaderService.getFileImage;
@@ -300,7 +347,7 @@ export class PanelAdminProductos implements OnInit {
 
     const uploadedImageUrl = await this.saveImageOnCloudinary(
       imageFile,
-      `ViveroLasTorres/${this.selectedCategory()}/${this.createFormState().type.toLowerCase()}`,
+      `ViveroLasTorres/${this.selectedCategory()}/${(this.createFormState().type || this.getDefaultTypeByCategory(this.selectedCategory())).toLowerCase()}`,
     );
 
     if (!uploadedImageUrl) {
@@ -312,25 +359,11 @@ export class PanelAdminProductos implements OnInit {
       return;
     }
 
-    const state = this.createFormState();
-    const payload: CreateProductPayload = {
-      nombre: state.name.trim(),
-      precio: Math.max(0, Number(state.price) || 0),
-      imagen: uploadedImageUrl,
-      stock: Math.max(0, Number(state.stock) || 0),
-      categoriaSeleccionada: {
-        //el id depende de la categoria seleccionada: plantas = 1, macetas = 2, piedras = 3, tierra = 4, pasto = 5, plaguicidas = 6, herbicidas = 7, fertilizantes = 8
-        id: this.categoryOptions.indexOf(this.selectedCategory()) + 1,
-        categoria: this.selectedCategory()
-      },
-      tipo: state.type,
-      nivel_cuidado: state.careLevel.toLowerCase(),
-      descripcion: state.description.trim(),
-    };
+    const payload = this.buildCreatePayload(state, uploadedImageUrl);
 
     console.log('Payload para crear producto:', payload);
     
-    const result = await createPlant(payload as unknown as Record<string, unknown>);
+    const result = await this.createProductBySelectedCategory(payload);
 
     this.showMessage(result.status, 'crear');
 
@@ -351,6 +384,155 @@ export class PanelAdminProductos implements OnInit {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .trim();
+  }
+
+  private async createProductBySelectedCategory(payload: Record<string, unknown>): Promise<{ status: number }> {
+    const requestPayload = payload;
+
+    if (this.selectedCategory() === 'plantas') {
+      return await createPlant(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'macetas') {
+      return await createMaceta(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'piedras') {
+      return await createPiedra(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'tierra') {
+      return await createTierra(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'pasto') {
+      return await createPasto(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'plaguicidas') {
+      return await createPlaguicida(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'herbicidas') {
+      return await createHerbicida(requestPayload);
+    }
+
+    if (this.selectedCategory() === 'fertilizantes') {
+      return await createFertilizante(requestPayload);
+    }
+
+    return { status: 0 };
+  }
+
+  private async updateProductBySelectedCategory(updatedProduct: Product): Promise<{ status: number }> {
+    const productCategory = this.normalizeCategory(updatedProduct.productos.categorias.categoria);
+    const requestPayload = updatedProduct;
+
+    if (productCategory === this.normalizeCategory('plantas')) {
+      return await updatePlantById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('macetas')) {
+      return await updateMacetaById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('piedras')) {
+      return await updatePiedraById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('tierra')) {
+      return await updateTierraById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('pasto')) {
+      return await updatePastoById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('plaguicidas')) {
+      return await updatePlaguicidaById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('herbicidas')) {
+      return await updateHerbicidaById(updatedProduct.id, requestPayload);
+    }
+
+    if (productCategory === this.normalizeCategory('fertilizantes')) {
+      return await updateFertilizanteById(updatedProduct.id, requestPayload);
+    }
+
+    return { status: 0 };
+  }
+
+  private buildCreatePayload(state: CreateProductForm, uploadedImageUrl: string): Record<string, unknown> {
+    const category = this.selectedCategory();
+    const basePayload: CreateBasePayload = {
+      nombre: state.name.trim(),
+      precio: Math.max(0, Number(state.price) || 0),
+      imagen: uploadedImageUrl,
+      stock: Math.max(0, Number(state.stock) || 0),
+      categoriaSeleccionada: {
+        // el id depende de la categoria seleccionada: plantas = 1, macetas = 2, piedras = 3, tierra = 4, pasto = 5, plaguicidas = 6, herbicidas = 7, fertilizantes = 8
+        id: this.categoryOptions.indexOf(category) + 1,
+        categoria: category,
+      },
+      descripcion: state.description.trim(),
+    };
+
+    if (category === 'plantas') {
+      return {
+        ...basePayload,
+        tipo: state.type || this.getDefaultTypeByCategory(category),
+        nivel_cuidado: state.careLevel.toLowerCase(),
+      };
+    }
+
+    if (category === 'piedras') {
+      return {
+        ...basePayload,
+        esPiedraSuelta: state.esPiedraSuelta,
+      };
+    }
+
+    return {
+      ...basePayload,
+      tipo: state.type || this.getDefaultTypeByCategory(category),
+    };
+  }
+
+  private getTypeOptionsByCategory(category: ProductCategoryType): string[] {
+    return this.typeOptionsByCategory[category] ?? ['general'];
+  }
+
+  private getDefaultTypeByCategory(category: ProductCategoryType): string {
+    return this.getTypeOptionsByCategory(category)[0];
+  }
+
+  private ensureCreateTypeDefaultByCategory(category: ProductCategoryType): void {
+    const options = this.getTypeOptionsByCategory(category);
+    const currentType = this.normalizeType(untracked(() => this.createFormState().type));
+    const esPiedraSuelta = untracked(() => this.createFormState().esPiedraSuelta);
+
+    if (options.includes(currentType)) {
+      if (category === 'piedras' || !esPiedraSuelta) {
+        return;
+      }
+
+      this.createFormState.update((current) => ({
+        ...current,
+        esPiedraSuelta: false,
+      }));
+      return;
+    }
+
+    this.createFormState.update((current) => ({
+      ...current,
+      type: options[0],
+      esPiedraSuelta: category === 'piedras' ? current.esPiedraSuelta : false,
+    }));
+  }
+
+  private normalizeType(value: string): string {
+    return value.trim().toLowerCase();
   }
 
   showMessage(status: number, action: 'actualizar' | 'crear' = 'actualizar'){
@@ -479,11 +661,12 @@ export class PanelAdminProductos implements OnInit {
     return imageUrl;
   }
 
-  private getEmptyCreateForm(): CreateProductForm {
+  private getEmptyCreateForm(category: ProductCategoryType = 'plantas'): CreateProductForm {
     return {
       imageUrl: '',
       name: '',
-      type: 'interior',
+      type: this.getDefaultTypeByCategory(category),
+      esPiedraSuelta: false,
       careLevel: 'Bajo',
       description: '',
       price: 0,

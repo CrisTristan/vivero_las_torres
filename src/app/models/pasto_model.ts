@@ -1,5 +1,16 @@
 import { supabase } from '../DataBase/SupaBase/SupaBaseConnectionDB';
 import { Product } from '../types/product.type';
+import { environment } from '../../environments/environment';
+
+export interface UpdatePastoResponse {
+  status: number;
+  product: Product | null;
+}
+
+export interface CreatePastoResponse {
+  status: number;
+  product: Product | null;
+}
 
 export async function getAllPasto(): Promise<Product[]> {
   try {
@@ -33,4 +44,108 @@ export async function getPastoById(id: number): Promise<Product | null> {
         console.error('Error fetching pasto by ID from Supabase:', error);
         return null;
     }
+}
+
+export async function updatePasto(id: number, updatedData: Partial<Product>): Promise<UpdatePastoResponse> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/pasto/updatePastoById/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.status === 204) {
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`Error updating pasto: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    const result = await response.json();
+
+    let product: Product | null = null;
+
+    if (result?.pasto) {
+      product = result.pasto as Product;
+    } else if (result?.data) {
+      product = result.data as Product;
+    } else {
+      product = result as Product;
+    }
+
+    return {
+      status: response.status,
+      product,
+    };
+  } catch (error) {
+    console.error('Error updating pasto through backend API:', error);
+    return {
+      status: 0,
+      product: null,
+    };
+  }
+}
+
+export async function createNewPasto(payload: Record<string, unknown>): Promise<CreatePastoResponse> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/pasto/createNew`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 204) {
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`Error creating pasto: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        product: null,
+      };
+    }
+
+    const result = await response.json();
+
+    if (result?.pasto) {
+      return {
+        status: response.status,
+        product: result.pasto as Product,
+      };
+    }
+
+    if (result?.data) {
+      return {
+        status: response.status,
+        product: result.data as Product,
+      };
+    }
+
+    return {
+      status: response.status,
+      product: result as Product,
+    };
+  } catch (error) {
+    console.error('Error creating pasto through backend API:', error);
+    return {
+      status: 0,
+      product: null,
+    };
+  }
 }
