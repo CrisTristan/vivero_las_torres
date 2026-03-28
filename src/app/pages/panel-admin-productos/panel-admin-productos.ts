@@ -77,10 +77,10 @@ export class PanelAdminProductos implements OnInit {
   public readonly categoryOptions: ProductCategoryType[] = ['plantas', 'macetas', 'piedras', 'tierra', 'pasto', 'plaguicidas', 'herbicidas', 'fertilizantes'];
   private readonly typeOptionsByCategory: Record<ProductCategoryType, string[]> = {
     plantas: ['interior', 'exterior'],
-    macetas: ['barro', 'plastico', 'fibra_vidreo'],
+    macetas: ['barro', 'plastico', 'fibra_vidrio'],
     piedras: ['blanca marmol', 'negra mamol', 'rio'],
-    tierra: ['general'],
-    pasto: ['general'],
+    tierra: ['negra', "hoja", "fibra de coco"],
+    pasto: ['San Agustin', 'Chino'],
     plaguicidas: ['general'],
     herbicidas: ['general'],
     fertilizantes: ['general'],
@@ -248,6 +248,7 @@ export class PanelAdminProductos implements OnInit {
   closeEditModal(): void {
     this.isEditModalOpen = false;
     this.editingProductId = null;
+    this.imageUploaderService.setFileImage = null; // Limpiamos la imagen seleccionada al cerrar el modal de edición para evitar confusiones en futuras ediciones.
   }
 
   openCreateModal(): void {
@@ -257,18 +258,64 @@ export class PanelAdminProductos implements OnInit {
   closeCreateModal(): void {
     this.isCreateModalOpen = false;
     this.createFormState.set(this.getEmptyCreateForm(this.selectedCategory()));
+    this.imageUploaderService.setFileImage = null; // Limpiamos la imagen seleccionada al cerrar el modal de creación para evitar confusiones en futuras creaciones.
   }
 
   async onProductEdited(updatedProduct: Product): Promise<void> {
     console.log('Producto editado:', updatedProduct);
+    let productToPersist = updatedProduct; // variable para almacenar el producto con la URL de imagen actualizada en caso de que se haya editado la imagen (base64 -> URL de Cloudinary)
+
+    const currentImage = updatedProduct.productos?.imagen;
+    const imageFile = this.imageUploaderService.getFileImage;
+    const productCategory = this.normalizeCategory(updatedProduct.productos?.categorias?.categoria ?? '');
+
+    // Si la imagen viene como data URL y la categoria soporta upload en edicion,
+    // primero subimos a Cloudinary y luego persistimos la URL publica.
+    if (
+      typeof currentImage === 'string' &&
+      this.isBase64Image(currentImage) &&
+      this.isCategorySupportedForEditImageUpload(productCategory)
+    ) {
+      if (!imageFile) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Imagen inválida',
+          detail: 'Vuelve a seleccionar la imagen antes de guardar cambios',
+        });
+        return;
+      }
+
+      const folder = this.getCloudinaryFolderForProduct(updatedProduct);
+      const uploadedImageUrl = await this.saveImageOnCloudinary(imageFile, folder);
+
+      if (!uploadedImageUrl) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo subir la imagen editada a Cloudinary',
+        });
+        return;
+      }
+      
+      // Reemplazamos la URL de la imagen en el producto a persistir para que se guarde la nueva URL de Cloudinary en lugar del base64.
+      productToPersist = {
+        ...updatedProduct,
+        productos: {
+          ...updatedProduct.productos,
+          // Reemplazamos base64 por URL final de Cloudinary.
+          imagen: uploadedImageUrl,
+        },
+      };
+    }
+
     this.products.update((current) =>
-      current.map((product) => (product.id === updatedProduct.id ? updatedProduct : product)),
+      current.map((product) => (product.id === productToPersist.id ? productToPersist : product)),
     );
 
     console.log('Productos actualizados:', this.products());
-    this.lastEditedProductState.set(updatedProduct);
+    this.lastEditedProductState.set(productToPersist);
     console.log('filteredProducts', this.filteredProducts);
-    const result = await this.updateProductBySelectedCategory(updatedProduct);
+    const result = await this.updateProductBySelectedCategory(productToPersist);
     this.showMessage(result.status);
     this.closeEditModal();
   }
@@ -500,6 +547,8 @@ export class PanelAdminProductos implements OnInit {
   }
 
   private getTypeOptionsByCategory(category: ProductCategoryType): string[] {
+    console.log('Obteniendo opciones de tipo para categoría:', category);
+    console.log('Opciones disponibles para la categoría:', this.typeOptionsByCategory[category]);
     return this.typeOptionsByCategory[category] ?? ['general'];
   }
 
@@ -533,6 +582,34 @@ export class PanelAdminProductos implements OnInit {
 
   private normalizeType(value: string): string {
     return value.trim().toLowerCase();
+  }
+
+  private isBase64Image(value: string): boolean {
+    // Detecta previews locales generados por FileReader (data URL).
+    return /^data:image\/[a-zA-Z0-9.+-]+;base64,/.test(value.trim());
+  }
+
+  private isCategorySupportedForEditImageUpload(category: string): boolean {
+    const supportedCategories = new Set([
+      'plantas',
+      'macetas',
+      'piedras',
+      'tierra',
+      'pasto',
+      'plaguicidas',
+      'herbicidas',
+      'fertilizantes',
+    ]);
+
+    return supportedCategories.has(category);
+  }
+
+  private getCloudinaryFolderForProduct(product: Product): string {
+    const category = this.normalizeCategory(product.productos?.categorias?.categoria ?? 'plantas');
+    const type = this.normalizeType(product.tipo ?? '') || 'general';
+
+    // Estructura final: ViveroLasTorres/{categoria}/{tipo}
+    return `ViveroLasTorres/${category}/${type}`;
   }
 
   showMessage(status: number, action: 'actualizar' | 'crear' = 'actualizar'){

@@ -47,6 +47,7 @@ export async function getMacetaById(id: number): Promise<Product | null> {
 }
 
 export async function updateMaceta(id: number, updatedData: Partial<Product>): Promise<UpdateMacetaResponse> {
+  console.log('Updating maceta with ID:', id, 'and data:', updatedData);
   try {
     const response = await fetch(`${environment.apiUrl}/macetas/updateMacetaById/${id}`, {
       method: 'PUT',

@@ -13,6 +13,7 @@ export async function fetchAllPasto(): Promise<Product[]> {
 }
 
 export async function updatePastoById(id: number, updatedData: Partial<Product>): Promise<UpdatePastoResponse> {
+    console.log("Updating pasto with ID:", id, "and data:", updatedData);
     try {
         const updatedPasto = await updatePasto(id, updatedData);
         console.log("Pasto actualizado en controller:", updatedPasto);

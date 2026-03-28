@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CareLevel } from '../../types/admin-plant-product.type';
 import { Product } from '../../types/product.type';
+import { ImageUploaderService } from '../../services/image-uploader-service';
 
 interface EditPlantForm {
   imageUrl: string;
@@ -22,6 +23,7 @@ interface EditPlantForm {
   styleUrl: './edit-modal-product.css',
 })
 export class EditModalProduct implements OnChanges {
+  private readonly imageUploaderService = inject(ImageUploaderService);
   @Input({ required: true }) isOpen = false;
   @Input() product: Product | null = null;
 
@@ -33,10 +35,16 @@ export class EditModalProduct implements OnChanges {
     plantas: ['interior', 'exterior'],
     macetas: ['barro', 'plastico', 'fibra_vidreo'],
     piedras: ['blanca marmol', 'negra mamol', 'rio'],
+    tierra: ['negra', 'hoja', 'fibra de coco'],
+    pasto: ['San Agustin', 'Chino'],
+    plaguicidas: ['general'],
+    herbicidas: ['general'],
+    fertilizantes: ['general'],
   };
   public readonly formState = signal<EditPlantForm>(this.getEmptyForm());
 
   get typeOptions(): string[] {
+    // Devuelve las opciones de tipo para la categoría actual, asegurando que el valor actual esté incluido
     return this.getTypeOptionsByCategory(this.getProductCategory(), this.formState().type);
   }
 
@@ -46,6 +54,9 @@ export class EditModalProduct implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
+      // Evita reusar una imagen seleccionada en una edición anterior.
+      this.imageUploaderService.setFileImage = null;
+
       const category = this.getProductCategory();
       const currentType = this.normalizeType(this.product.tipo ?? '');
 
@@ -62,6 +73,8 @@ export class EditModalProduct implements OnChanges {
     }
 
     if (changes['isOpen'] && !this.isOpen) {
+      // Limpia estado temporal de imagen cuando el modal se cierra.
+      this.imageUploaderService.setFileImage = null;
       this.formState.set(this.getEmptyForm());
     }
   }
@@ -84,6 +97,9 @@ export class EditModalProduct implements OnChanges {
     if (!file) {
       return;
     }
+
+    // Guardamos el File real para subirlo a Cloudinary al momento de guardar.
+    this.imageUploaderService.setFileImage = file;
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -170,17 +186,14 @@ export class EditModalProduct implements OnChanges {
 
   private getTypeOptionsByCategory(category: string, currentType?: string): string[] {
     const normalizedCategory = this.normalizeCategory(category);
-    const baseOptions = this.typeOptionsByCategory[normalizedCategory] ?? [];
-    const normalizedCurrentType = this.normalizeType(currentType ?? '');
-
+    let baseOptions = this.typeOptionsByCategory[normalizedCategory] ?? [];
+    // Si hay un tipo actual y no está en las opciones, lo agregamos al inicio
+    if (currentType && !baseOptions.includes(currentType)) {
+      return [currentType, ...baseOptions];
+    }
     if (baseOptions.length === 0) {
-      return normalizedCurrentType ? [normalizedCurrentType] : ['general'];
+      return ['general'];
     }
-
-    if (normalizedCurrentType && !baseOptions.includes(normalizedCurrentType)) {
-      return [normalizedCurrentType, ...baseOptions];
-    }
-
     return baseOptions;
   }
 
@@ -189,7 +202,8 @@ export class EditModalProduct implements OnChanges {
   }
 
   private normalizeType(value: string): string {
-    return value.trim().toLowerCase();
+    // Ya no normalizamos el tipo, solo quitamos espacios al inicio y final
+    return value.trim();
   }
 
   private normalizeCategory(value: string): string {
