@@ -149,3 +149,29 @@ export async function createNewFertilizante(payload: Record<string, unknown>): P
     };
   }
 }
+
+export async function deleteFertilizanteById(id: number): Promise<{ status: number; data?: { message: string } }> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/fertilizantes/deleteFertilizanteById/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      console.error(`Error deleting fertilizante: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        data: { message: 'Error al eliminar el fertilizante' },
+      };
+    }
+    const data = await response.json();
+    return {
+      status: response.status,
+      data,
+    };
+  } catch (error) {
+    console.error('Error deleting fertilizante through backend API:', error);
+    return {
+      status: 0,
+      data: { message: 'Error al eliminar el fertilizante' },
+    };
+  }
+}

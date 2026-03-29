@@ -2,39 +2,24 @@
   <div class="my-3">
     <app-search-bar [value]="searchTerm()"></app-search-bar>
     <div class="flex flex-row justify-between my-3 font-bold">
-      <button
-        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'plantas'"
-        (click)="filterByCategory('plantas')"
-      >
+      <button class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="this.getSelectedCategory() === 'plantas'" (click)="filterByCategory('plantas')">
         Plantas
       </button>
-      <button
-        class="bg-gray-400 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'macetas'"
-        (click)="filterByCategory('macetas')"
-      >
+      <button class="bg-gray-400 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="this.getSelectedCategory() === 'macetas'" (click)="filterByCategory('macetas')">
         Macetas
       </button>
-      <button
-        class="bg-white px-4 py-2 rounded-lg border-2 border-black filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'piedras'"
-        (click)="filterByCategory('piedras')"
-      >
+      <button class="bg-white px-4 py-2 rounded-lg border-2 border-black filter-button"
+        [class.filter-selected]="this.getSelectedCategory() === 'piedras'" (click)="filterByCategory('piedras')">
         Piedras
       </button>
-      <button
-        class="bg-amber-600 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'tierra'"
-        (click)="filterByCategory('tierra')"
-      >
+      <button class="bg-amber-600 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="this.getSelectedCategory() === 'tierra'" (click)="filterByCategory('tierra')">
         Tierra
       </button>
-      <button
-        class="bg-green-600 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'pasto'"
-        (click)="filterByCategory('pasto')"
-      >
+      <button class="bg-green-600 px-4 py-2 rounded-lg filter-button"
+        [class.filter-selected]="this.getSelectedCategory() === 'pasto'" (click)="filterByCategory('pasto')">
         Pasto
       </button>
     </div>
@@ -42,91 +27,86 @@
 
   <div class="grid grid-cols-2 grid-rows-2 gap-2">
     @for (product of filteredProducts(); track product.id) {
-      @if(product.esPiedraSuelta !== true){
-      <div class="border rounded-xl p-4 shadow mb-2.5" (click)="navigateToProductDetails(product.id, this.getSelectedCategory())">
-        <div class="flex justify-end">
-          <h2
-            class="p-2 m-2 rounded-full text-xl px-5"
-            [class.interior]="product.tipo === 'interior'"
-            [class.exterior]="product.tipo === 'exterior'"
-            [class.barro]="product.tipo === 'barro'"
-          >
-            {{ product.tipo }}
-          </h2>
-        </div>
-        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="shadow-2xl" />
-        <div class="space-y-2 mt-2">
-          <h2 class="text-2xl font-bold text-center">{{ product.productos.nombre }}</h2>
-          <!-- <h3 class="text-green-600 font-semibold">$ {{ product.price }}</h3> -->
-           @if(this.getSelectedCategory() === 'plantas') {
-              <p class="text-2xl">Nivel de Cuidado: {{ product.nivel_cuidado }}</p>
-           }
-          
+    @if(product.esPiedraSuelta !== true){
+    <div class="border rounded-xl p-4 shadow mb-2.5"
+      (click)="navigateToProductDetails(product.id, this.getSelectedCategory())">
+      <div class="flex justify-end">
+        <h2 class="p-2 m-2 rounded-full text-xl px-5" [class.interior]="product.tipo === 'interior'"
+          [class.exterior]="product.tipo === 'exterior'" [class.barro]="product.tipo === 'barro'">
+          {{ product.tipo }}
+        </h2>
+      </div>
+      <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="shadow-2xl" />
+      <div class="space-y-2 mt-2">
+        <h2 class="text-2xl font-bold text-center">{{ product.productos.nombre }}</h2>
+        <!-- <h3 class="text-green-600 font-semibold">$ {{ product.price }}</h3> -->
+        @if(this.getSelectedCategory() === 'plantas') {
+        <p class="text-2xl">Nivel de Cuidado: {{ product.nivel_cuidado }}</p>
+        }
 
-          <div class="flex flex-col gap-2" [class.hidden]="!isProductSelected(product.id)">
+
+        <div class="flex flex-col gap-2" [class.hidden]="!isProductSelected(product.id)">
           <div class="bg-green-300 border-2 border-green-600 rounded-lg p-4">
-          <h3 class="text-xl font-bold">Descripción</h3>
+            <h3 class="text-xl font-bold">Descripción</h3>
             <p class="text-xl">
-            @if(this.getSelectedCategory() === 'plantas'){
+              @if(this.getSelectedCategory() === 'plantas'){
               {{ product.descripcion.descripcion }}
-            }@else if(this.getSelectedCategory() === 'macetas'){
-              <ol class="list-disc list-inside">
-                <li>Volumen: {{ product.descripcion.volumen }}</li>
-                <li>Altura: {{ product.descripcion.altura }}</li>
-                <li>Diámetro Superior: {{ product.descripcion.diametro_superior }}</li>
-                <li>Diámetro Inferior: {{ product.descripcion.diametro_inferior }}</li>
-              </ol> 
+              }@else if(this.getSelectedCategory() === 'macetas'){
+            <ol class="list-disc list-inside">
+              <li>Volumen: {{ product.descripcion.volumen }}</li>
+              <li>Altura: {{ product.descripcion.altura }}</li>
+              <li>Diámetro Superior: {{ product.descripcion.diametro_superior }}</li>
+              <li>Diámetro Inferior: {{ product.descripcion.diametro_inferior }}</li>
+            </ol>
             }@else if(this.getSelectedCategory() === 'piedras'){
-              {{ product.descripcion.descripcion }}
+            {{ product.descripcion.descripcion }}
             }@else if(this.getSelectedCategory() === 'tierra'){
-              {{ product.descripcion.descripcion }}
+            {{ product.descripcion.descripcion }}
             }
-            
-          </p>
+
+            </p>
           </div>
-           <div class="flex justify-between items-center">
-              <p>Añadir a favoritos</p>
-            @if (this.getSelectedCategory() === 'plantas') {            
-              <span
-                  class="material-symbols-outlined"
-                  [class.favorite-selected]="isProductInMyPlantsDesigns(product.id)"
-                  (click)="isProductInMyPlantsDesigns(product.id) ? removeFromMyPlantsDesigns(product.id) : addToMyPlantsDesigns(product); $event.stopPropagation()"
-                >
-                  favorite
-                </span>
+          <div class="flex justify-between items-center">
+            <p>Añadir a favoritos</p>
+            @if (this.getSelectedCategory() === 'plantas') {
+            <span class="material-symbols-outlined" [class.favorite-selected]="isProductInMyPlantsDesigns(product.id)"
+              (click)="isProductInMyPlantsDesigns(product.id) ? removeFromMyPlantsDesigns(product.id) : addToMyPlantsDesigns(product); $event.stopPropagation()">
+              favorite
+            </span>
             } @else if (this.getSelectedCategory() === 'macetas') {
 
-             <span
-                  class="material-symbols-outlined"
-                  [class.favorite-selected]="isProductInMyPotsDesigns(product.id)"
-                  (click)="isProductInMyPotsDesigns(product.id) ? removeFromMyPotsDesigns(product.id) : addToMyPotsDesigns(product); $event.stopPropagation()"
-                >
-                  favorite
-              </span>
+            <span class="material-symbols-outlined" [class.favorite-selected]="isProductInMyPotsDesigns(product.id)"
+              (click)="isProductInMyPotsDesigns(product.id) ? removeFromMyPotsDesigns(product.id) : addToMyPotsDesigns(product); $event.stopPropagation()">
+              favorite
+            </span>
             } @else if(this.getSelectedCategory() === 'piedras') {
-              <span
-                class="material-symbols-outlined"
-                [class.favorite-selected]="isProductInMyRocksDesigns(product.id)"
-                (click)="isProductInMyRocksDesigns(product.id) ? removeFromMyRocksDesigns(product.id) : addToMyRocksDesigns(product); $event.stopPropagation()"
-              >
-                favorite
-              </span>
+            <span class="material-symbols-outlined" [class.favorite-selected]="isProductInMyRocksDesigns(product.id)"
+              (click)="isProductInMyRocksDesigns(product.id) ? removeFromMyRocksDesigns(product.id) : addToMyRocksDesigns(product); $event.stopPropagation()">
+              favorite
+            </span>
             }
-            </div>
-            <button
-              class="bg-green-400 text-white rounded-md p-2 mt-5 w-full"
-              (click)="addToCart(product); $event.stopPropagation()"
-            >
-              Añadir al Carrito 
-            </button>
           </div>
+          <button class="bg-green-400 text-white rounded-md p-2 mt-5 w-full"
+            (click)="addToCart(product); $event.stopPropagation()">
+            Añadir al Carrito
+          </button>
         </div>
       </div>
-      }
+    </div>
+    }
     } @empty {
-      <div class="fixed inset-0 flex items-center justify-center pointer-events-none">
-    <span class="material-symbols-outlined text-[20rem] leading-none animate-spin">autorenew</span>
-  </div>
+
+    @if(this.isLoadingAllProducts()) {
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none">
+      <span class="material-symbols-outlined text-[20rem] leading-none animate-spin">autorenew</span>
+    </div>
+    }@else {
+    <div class="flex flex-col items-center justify-center gap-4 w-screen h-[60vh]">
+      <span class="material-symbols-outlined text-[5rem] leading-none">sentiment_dissatisfied</span>
+      <p class="text-2xl font-bold">No se encontraron productos</p>
+    </div>
+    }
+
     }
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { CreateMacetaResponse, createNewMaceta, getAllMacetas, updateMaceta, UpdateMacetaResponse } from "../models/macetas_mode";
+import { CreateMacetaResponse, createNewMaceta, deleteMacetaById, getAllMacetas, updateMaceta, UpdateMacetaResponse } from "../models/macetas_mode";
 import { Product } from "../types/product.type";
 
 export async function fetchAllMacetas(): Promise<Product[]> {
@@ -30,6 +30,19 @@ export async function createMaceta(payload: Record<string, unknown>): Promise<Cr
         return createdMaceta;
     } catch (error) {
         console.error("Error creating maceta in controller:", error);
+        throw error;
+    }
+}
+
+export async function handleDeleteMaceta(id: number): Promise<{ status: number; message: string }> {
+    try {
+        const result = await deleteMacetaById(id);
+        return {
+            status: result.status,
+            message: "Maceta eliminada correctamente"
+        };
+    } catch (error) {
+        console.error("Error deleting maceta in controller:", error);
         throw error;
     }
 }

@@ -1,4 +1,4 @@
-import { CreatePastoResponse, createNewPasto, getAllPasto, updatePasto, UpdatePastoResponse } from "../models/pasto_model";
+import { CreatePastoResponse, createNewPasto, getAllPasto, updatePasto, UpdatePastoResponse, deletePastoById } from "../models/pasto_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllPasto(): Promise<Product[]> {
@@ -31,6 +31,17 @@ export async function createPasto(payload: Record<string, unknown>): Promise<Cre
         return createdPasto;
     } catch (error) {
         console.error("Error creating pasto in controller:", error);
+        throw error;
+    }
+}
+
+export async function handleDeletePasto(id: number): Promise<{ status: number; data: any }> {
+    try {
+        const onDeleteResponde = await deletePastoById(id);
+        console.log("Pasto eliminado en controller:", onDeleteResponde);
+        return onDeleteResponde;
+    } catch (error) {
+        console.error("Error deleting pasto in controller:", error);
         throw error;
     }
 }

@@ -1,0 +1,136 @@
+<app-header-section
+    [title]="adminMenuService.currentSection()"
+	[subtitle]="'Gestiona tus productos'"
+	[customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'"
+	[showCreateButton]="true"
+	[createButtonLabel]="createButtonLabel"
+	(createButtonClick)="openCreateModal()"
+></app-header-section>
+
+@if(isModalCreateOpen()){
+    <div class="fixed flex-col items-center justify-center z-50 h-[80vh] bg-white w-[40vw] top-[10vh] left-[30vw] rounded-xl border border-[#d6e0d6] shadow-lg p-5">
+        <div>
+        <p>Modal de creación de pedido</p>
+        <button (click)="isModalCreateOpen.set(false)">Cerrar</button>
+        </div>
+        <div>
+        <p>Aquí iría el formulario para crear un nuevo pedido</p>
+        </div>
+    </div>
+}
+
+<div class="pt-[21vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
+
+  <!-- 🔝 CARDS -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+    <div class="bg-green-50 rounded-xl p-5 shadow-sm">
+      <p class="text-3xl font-bold">5</p>
+      <p class="text-sm text-gray-600">Pendientes</p>
+    </div>
+
+    <div class="bg-green-50 rounded-xl p-5 shadow-sm">
+      <p class="text-3xl font-bold">8</p>
+      <p class="text-sm text-gray-600">En Proceso</p>
+    </div>
+
+    <div class="bg-green-50 rounded-xl p-5 shadow-sm">
+      <p class="text-3xl font-bold">12</p>
+      <p class="text-sm text-gray-600">Enviados Hoy</p>
+    </div>
+
+    <div class="bg-green-50 rounded-xl p-5 shadow-sm">
+      <p class="text-3xl font-bold">156</p>
+      <p class="text-sm text-gray-600">Completados</p>
+    </div>
+
+  </div>
+
+  <!-- 🔎 FILTROS -->
+  <div class="bg-green-50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2">
+      <button *ngFor="let f of ['Todos','Pendiente','Procesando','Enviado','Completado']"
+        (click)="cambiarFiltro(f)"
+        class="px-3 py-1 rounded-lg text-sm"
+        [class.bg-white]="filtro()===f">
+        {{f}}
+      </button>
+    </div>
+
+    <!-- Buscador -->
+    <div class="flex items-center gap-2 w-full lg:w-auto">
+      <input type="text"
+        placeholder="Buscar pedido..."
+        (input)="setBusqueda($event.target.value)"
+        class="border rounded-lg px-3 py-2 text-sm w-full lg:w-64" />
+
+      <button class="border px-3 py-2 rounded-lg text-sm bg-white">Exportar</button>
+    </div>
+
+  </div>
+
+  <!-- 📋 TABLA -->
+  <div class="bg-green-50 rounded-xl p-4 overflow-x-auto">
+
+    <table class="w-full text-sm">
+      <thead class="text-left text-gray-600">
+        <tr>
+          <th class="py-2">Pedido</th>
+          <th>Cliente</th>
+          <th>Productos</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Pago</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let p of pedidosFiltrados()" class="border-t">
+
+          <td class="py-3 font-medium">{{p.id}}</td>
+
+          <td>
+            <p>{{p.cliente}}</p>
+            <p class="text-xs text-gray-500">{{p.email}}</p>
+          </td>
+
+          <td>{{p.producto}}</td>
+
+          <td class="font-semibold">${{p.total}}</td>
+
+          <td>
+            <span class="px-2 py-1 rounded-full text-xs"
+              [ngClass]="estadoClass(p.estado)">
+              {{p.estado}}
+            </span>
+          </td>
+
+          <td>
+            <span class="px-2 py-1 rounded-full text-xs"
+              [ngClass]="pagoClass(p.pago)">
+              {{p.pago}}
+            </span>
+          </td>
+
+          <td>{{p.fecha}}</td>
+
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 📄 PAGINACIÓN -->
+    <div class="flex justify-between items-center mt-4 text-sm">
+      <p>Mostrando 1-7 de 156 pedidos</p>
+
+      <div class="flex gap-2">
+        <button class="px-3 py-1 border rounded-lg bg-gray-200">Anterior</button>
+        <button class="px-3 py-1 border rounded-lg bg-white">Siguiente</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>

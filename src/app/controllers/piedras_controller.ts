@@ -1,4 +1,4 @@
-import { CreatePiedraResponse, createNewPiedra, getAllPiedras, updatePiedra, UpdatePiedraResponse } from "../models/piedras_model";
+import { CreatePiedraResponse, createNewPiedra, getAllPiedras, updatePiedra, UpdatePiedraResponse, deletePiedraById } from "../models/piedras_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllPiedras(): Promise<Product[]> {
@@ -30,6 +30,31 @@ export async function createPiedra(payload: Record<string, unknown>): Promise<Cr
         return createdPiedra;
     } catch (error) {
         console.error("Error creating piedra in controller:", error);
+        throw error;
+    }
+}
+
+export async function handleDeletePiedra(id: number): Promise<{ status: number; message: string }> {
+    try {
+        const onDeleteResult = await deletePiedraById(id);
+        if (onDeleteResult.status === 200) {
+            return {
+                status: onDeleteResult.status,
+                message: "Piedra eliminada correctamente"
+            };
+        } else if (onDeleteResult.status === 404) {
+            return {
+                status: onDeleteResult.status,
+                message: "Piedra no encontrada"
+            };
+        } else {
+            return {
+                status: onDeleteResult.status,
+                message: "Ocurrió un error inesperado"
+            };
+        }
+    }catch (error) {
+        console.error("Error deleting piedra in controller:", error);
         throw error;
     }
 }

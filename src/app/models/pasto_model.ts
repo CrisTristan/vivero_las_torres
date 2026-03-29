@@ -149,3 +149,22 @@ export async function createNewPasto(payload: Record<string, unknown>): Promise<
     };
   }
 }
+
+export async function deletePastoById(id: number): Promise<{ status: number; data: any }> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/pasto/deletePastoById/${id}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+    return {
+      status: response.status,
+      data,
+    };
+  } catch (error) {
+    console.error('Error deleting pasto through backend API:', error);
+    return {
+      status: 0,
+      data: null,
+    };
+  }
+}

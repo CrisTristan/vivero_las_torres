@@ -149,3 +149,29 @@ export async function createNewPlaguicida(payload: Record<string, unknown>): Pro
     };
   }
 }
+
+export async function deletePlaguicidaById(id: number): Promise<{ status: number; data: any }> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/plaguicidas/deletePlaguicidaById/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      console.error(`Error deleting plaguicida: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        data: null,
+      };
+    }
+    const data = await response.json();
+    return {
+      status: response.status,
+      data,
+    };
+  } catch (error) {
+    console.error('Error deleting plaguicida through backend API:', error);
+    return {
+      status: 0,
+      data: null,
+    };
+  }
+}

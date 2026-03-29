@@ -21,10 +21,12 @@ import { Product } from '../../types/product.type';
 export class CardProduct {
   @Input({ required: true }) product!: Product;
   @Input() menuOpen = false;
-
+ 
   @Output() toggleMenu = new EventEmitter<number>();
   @Output() edit = new EventEmitter<number>();
   @Output() remove = new EventEmitter<number>();
+  //Obtener la categoria del producto con algun servicio o función que lo determine a partir de su tipo o id
+
 
   onToggleMenu(event: MouseEvent): void {
     event.stopPropagation();

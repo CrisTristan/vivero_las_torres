@@ -150,3 +150,31 @@ export async function createNewMaceta(payload: Record<string, unknown>): Promise
     };
   }
 }
+
+export async function deleteMacetaById(id: number): Promise<{ status: number; data: any }> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/macetas/deleteMacetaById/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(`Error deleting maceta: ${response.status} ${response.statusText}`, errorData);
+      return {
+        status: response.status,
+        data: errorData,
+      };
+    }
+    const data = await response.json();
+    return {
+      status: response.status,
+      data,
+    };
+  }
+  catch (error) {
+    console.error('Error deleting maceta through backend API:', error);
+    return {
+      status: 0,
+      data: { error: 'Error deleting maceta' },
+    };
+  }
+}

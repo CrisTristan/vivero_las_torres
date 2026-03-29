@@ -1,4 +1,4 @@
-import { CreateFertilizanteResponse, createNewFertilizante, getAllFertilizantes, getFertilizanteById, updateFertilizante, UpdateFertilizanteResponse } from "../models/fertilizante_model";
+import { CreateFertilizanteResponse, createNewFertilizante, deleteFertilizanteById, getAllFertilizantes, getFertilizanteById, updateFertilizante, UpdateFertilizanteResponse } from "../models/fertilizante_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllFertilizantes(): Promise<Product[]> {
@@ -43,4 +43,17 @@ export async function createFertilizante(payload: Record<string, unknown>): Prom
     console.error("Error creating fertilizante in controller:", error);
     throw error;
   }
+}
+
+export async function handleDeleteFertilizante(id: number): Promise<{ status: number; message: string }> {
+    try {
+        const result = await deleteFertilizanteById(id);
+        return {
+            status: result.status,
+            message: result.data?.message || "Fertilizante eliminado correctamente"
+        };
+    }catch (error) {
+        console.error("Error deleting fertilizante in controller:", error);
+        throw error;
+    }
 }

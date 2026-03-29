@@ -150,3 +150,26 @@ export async function createNewPlant(payload: Record<string, unknown>): Promise<
     };
   }
 }
+
+// Función para eliminar una planta por ID
+export async function deletePlantById(id: number): Promise<{ status: number; data: any }> {
+    try {
+        const response = await fetch(`${environment.apiUrl}/plantas/deletePlantById/${id}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        return {
+            status: response.status,
+            data
+        };
+
+    } catch (error) {
+        console.error("Error en deletePlantById:", error);
+        return {
+            status: 500,
+            data: { error: "Error de conexión con el servidor" }
+        };
+    }
+}

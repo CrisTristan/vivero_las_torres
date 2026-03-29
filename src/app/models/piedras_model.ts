@@ -147,3 +147,22 @@ export async function createNewPiedra(payload: Record<string, unknown>): Promise
     };
   }
 }
+
+export async function deletePiedraById(id: number): Promise<{ status: number; data: any }> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/piedras/deletePiedraById/${id}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json();
+    return {
+      status: response.status,
+      data,
+    };
+  } catch (error) {
+    console.error('Error deleting piedra through backend API:', error);
+    return {
+      status: 0,
+      data: null,
+    };
+  }
+}

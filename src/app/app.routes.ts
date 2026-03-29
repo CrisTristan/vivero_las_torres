@@ -15,6 +15,7 @@ import {authorizationAdminGuard} from "./Guards/authorization-admin-guard";
 import { PanelAdministrador } from './pages/panel-admin-main/panel-admin-main';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { PanelAdminProductos } from './pages/panel-admin-productos/panel-admin-productos';
+import { PanelAdminPedidos } from './pages/panel-admin-pedidos/panel-admin-pedidos';
 
 export const routes: Routes = [
     {
@@ -92,6 +93,12 @@ export const routes: Routes = [
         path: 'panel-admin-productos',
         component: PanelAdminProductos,
         title: 'Panel de Administración - Productos',
+        canActivate: [authorizationAdminGuard]
+    },
+    {
+        path: 'panel-admin-pedidos',
+        component: PanelAdminPedidos,
+        title: 'Panel de Administración - Pedidos',
         canActivate: [authorizationAdminGuard]
     }
 ];

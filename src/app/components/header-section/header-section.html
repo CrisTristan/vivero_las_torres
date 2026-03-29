@@ -23,10 +23,39 @@
                 </button>
             }
 
-            <button type="button" class="relative h-9 w-9 flex items-center justify-center text-[#6b7280]">
+            <button type="button" class="relative h-9 w-9 flex items-center justify-center text-[#6b7280]"
+                (click)="onPressButtonNotification()"
+            >
                 <span class="material-symbols-outlined text-[22px] leading-none">notifications</span>
                 <span class="absolute -right-1 -top-1 h-5 min-w-5 px-1 rounded-full bg-[#178a2d] text-white text-[11px] font-semibold leading-5 text-center">3</span>
             </button>
+
+            @if(isNotificationsOpen()) {
+                <div class="absolute top-[60px] right-5 w-80 rounded-lg border border-[#d6e0d6] bg-white shadow-md overflow-hidden z-20">
+                    <div class="p-4">
+                        <p class="text-sm text-[#374151]">Notificaciones</p>
+                        <ul class="mt-2 max-h-60 overflow-y-auto">
+                            <li class="py-2 border-b border-[#e5e7eb]">
+                                <p class="text-[14px] text-[#4b5563]">Nuevo pedido recibido</p>
+                                <p class="text-[12px] text-[#9ca3af]">Hace 5 minutos</p>
+                                <button>
+                                    <span class="material-symbols-outlined text-[18px] text-[#6b7280] hover:text-[#111827] transition-colors">
+                                        delete
+                                    </span>
+                                </button>
+                            </li>
+                            <li class="py-2 border-b border-[#e5e7eb]">
+                                <p class="text-[14px] text-[#4b5563]">Producto "Maceta de barro" agotado</p>
+                                <p class="text-[12px] text-[#9ca3af]">Hace 20 minutos</p>
+                            </li>
+                            <li class="py-2">
+                                <p class="text-[14px] text-[#4b5563]">Nuevo mensaje de cliente</p>
+                                <p class="text-[12px] text-[#9ca3af]">Hace 1 hora</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

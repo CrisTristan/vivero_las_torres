@@ -1,4 +1,4 @@
-import { CreatePlaguicidaResponse, createNewPlaguicida, getAllPlaguicidas, updatePlaguicida, UpdatePlaguicidaResponse } from "../models/plaguicida_model";
+import { CreatePlaguicidaResponse, createNewPlaguicida, getAllPlaguicidas, updatePlaguicida, UpdatePlaguicidaResponse, deletePlaguicidaById } from "../models/plaguicida_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllPlaguicidas(): Promise<Product[]> {
@@ -30,6 +30,19 @@ export async function createPlaguicida(payload: Record<string, unknown>): Promis
         return createdPlaguicida;
     } catch (error) {
         console.error("Error creating plaguicida in controller:", error);
+        throw error;
+    }
+}
+
+export async function handleDeletePlaguicida(id: number): Promise<{ status: number; message: string }> {
+    try {
+        const result = await deletePlaguicidaById(id);
+        return {
+            status: result.status,
+            message: result.data?.message || "Plaguicida eliminado correctamente"
+        };
+    } catch (error) {
+        console.error("Error deleting plaguicida in controller:", error);
         throw error;
     }
 }

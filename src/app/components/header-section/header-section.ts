@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { AdminMenuService } from '../../services/admin-menu-service';
 import { SearchBar } from '../search-bar/search-bar';
 
@@ -18,7 +18,14 @@ export class HeaderSection {
 
   public adminMenuService = inject(AdminMenuService);
 
+  public isNotificationsOpen = signal(false);
+  
   onCreateButtonClick(): void {
     this.createButtonClick.emit();
+  }
+
+  onPressButtonNotification(): void {
+    //this.adminMenuService.toggleNotifications();
+    this.isNotificationsOpen.update((isOpen) => !isOpen);
   }
 }

@@ -1,4 +1,4 @@
-import { CreateHerbicidaResponse, createNewHerbicida, getAllHerbicidas, updateHerbicida, UpdateHerbicidaResponse } from "../models/herbicidas_model";
+import { CreateHerbicidaResponse, createNewHerbicida, deleteHerbicidaById, getAllHerbicidas, updateHerbicida, UpdateHerbicidaResponse } from "../models/herbicidas_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllHerbicidas(): Promise<Product[]> {
@@ -30,6 +30,19 @@ export async function createHerbicida(payload: Record<string, unknown>): Promise
         return createdHerbicida;
     } catch (error) {
         console.error("Error creating herbicida in controller:", error);
+        throw error;
+    }
+}
+
+export async function handleDeleteHerbicida(id: number): Promise<{ status: number; message: string }> {
+    try {
+        const result = await deleteHerbicidaById(id);
+        return {
+            status: result.status,
+            message: result.data?.message || "Herbicida eliminado correctamente"
+        };
+    } catch (error) {
+        console.error("Error deleting herbicida in controller:", error);
         throw error;
     }
 }

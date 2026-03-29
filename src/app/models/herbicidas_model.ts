@@ -149,3 +149,30 @@ export async function createNewHerbicida(payload: Record<string, unknown>): Prom
     };
   }
 }
+
+export async function deleteHerbicidaById(id: number): Promise<{ status: number; data?: { message: string } }> {
+    try {
+        const response = await fetch(`${environment.apiUrl}/herbicidas/deleteHerbicidaById/${id}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            console.error(`Error deleting herbicida: ${response.status} ${response.statusText}`);
+            const errorData = await response.json();
+            return {
+                status: response.status,
+                data: { message: errorData?.message || 'Error al eliminar herbicida' },
+            };
+        }
+        return {
+            status: response.status,
+            data: { message: 'Herbicida eliminado correctamente' },
+        };
+    }
+    catch (error) {
+        console.error('Error deleting herbicida through backend API:', error);
+        return {
+          status: 0,
+          data: { message: 'Error al eliminar herbicida' },
+        };
+      }
+}

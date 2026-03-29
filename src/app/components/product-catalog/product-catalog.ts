@@ -27,6 +27,7 @@ export class ProductCatalog implements OnInit {
   designService = inject(PlantDesignService);
   shoppingCartService = inject(ShoppingCartService);
   private products = signal<Product[]>([]);
+  public isLoadingAllProducts = signal(true);
 
   constructor(
     private searchService: SearchProductEvent,
@@ -95,6 +96,7 @@ export class ProductCatalog implements OnInit {
       .then(([plantas, macetas, piedras, tierra, pasto]) => {
         this.products.set([...plantas, ...macetas, ...piedras, ...tierra, ...pasto]);
         console.log('productos', this.products());
+        this.isLoadingAllProducts.update((current)=>!current);
       })
       .catch((error) => {
         console.error('Error fetching productos in ProductCatalog:', error);

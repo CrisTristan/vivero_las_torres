@@ -6,15 +6,15 @@ import { HeaderSection } from '../../components/header-section/header-section';
 import { EditModalProduct } from '../../components/edit-modal-product/edit-modal-product';
 import { CareLevel, ProductCategoryType } from '../../types/admin-plant-product.type';
 import { SearchProductEvent } from '../../services/search-product-event';
-import { createPlant, fetchAllPlants, updatePlantById } from '../../controllers/planta_controller';
-import { createMaceta, fetchAllMacetas, updateMacetaById } from '../../controllers/maceta_controller';
-import { createPiedra, fetchAllPiedras, updatePiedraById } from '../../controllers/piedras_controller';
-import { createTierra, fetchAllTierra, updateTierraById } from '../../controllers/tierra_controller';
-import { createPasto, fetchAllPasto, updatePastoById } from '../../controllers/pasto_controller';
+import { createPlant, fetchAllPlants, handleDeletePlant, updatePlantById } from '../../controllers/planta_controller';
+import { createMaceta, fetchAllMacetas, handleDeleteMaceta, updateMacetaById } from '../../controllers/maceta_controller';
+import { createPiedra, fetchAllPiedras, handleDeletePiedra, updatePiedraById } from '../../controllers/piedras_controller';
+import { createTierra, fetchAllTierra, handleDeleteTierra, updateTierraById } from '../../controllers/tierra_controller';
+import { createPasto, fetchAllPasto, handleDeletePasto, updatePastoById } from '../../controllers/pasto_controller';
 import { Product } from '../../types/product.type';
-import { createFertilizante, fetchAllFertilizantes, updateFertilizanteById } from '../../controllers/fertilizante_controller';
-import { createPlaguicida, fetchAllPlaguicidas, updatePlaguicidaById } from '../../controllers/plaguicidas_controller';
-import { createHerbicida, fetchAllHerbicidas, updateHerbicidaById } from '../../controllers/herbicidas_controller';
+import { createFertilizante, fetchAllFertilizantes, handleDeleteFertilizante, updateFertilizanteById } from '../../controllers/fertilizante_controller';
+import { createPlaguicida, fetchAllPlaguicidas, handleDeletePlaguicida, updatePlaguicidaById } from '../../controllers/plaguicidas_controller';
+import { createHerbicida, fetchAllHerbicidas, handleDeleteHerbicida, updateHerbicidaById } from '../../controllers/herbicidas_controller';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ImageUploaderCloudinary } from '../../components/image-uploader-cloudinary/image-uploader-cloudinary';
@@ -87,7 +87,7 @@ export class PanelAdminProductos implements OnInit {
   };
   public selectedCategory = signal<ProductCategoryType>('plantas');
   public searchTerm = '';
-  public selectedMenuProductId: number | null = null;
+  public selectedMenuProductId: number | null = null; //almacena el id del producto al que se le hizo click en el menu para mostrar/ocultar el menu de ese producto
   public isGridView = true;
   public isMobileViewport = window.innerWidth < 640;
   public isEditModalOpen = false;
@@ -420,9 +420,56 @@ export class PanelAdminProductos implements OnInit {
     }
   }
 
-  onDeleteProduct(productId: number): void {
+  async onDeleteProduct(productId: number): Promise<void> {
     this.selectedMenuProductId = null;
     console.log('Eliminar producto:', productId);
+    //Obtener la categoria actualmente seleccionada para saber a que controlador invocar.
+    //preguntar por confirmacion antes de eliminar al usuario
+     const confirmacion = confirm("¿Seguro que deseas eliminar este producto?");
+      if (!confirmacion) return;
+    const productCategory = this.selectedCategory();
+    switch (productCategory) {
+      case 'plantas':
+        const result = await handleDeletePlant(productId);
+        this.showMessage(result.status, 'eliminar');
+        break;
+      case 'macetas':
+        const deleteMacetaResult = await handleDeleteMaceta(productId);
+        this.showMessage(deleteMacetaResult.status, 'eliminar');
+        break;
+      case 'piedras':
+        const deletePiedraResult = await handleDeletePiedra(productId);
+        this.showMessage(deletePiedraResult.status, 'eliminar');
+        break;
+      case 'tierra':
+        const deleteTierraResult = await handleDeleteTierra(productId);
+        this.showMessage(deleteTierraResult.status, 'eliminar');
+        break;
+      case 'pasto':
+        const deletePastoResult = await handleDeletePasto(productId);
+        this.showMessage(deletePastoResult.status, 'eliminar');
+        break;
+      case 'plaguicidas':
+        const deletePlaguicidaResult = await handleDeletePlaguicida(productId);
+        this.showMessage(deletePlaguicidaResult.status, 'eliminar');
+        break;
+      case 'herbicidas':
+        const deleteHerbicidaResult = await handleDeleteHerbicida(productId);
+        this.showMessage(deleteHerbicidaResult.status, 'eliminar');
+        break;
+      case 'fertilizantes':
+        const deleteFertilizanteResult = await handleDeleteFertilizante(productId);
+        this.showMessage(deleteFertilizanteResult.status, 'eliminar');
+        break;
+      default:
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Categoría no soportada para eliminación',
+        });
+        return;
+    }
+    this.reloadProductsBySelectedCategory();
   }
 
   private normalizeCategory(value: string): string {
@@ -612,10 +659,12 @@ export class PanelAdminProductos implements OnInit {
     return `ViveroLasTorres/${category}/${type}`;
   }
 
-  showMessage(status: number, action: 'actualizar' | 'crear' = 'actualizar'){
+  showMessage(status: number, action: 'actualizar' | 'crear' | 'eliminar' = 'actualizar'){
     const successDetail = action === 'crear'
       ? 'Producto creado correctamente'
-      : 'Producto actualizado correctamente';
+      : action === 'eliminar'
+        ? 'Producto eliminado correctamente'
+        : 'Producto actualizado correctamente';
 
     const errorDetail = status === 413
       ? 'La imagen es demasiado pesada para enviarla al servidor'
@@ -630,58 +679,58 @@ export class PanelAdminProductos implements OnInit {
     }
   }
 
-  private async compressImageToDataUrl(
-    file: File,
-    maxWidth: number,
-    maxHeight: number,
-    quality: number,
-  ): Promise<string | null> {
-    const imageDataUrl = await this.readFileAsDataUrl(file);
+  // private async compressImageToDataUrl(
+  //   file: File,
+  //   maxWidth: number,
+  //   maxHeight: number,
+  //   quality: number,
+  // ): Promise<string | null> {
+  //   const imageDataUrl = await this.readFileAsDataUrl(file);
 
-    if (!imageDataUrl) {
-      return null;
-    }
+  //   if (!imageDataUrl) {
+  //     return null;
+  //   }
 
-    const image = await this.loadImage(imageDataUrl);
+  //   const image = await this.loadImage(imageDataUrl);
 
-    if (!image) {
-      return null;
-    }
+  //   if (!image) {
+  //     return null;
+  //   }
 
-    const ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
-    const targetWidth = Math.max(1, Math.round(image.width * ratio));
-    const targetHeight = Math.max(1, Math.round(image.height * ratio));
+  //   const ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
+  //   const targetWidth = Math.max(1, Math.round(image.width * ratio));
+  //   const targetHeight = Math.max(1, Math.round(image.height * ratio));
 
-    const canvas = document.createElement('canvas');
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
+  //   const canvas = document.createElement('canvas');
+  //   canvas.width = targetWidth;
+  //   canvas.height = targetHeight;
 
-    const context = canvas.getContext('2d');
-    if (!context) {
-      return null;
-    }
+  //   const context = canvas.getContext('2d');
+  //   if (!context) {
+  //     return null;
+  //   }
 
-    context.drawImage(image, 0, 0, targetWidth, targetHeight);
-    return canvas.toDataURL('image/jpeg', quality);
-  }
+  //   context.drawImage(image, 0, 0, targetWidth, targetHeight);
+  //   return canvas.toDataURL('image/jpeg', quality);
+  // }
 
-  private readFileAsDataUrl(file: File): Promise<string | null> {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : null);
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(file);
-    });
-  }
+  // private readFileAsDataUrl(file: File): Promise<string | null> {
+  //   return new Promise((resolve) => {
+  //     const reader = new FileReader();
+  //     reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+  //     reader.onerror = () => resolve(null);
+  //     reader.readAsDataURL(file);
+  //   });
+  // }
 
-  private loadImage(dataUrl: string): Promise<HTMLImageElement | null> {
-    return new Promise((resolve) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = () => resolve(null);
-      image.src = dataUrl;
-    });
-  }
+  // private loadImage(dataUrl: string): Promise<HTMLImageElement | null> {
+  //   return new Promise((resolve) => {
+  //     const image = new Image();
+  //     image.onload = () => resolve(image);
+  //     image.onerror = () => resolve(null);
+  //     image.src = dataUrl;
+  //   });
+  // }
 
   private reloadProductsBySelectedCategory(): void {
     if (this.selectedCategory() === 'plantas') {

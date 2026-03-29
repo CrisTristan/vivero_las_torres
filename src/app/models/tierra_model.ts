@@ -149,3 +149,28 @@ export async function createNewTierra(payload: Record<string, unknown>): Promise
     };
   }
 }
+
+export async function deleteTierraById(id: number): Promise<{ status: number; data: any }> {
+  try {
+    const response = await fetch(`${environment.apiUrl}/tierra/deleteTierraById/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      console.error(`Error deleting tierra: ${response.status} ${response.statusText}`);
+      return {
+        status: response.status,
+        data: null,
+      };
+    }
+    return {
+      status: response.status,
+      data: await response.json(),
+    };
+  } catch (error) {
+    console.error('Error deleting tierra through backend API:', error);
+    return {
+      status: 0,
+      data: null,
+    };
+  } 
+}

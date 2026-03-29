@@ -1,4 +1,4 @@
-import { CreatePlantResponse, createNewPlant, getAllPlants, updatePlant, UpdatePlantResponse } from "../models/planta_model";
+import { CreatePlantResponse, createNewPlant, getAllPlants, updatePlant, UpdatePlantResponse, deletePlantById } from "../models/planta_model";
 import { Product } from "../types/product.type";
 
 export async function fetchAllPlants(): Promise<Product[]> {
@@ -31,5 +31,34 @@ export async function createPlant(payload: Record<string, unknown>): Promise<Cre
     } catch (error) {
         console.error("Error creating planta in controller:", error);
         throw error;
+    }
+}
+
+export async function handleDeletePlant(id: number): Promise<{ status: number; message: string }> {
+    // const confirmacion = confirm("¿Seguro que deseas eliminar esta planta?");
+    
+    // if (!confirmacion) return "Eliminación cancelada";
+
+    const result = await deletePlantById(id);
+
+    if (result.status === 200) {
+        //showMessage(result.data.message, "success");
+        return {
+            status: result.status,
+            message: result.data.message
+        };
+
+    } else if (result.status === 404) {
+        //showMessage(result.data.error, "error");
+        return {
+            status: result.status,
+            message: result.data.error
+        };
+    } else {
+        //showMessage("Ocurrió un error inesperado", "error");
+        return {
+            status: result.status,
+            message: "Ocurrió un error inesperado"
+        }
     }
 }
