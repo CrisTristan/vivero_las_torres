@@ -2,7 +2,7 @@ import { Component, Input, inject } from '@angular/core';
 import { AdminMenuService } from '../../services/admin-menu-service';
 import { AdminMenuItem } from '../../types/admin_menu_item_type';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../../services/auth-service';
 
 /*
 Importante: Las rutas estan fuertemente ligadas a los nombres de las secciones del menú. Si se cambia el nombre de una sección, se debe actualizar la ruta correspondiente en navigateToSection.
@@ -21,6 +21,8 @@ export class AdminMenu {
   @Input() customClass: string = '';
   
   public adminMenuService = inject(AdminMenuService);
+  public authService = inject(AuthService);
+
   constructor(private router : Router) {}
 
   get menuSections() : AdminMenuItem[] {
@@ -42,6 +44,12 @@ export class AdminMenu {
 
   navigateToProductsSection(){
     this.router.navigate(['/panel-admin-productos']);
+  }
+
+  handleLogout(){
+    this.adminMenuService.toggleMenuVisible.set(false);
+    //Cerramos la sesión del usuario y redirigimos a la página de inicio de sesión
+    this.authService.logout();
   }
 
 }

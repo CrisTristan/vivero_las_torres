@@ -162,7 +162,12 @@ shopping_cart
         plantDesignService.userSelectedPot() &&
         plantDesignService.userSelectedStone()
       ) {
-        <span>Comprar</span>
+        <!-- verificar si el usurio esta logueado para mostrar el texto del boton -->
+        @if (this.authService.isLoggedIn()) {
+            <span>Proceder al pago</span>
+        }@else{
+          <span><p class="text-lg">Por favor inicia Sesión para poder continuar con la compra</p></span>
+        }
       }@else {
         Completa tu Arreglo
       }

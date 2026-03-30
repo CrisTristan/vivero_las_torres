@@ -37,13 +37,11 @@ export const routes: Routes = [
         path: 'plantDesignDashboard',
         component: PlantDesignDashboard,
         title: 'Arreglo Personalizado',
-        canActivate: [authGuard]
     },
     {
         path: 'shoppingCart',
         component: ShoppingCartPage,
         title: 'Carrito de Compras',
-        canActivate: [authGuard]
     },
     {
         path: 'product-details',

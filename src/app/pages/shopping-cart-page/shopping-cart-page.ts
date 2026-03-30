@@ -1,8 +1,9 @@
-import { Component, effect, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { ShoppingCartService } from '../../services/shopping-cart-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
 import { PaymentService } from '../../services/payment-service';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-shopping-cart-page',
@@ -13,6 +14,8 @@ import { PaymentService } from '../../services/payment-service';
 export class ShoppingCartPage implements OnInit {
 
   productsInCart: Product[] = [];
+
+  public authService = inject(AuthService);
 
   constructor(private shoppingCartService: ShoppingCartService, private router: Router, private paymentService: PaymentService) {
     effect(() => {

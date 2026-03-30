@@ -27,6 +27,10 @@ export class LogInPage {
 
   }
 
+  navigateToRegister() {
+    this.router.navigate(['/register']);
+  }
+
   onForgotPassword() {
     this.router.navigate(['/forgot-password']);
   }

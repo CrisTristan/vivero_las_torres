@@ -34,7 +34,7 @@ export class EditModalProduct implements OnChanges {
   private readonly typeOptionsByCategory: Record<string, string[]> = {
     plantas: ['interior', 'exterior'],
     macetas: ['barro', 'plastico', 'fibra_vidreo'],
-    piedras: ['blanca marmol', 'negra mamol', 'rio'],
+    piedras: ['blanca marmol', 'negra marmol', 'rio'],
     tierra: ['negra', 'hoja', 'fibra de coco'],
     pasto: ['San Agustin', 'Chino'],
     plaguicidas: ['general'],

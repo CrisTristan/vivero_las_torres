@@ -1,11 +1,15 @@
+import { User } from "./user";
+
 export interface OrderedProductInfo {
   imagen: string;
   nombre: string;
 }
 
 export interface OrderInfo {
+  total?: number;
   fecha?: string;
   estado: 'entregado' | 'no entregado';
+  usuario?: User;
   Entregado_El_Dia: string | null;
   es_arreglo_personalizado?: boolean;
 }
