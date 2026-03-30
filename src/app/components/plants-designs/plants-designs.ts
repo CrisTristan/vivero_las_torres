@@ -2,6 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, inject } from '@angula
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
+import { FilterCategoryService } from '../../services/filter-category-service';
 
 @Component({
   selector: 'app-plants-designs',
@@ -12,6 +13,7 @@ import { Product } from '../../types/product.type';
 export class PlantsDesigns implements AfterViewInit {
 
   designService = inject(PlantDesignService);
+  filterCategoryService = inject(FilterCategoryService);
   currentPage = 0;
   @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
   
@@ -45,6 +47,7 @@ export class PlantsDesigns implements AfterViewInit {
   }
 
   navigateToCatalog() {
+    this.filterCategoryService.setCurrentCategory('plantas');
     this.router.navigate(['/productCatalog']);
   }
 

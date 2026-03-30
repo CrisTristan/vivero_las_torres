@@ -71,27 +71,8 @@ export class ProductCatalog implements OnInit {
     if (savedStones) {
       this.designService.selectedStones.set(JSON.parse(savedStones));
     }
-
-      // fetchAllPlants()
-      // .then((productos) => {
-      //   this.products.set(productos);
-      //   // console.log("Productos fetched in ProductCatalog:", productos);
-      //   console.log('productos', this.products());
-      // })
-      // .catch((error) => {
-      //   console.error('Error fetching productos in ProductCatalog:', error);
-      // });
-
-      // fetchAllMacetas()
-      // .then((productos) => {
-      //   this.products.update((current) => [...current, ...productos]);
-      //   // console.log("Productos fetched in ProductCatalog:", productos);
-      //   console.log('productos', this.products());
-      // })
-      // .catch((error) => {
-      //   console.error('Error fetching productos in ProductCatalog:', error);
-      // });
     
+    //Esta promesa carga todos los productos al iniciar el catálogo, para luego filtrarlos por categoría y búsqueda en la función filteredProducts.
       Promise.all([fetchAllPlants(), fetchAllMacetas(), fetchAllPiedras(), fetchAllTierra(), fetchAllPasto()])
       .then(([plantas, macetas, piedras, tierra, pasto]) => {
         this.products.set([...plantas, ...macetas, ...piedras, ...tierra, ...pasto]);

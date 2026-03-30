@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, inject } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
+import { FilterCategoryService } from '../../services/filter-category-service';
 
 @Component({
   selector: 'app-plantpots-designs',
@@ -14,6 +15,8 @@ export class PlantpotsDesigns {
   currentPage = 0;
   @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
   
+  public filterCategoryService = inject(FilterCategoryService);
+
   constructor(
     private router: Router
   ) { 
@@ -34,6 +37,7 @@ export class PlantpotsDesigns {
   }
 
   navigateToCatalog() {
+    this.filterCategoryService.setCurrentCategory('macetas');
     this.router.navigate(['/productCatalog']);
   }
 

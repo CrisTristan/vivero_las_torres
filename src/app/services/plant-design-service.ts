@@ -25,8 +25,6 @@ export class PlantDesignService{
   //este arreglo se llenará con todas las piedras obtenidas del backend
   //pero maneja las piedras sueltas para el diseño de planta, maceta y piedras.
 
-  private shoppingCartService = inject(ShoppingCartService);
-
   constructor(private paymentService: PaymentService, private router: Router) {
     fetchAllPiedras().then((piedras) => {
       this.stones.set(piedras);
@@ -76,22 +74,10 @@ export class PlantDesignService{
     this.userSelectedStone.set(null);
   }
 
-  syncArrangementToCart() {
-    if (!this.isComplete()) {
-      return;
-    }
-
-    this.shoppingCartService.replaceCartWithSingleItem(this.userSelectedPlant()!);
-    this.shoppingCartService.replaceCartWithSingleItem(this.userSelectedPot()!);
-    this.shoppingCartService.replaceCartWithSingleItem(this.userSelectedStone()!);
-  }
-
   proceedToPayment() {
     if (!this.isComplete()) {
       return;
     }
-
-    this.syncArrangementToCart();
     this.paymentService.setTotalAmount(this.total());
     this.router.navigate(['/payment']);
   }

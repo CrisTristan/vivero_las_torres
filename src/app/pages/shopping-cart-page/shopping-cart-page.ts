@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
 import { PaymentService } from '../../services/payment-service';
 import { AuthService } from '../../services/auth-service';
+import { FilterCategoryService } from '../../services/filter-category-service';
 
 @Component({
   selector: 'app-shopping-cart-page',
@@ -16,6 +17,8 @@ export class ShoppingCartPage implements OnInit {
   productsInCart: Product[] = [];
 
   public authService = inject(AuthService);
+  public filterCategoryService = inject(FilterCategoryService);
+
 
   constructor(private shoppingCartService: ShoppingCartService, private router: Router, private paymentService: PaymentService) {
     effect(() => {
@@ -35,6 +38,7 @@ export class ShoppingCartPage implements OnInit {
   }
 
   navigateToCatalog() {
+    this.filterCategoryService.setCurrentCategory('plantas');
     this.router.navigate(['/productCatalog']);
   }
 
