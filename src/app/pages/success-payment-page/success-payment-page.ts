@@ -18,7 +18,11 @@ export class SuccessPaymentPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.shoppingCartService.clearCart();
+    //Limpiamos ambos carritos, el de productos normales y el de arreglo personalizado
+      this.shoppingCartService.clearCart();
+      this.shoppingCartService.clearPersonalizedArrangementItems();
+      // Reiniciar la señal de pago para arreglo personalizado
+      this.paymentService.isPaymentForPersonalizedArrangement.set(false);
   }
 
   navigateToCatalog() {

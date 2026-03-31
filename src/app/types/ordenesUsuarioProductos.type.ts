@@ -23,6 +23,7 @@ interface Product {
 interface ProductDetails {
     nombre: string;
     imagen: string;
+    precio: number;
 }
 export interface OrdenesUsuarioProductos {
   orden_id: number;

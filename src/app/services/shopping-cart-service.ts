@@ -1,11 +1,60 @@
-import { Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { Product } from '../types/product.type';
+import { PlantDesignService } from './plant-design-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShoppingCartService {
   private cartItems = signal<Product[]>([]);
+
+  //Muy importante
+  //Aqui se van a guardar los productos para el arreglo personalizado (planta, maceta, piedras) del carrito.
+  private cartItemsForPersonalizedArrangement = signal<Product[]>([]); 
+
+  private plantDesignService = inject(PlantDesignService);
+
+  constructor() {
+    effect(() => {
+      // Siempre crea un nuevo arreglo solo con los seleccionados actuales
+      const selectedPlant = this.plantDesignService.userSelectedPlant();
+      const selectedPot = this.plantDesignService.userSelectedPot();
+      const selectedStone = this.plantDesignService.userSelectedStone();
+
+      const newItems = [];
+      if (selectedPlant) newItems.push(selectedPlant);
+      if (selectedPot) newItems.push(selectedPot);
+      if (selectedStone) newItems.push(selectedStone);
+
+      this.cartItemsForPersonalizedArrangement.set(newItems);
+    });
+
+    try {
+      const stored = localStorage.getItem('cartItems');
+      if (stored) {
+        this.cartItems.set(JSON.parse(stored));
+      }
+    } catch {
+      this.cartItems.set([]);
+    }
+  }
+
+  //Los 3 metodos siguientes son para manejar los productos del arreglo personalizado.
+  addItemToPersonalizedArrangements(item: Product) {
+    this.cartItemsForPersonalizedArrangement.update(current => [...current, item]);
+  }
+
+  removeItemFromPersonalizedArrangements(id: number) {
+    this.cartItemsForPersonalizedArrangement.update(current => current.filter(item => item.id !== id));
+  }
+
+  getPersonalizedArrangementItems() {
+    return this.cartItemsForPersonalizedArrangement();
+  }
+
+  clearPersonalizedArrangementItems() {
+    this.cartItemsForPersonalizedArrangement.set([]);
+  }
 
   private getPersonalizedItemType(item: Product): 'plantas' | 'macetas' | 'piedras' {
     const category = item.productos.categorias.categoria.trim().toLowerCase();
@@ -21,19 +70,16 @@ export class ShoppingCartService {
     return 'piedras';
   }
 
-  constructor() {
-    try {
-      const stored = localStorage.getItem('cartItems');
-      if (stored) {
-        this.cartItems.set(JSON.parse(stored));
-      }
-    } catch {
-      this.cartItems.set([]);
-    }
-  }
 
   get total(): number {
     return this.cartItems().reduce(
+      (sum, item) => sum + item.productos.precio,
+      0
+    );
+  }
+
+  get totalInCartItemsForPersonalizedArrangement(): number {
+    return this.cartItemsForPersonalizedArrangement().reduce(
       (sum, item) => sum + item.productos.precio,
       0
     );

@@ -56,6 +56,7 @@ export class PaymentComponent {
         });
         paymentElement.mount('#payment-element');
       });
+      console.log('Esta pago es para un arreglo personalizado?', this.paymentService.isPaymentForPersonalizedArrangement());
   }
 
   async pay() {
@@ -74,8 +75,13 @@ export class PaymentComponent {
       //el pago se  realizo correctamente
       // Creamos la orden en el backend
       const orderController = new OrderController(this.authService, this.shoppingCartService);
-      const result = await orderController.placeOrder();
-      console.log('Resultado de placeOrder:', result);
+      if(this.paymentService.isPaymentForPersonalizedArrangement()) {
+        const res =await orderController.placePersonalizedArrangementOrder();
+        console.log('Orden de arreglo personalizado creada:', res);
+      } else {
+        const res = await orderController.placeNormalOrder();
+        console.log('Orden normal creada:', res);
+      }
       this.router.navigate(['/success-payment']);
     }
   }

@@ -164,7 +164,7 @@ shopping_cart
       ) {
         <!-- verificar si el usurio esta logueado para mostrar el texto del boton -->
         @if (this.authService.isLoggedIn()) {
-            <span>Proceder al pago</span>
+            <span (click)="this.handlePersonalizedArrangmentPayment()">Proceder al pago</span>
         }@else{
           <span><p class="text-lg">Por favor inicia Sesión para poder continuar con la compra</p></span>
         }

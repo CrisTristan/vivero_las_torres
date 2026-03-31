@@ -145,6 +145,7 @@
 
 </div>
 
+<p-toast position="top-right"></p-toast>
 <!-- Modal de detalles del pedido -->
 @if(this.orderDetailsModalOpen() && this.selectedOrder()){
   <div id="modalOverlay"
@@ -176,11 +177,35 @@
         </div>
         <div class="mb-4">
           <h3 class="font-semibold">Productos:</h3>
-          <ul class="list-disc list-inside">
+          <!-- <ul class="list-disc list-inside">
             @for(producto of this.selectedOrder()?.productos; track producto.id) {
               <li>{{producto.producto.nombre}} x {{producto.cantidad}}</li>
             }
-          </ul>
+          </ul> -->
+          <table class="w-full text-sm mt-2">
+            <thead class="text-left text-gray-600">
+              <tr>
+                <th class="py-2">Producto</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for(producto of this.selectedOrder()?.productos; track producto.id) {
+              <tr>
+                <td class="py-3 font-medium"><img [src]="producto.producto.imagen" [alt]="producto.producto.nombre" class="h-[20vh] w-[20vw] object-cover"></td>
+                <td>{{producto.producto.nombre}}</td>
+                <td>{{producto.cantidad}}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+
+        </div>
+        <div>
+          <h3 class="font-semibold">Es arreglo Personalizado</h3>
+          <p>{{this.selectedOrder()?.orden?.es_arreglo_personalizado ? 'Sí' : 'No'}}</p>
         </div>
         <div class="mb-4">
           <h3 class="font-semibold">Total:</h3>
@@ -192,7 +217,17 @@
         </div>
         <div class="mb-4">
           <h3 class="font-semibold">Estado:</h3>
-          <p>{{this.selectedOrder()?.orden?.estado}}</p>
+          <p [ngClass]="estadoClass(this.selectedOrder()?.orden?.estado ?? 'no entregado')">
+            {{this.selectedOrder()?.orden?.estado}}
+          </p>
+          <!-- Mostar la fecha de entrega solo si el estado es "entregado" -->
+          @if(this.selectedOrder()?.orden?.estado === 'entregado' && this.selectedOrder()?.orden?.Entregado_El_Dia) {
+            <div class="mt-2">
+              <h3 class="font-semibold">Fecha de Entrega:</h3>
+              <p>{{this.formatearFecha(this.selectedOrder()?.orden?.Entregado_El_Dia ?? undefined)}}</p>
+            </div>
+
+          }
           <!-- Botón para mostrar el desplegable -->
           <button class="mt-2 px-3 py-1 rounded-lg bg-blue-100 text-blue-700 text-sm" (click)="this.showChangeStatusButton.set(true)">
             Cambiar estado de orden

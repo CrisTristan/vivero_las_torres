@@ -106,12 +106,35 @@ export class ProductsPurchasedByCustomer implements OnInit {
     }).format(parsedDate);
   }
 
-  getDeliveryDate(item: PurchasedItem): string | null {
-    if (this.isPersonalizedArrangement(item)) {
-      return item.Entregado_El_Dia;
+  //formatear la fecha de entrega con time zone de Cancun y mostrarla en formato legible para el usuario
+    formatearFecha(fechaStr: string | undefined): string {
+    const fecha = new Date(fechaStr || "");
+    return fecha.toLocaleString("es-MX", {
+      timeZone: "America/Cancun",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  getDeliveryDateText(item: PurchasedItem): string {
+    const dateSource = this.isPersonalizedArrangement(item)
+      ? item.Entregado_El_Dia
+      : item.orden.Entregado_El_Dia;
+    if (!dateSource) {
+      return 'Fecha no disponible';
     }
-    return item.orden.Entregado_El_Dia;
+    const parsedDate = new Date(dateSource);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return 'Fecha no disponible';
     }
+    return new Intl.DateTimeFormat('es-DO', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(parsedDate);
+  }
   
 
 
