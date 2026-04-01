@@ -5,92 +5,259 @@
     Datos de Envío
   </h2>
 
-  <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+  @for(shippingData of this.userShippingDataService.AllUserShippingData(); track shippingData?.id; let i = $index) {
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <!-- Helper -->
-      @for (field of numericFields; track field.key) {
+  <!-- Resumen -->
+  <div class="bg-green-100 rounded-xl p-4 mt-3 shadow-sm flex flex-col gap-3">
+    <div class="flex flex-col md:flex-row md:items-center md:gap-4">
+      <!-- @if(this.userShippingDataService.getSelectedShippingData()?.id === shippingData?.id) {
+        <div class="flex items-center gap-2 text-green-600">
+          <span class="material-symbols-outlined"> check_circle </span>
+          <span>Dirección seleccionada para envío</span>
+        </div>
+      } -->
+      <span>Dirección #{{i+1 }}</span>
+      <span class="font-semibold text-green-700">{{ shippingData.calle }}, {{ shippingData.numero_exterior }}{{ shippingData.numero_interior ? ' Int. ' + shippingData.numero_interior : '' }}</span>
+      <span class="text-gray-700">Col. {{ shippingData.colonia }}</span>
+      <span class="text-gray-700">CP: {{ shippingData.codigo_postal }}</span>
+    </div>
+    <div class="text-xs text-gray-500">{{ shippingData.region }} - {{ shippingData.manzana }} - {{ shippingData.lote }}</div>
+    <!-- Botones de acciones -->
+    <div class="flex gap-2">
+      <button
+        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition"
+        (click)="this.handleEditShippingDataForm(shippingData)"
+      >
+        Editar
+      </button>
+      <!-- <button
+        class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 rounded-lg transition"
+        (click)="onSetAsDefaultShippingData(shippingData)"
+      >
+        Establecer como predeterminada
+      </button> -->
+    </div>
+  </div>
+  <!-- Mostrar solo el formulario expandido si está en edición -->
+  @if (this.indexEditingShippingDataForm() === shippingData?.id) {
+      <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (field of numericFields; track field.key) {
+            <div class="flex flex-col">
+              <label class="label">{{ field.label }}</label>
+              <input
+                type="text"
+                class="input"
+                [class.border-red-500]="errors()[field.key]"
+                [(ngModel)]="form()[field.key]"
+                [name]="field.key"
+                (ngModelChange)="updateField(field.key, $event)"
+              />
+              @if (errors()[field.key]) {
+                <span class="error">{{ errors()[field.key] }}</span>
+              }
+            </div>
+          }
+          <div class="flex flex-col">
+            <label class="label">Colonia</label>
+            <input
+              class="input"
+              [class.border-red-500]="errors().colonia"
+              [(ngModel)]="form().colonia"
+              name="colonia"
+              (ngModelChange)="updateField('colonia', $event)"
+            />
+            @if (errors().colonia) {
+              <span class="error">{{ errors().colonia }}</span>
+            }
+          </div>
+          <div class="flex flex-col md:col-span-2">
+            <label class="label">Calle</label>
+            <input
+              class="input"
+              [class.border-red-500]="errors().calle"
+              [(ngModel)]="form().calle"
+              name="calle"
+              (ngModelChange)="updateField('calle', $event)"
+            />
+            @if (errors().calle) {
+              <span class="error">{{ errors().calle }}</span>
+            }
+          </div>
+          <div class="flex flex-col">
+            <label class="label">Número interior</label>
+            <input
+              class="input"
+              [class.border-red-500]="errors().numero_interior"
+              [(ngModel)]="form().numero_interior"
+              name="numero_interior"
+              (ngModelChange)="updateField('numero_interior', $event)"
+            />
+            @if (errors().numero_interior) {
+              <span class="error">{{ errors().numero_interior }}</span>
+            }
+          </div>
+          <div class="flex flex-col">
+            <label class="label">Número exterior (opcional)</label>
+            <input
+              class="input"
+              [(ngModel)]="form().numero_exterior"
+              name="numero_exterior"
+              (ngModelChange)="updateField('numero_exterior', $event)"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label class="label">Código postal</label>
+            <input
+              class="input"
+              [class.border-red-500]="errors().codigo_postal"
+              [(ngModel)]="form().codigo_postal"
+              name="codigo_postal"
+              (ngModelChange)="updateField('codigo_postal', $event)"
+            />
+            @if (errors().codigo_postal) {
+              <span class="error">{{ errors().codigo_postal }}</span>
+            }
+          </div>
+          <div class="flex flex-col md:col-span-2">
+            <label class="label">Referencia (opcional)</label>
+            <textarea
+              rows="3"
+              class="input"
+              [(ngModel)]="form().referencia"
+              name="referencia"
+              (ngModelChange)="updateField('referencia', $event)"
+            ></textarea>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+            [disabled]="!isValid()"
+            (click)="this.onSubmitEditedForm()"
+          >
+            Guardar cambios
+          </button>
+          <button
+            class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2.5 rounded-lg transition"
+            (click)="cancelEditShippingDataForm(); $event.stopPropagation()"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    }
+  }@empty {
+  <div>
+    <h1>No tienes direcciones guardadas</h1>
+    <p>Agrega una dirección de envío para facilitar tus compras futuras</p>
+    <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (field of numericFields; track field.key) {
 
         <div class="flex flex-col">
           <label class="label">{{ field.label }}</label>
-          <input type="text"
+          <input
+            type="text"
             class="input"
             [class.border-red-500]="errors()[field.key]"
-            (input)="updateField(field.key, $any($event.target).value)" />
+            [(ngModel)]="form()[field.key]"
+            [name]="field.key"
+            (ngModelChange)="updateField(field.key, $event)"
+          />
 
           @if (errors()[field.key]) {
-            <span class="error">{{ errors()[field.key] }}</span>
+          <span class="error">{{ errors()[field.key] }}</span>
           }
         </div>
-      }
+        }
 
-      <!-- Colonia -->
-      <div class="flex flex-col">
-        <label class="label">Colonia</label>
-        <input class="input"
-          [class.border-red-500]="errors().colonia"
-          (input)="updateField('colonia', $any($event.target).value)" />
-        @if (errors().colonia) {
+        <div class="flex flex-col">
+          <label class="label">Colonia</label>
+          <input
+            class="input"
+            [class.border-red-500]="errors().colonia"
+            [(ngModel)]="form().colonia"
+            name="colonia"
+            (ngModelChange)="updateField('colonia', $event)"
+          />
+          @if (errors().colonia) {
           <span class="error">{{ errors().colonia }}</span>
-        }
-      </div>
+          }
+        </div>
 
-      <!-- Calle -->
-      <div class="flex flex-col md:col-span-2">
-        <label class="label">Calle</label>
-        <input class="input"
-          [class.border-red-500]="errors().calle"
-          (input)="updateField('calle', $any($event.target).value)" />
-        @if (errors().calle) {
+        <div class="flex flex-col md:col-span-2">
+          <label class="label">Calle</label>
+          <input
+            class="input"
+            [class.border-red-500]="errors().calle"
+            [(ngModel)]="form().calle"
+            name="calle"
+            (ngModelChange)="updateField('calle', $event)"
+          />
+          @if (errors().calle) {
           <span class="error">{{ errors().calle }}</span>
-        }
-      </div>
+          }
+        </div>
 
-      <!-- Num interior -->
-      <div class="flex flex-col">
-        <label class="label">Número interior</label>
-        <input class="input"
-          [class.border-red-500]="errors().numero_interior"
-          (input)="updateField('numero_interior', $any($event.target).value)" />
-        @if (errors().numero_interior) {
+        <div class="flex flex-col">
+          <label class="label">Número interior</label>
+          <input
+            class="input"
+            [class.border-red-500]="errors().numero_interior"
+            [(ngModel)]="form().numero_interior"
+            name="numero_interior"
+            (ngModelChange)="updateField('numero_interior', $event)"
+          />
+          @if (errors().numero_interior) {
           <span class="error">{{ errors().numero_interior }}</span>
-        }
-      </div>
+          }
+        </div>
 
-      <!-- Num exterior -->
-      <div class="flex flex-col">
-        <label class="label">Número exterior (opcional)</label>
-        <input class="input"
-          (input)="updateField('numero_exterior', $any($event.target).value)" />
-      </div>
+        <div class="flex flex-col">
+          <label class="label">Número exterior (opcional)</label>
+          <input
+            class="input"
+            [(ngModel)]="form().numero_exterior"
+            name="numero_exterior"
+            (ngModelChange)="updateField('numero_exterior', $event)"
+          />
+        </div>
 
-      <!-- CP -->
-      <div class="flex flex-col">
-        <label class="label">Código postal</label>
-        <input class="input"
-          [class.border-red-500]="errors().codigo_postal"
-          (input)="updateField('codigo_postal', $any($event.target).value)" />
-        @if (errors().codigo_postal) {
+        <div class="flex flex-col">
+          <label class="label">Código postal</label>
+          <input
+            class="input"
+            [class.border-red-500]="errors().codigo_postal"
+            [(ngModel)]="form().codigo_postal"
+            name="codigo_postal"
+            (ngModelChange)="updateField('codigo_postal', $event)"
+          />
+          @if (errors().codigo_postal) {
           <span class="error">{{ errors().codigo_postal }}</span>
-        }
+          }
+        </div>
+
+        <div class="flex flex-col md:col-span-2">
+          <label class="label">Referencia (opcional)</label>
+          <textarea
+            rows="3"
+            class="input"
+            [(ngModel)]="form().referencia"
+            name="referencia"
+            (ngModelChange)="updateField('referencia', $event)"
+          ></textarea>
+        </div>
       </div>
 
-      <!-- Referencia -->
-      <div class="flex flex-col md:col-span-2">
-        <label class="label">Referencia (opcional)</label>
-          <textarea rows="3" class="input"
-            (input)="updateField('referencia', $any($event.target).value)"></textarea>
-      </div>
-
+      <button
+        class="mt-5 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+        [disabled]="!isValid()"
+        (click)="onSubmit()"
+      >
+        Guardar dirección
+      </button>
     </div>
-
-    <button
-      class="mt-5 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
-      [disabled]="!isValid()"
-      (click)="onSubmit()">
-      Guardar dirección
-    </button>
   </div>
-
+  }
 </div>

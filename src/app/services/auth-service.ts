@@ -2,6 +2,7 @@ import { Injectable, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../types/user';
 import { environment } from '../../environments/environment';
+import { ShoppingCartService } from './shopping-cart-service';
 
 type AuthResponse = {
   user: User;
@@ -27,7 +28,7 @@ export class AuthService {
   readonly user = this.currentUser.asReadonly();
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private shoppingCartService: ShoppingCartService) {
     try {
       const stored = localStorage.getItem('currentUser');
       if (stored) this.currentUser.set(JSON.parse(stored) as User);
@@ -48,6 +49,7 @@ export class AuthService {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    this.shoppingCartService.clearCart();
   }
 
   getAccessToken(): string | null {
@@ -203,6 +205,7 @@ export class AuthService {
 
   async logout(): Promise<void> {
     this.clearSession();
+    //Limpiar carrito y datos de envío al hacer logout
     await this.router.navigate(['/login']);
   }
 

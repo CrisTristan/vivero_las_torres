@@ -1,4 +1,5 @@
 export interface DireccionEnvio {
+  id?: number;
   region: string;
   manzana: string;
   lote: string;

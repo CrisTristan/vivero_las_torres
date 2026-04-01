@@ -8,11 +8,11 @@ export async function createUserShippingDataById(usuario_id: number | undefined,
 	colonia: string;
 	calle: string;
 	numero_interior: string;
-	numero_exterior: string;
+	numero_exterior?: string | undefined;
 	codigo_postal: string;
-	referencia: string;
+	referencia?: string | undefined;
 }): Promise<{ status: number; data: any }> {
-	const response = await fetch(`${environment.apiUrl}/direcciones_usuario/createUserShippingDataById/${usuario_id}`, {
+	const response = await fetch(`${environment.apiUrl}/direcciones_usuario/createUserShippingDataByUserId/${usuario_id}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -25,6 +25,53 @@ export async function createUserShippingDataById(usuario_id: number | undefined,
 	}
     
 	return {
+        status: response.status,
+        data: await response.json()
+    }
+}
+
+export async function getUserShippingDataByUserId(usuario_id: number | undefined): Promise<{ status: number; data: any }> {
+	const response = await fetch(`${environment.apiUrl}/direcciones_usuario/getUserShippingDataByUserId/${usuario_id}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.error || 'Error al obtener datos de envío');
+	}
+    
+	return {
+        status: response.status,
+        data: await response.json()
+    }
+}
+
+export async function updateUserShippingDataById(id: number, data: {
+    region: string;
+    manzana: string;
+    lote: string;
+    colonia: string;
+    calle: string;
+    numero_interior: string;
+    numero_exterior?: string | undefined;
+    codigo_postal: string;
+    referencia?: string | undefined;
+}): Promise<{ status: number; data: any }> {
+    const response = await fetch(`${environment.apiUrl}/direcciones_usuario/updateUserShippingDataById/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error al actualizar dirección de envío');
+    }
+    
+    return {
         status: response.status,
         data: await response.json()
     }

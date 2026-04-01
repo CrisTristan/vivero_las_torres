@@ -78,7 +78,7 @@ export class ShoppingCartPage implements OnInit {
   finalizePurchase() {
     // Antes de navegar a la página de pago, establecemos la señal para indicar que el pago es para productos normales (no personalizados)
     this.paymentService.isPaymentForPersonalizedArrangement.set(false);
-    this.router.navigate(['/payment']);
+    this.router.navigate(['/seleccion-de-datos-de-envio']);
     // this.shoppingCartService.clearCart();
     // this.productsInCart = [];
     //implementar redireccion a una pagina de confirmacion de compra o a la pagina principal

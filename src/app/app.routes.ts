@@ -18,6 +18,7 @@ import { PanelAdminProductos } from './pages/panel-admin-productos/panel-admin-p
 import { PanelAdminPedidos } from './pages/panel-admin-pedidos/panel-admin-pedidos';
 import { CustomerPurchaseHistoryPage } from './pages/customer-purchase-history-page/customer-purchase-history-page';
 import { CustomerShippingDataPage } from './pages/customer-shipping-data-page/customer-shipping-data-page';
+import { SelectingShippingDataPage } from './pages/selecting-shipping-data-page/selecting-shipping-data-page';
 
 export const routes: Routes = [
     {
@@ -112,5 +113,11 @@ export const routes: Routes = [
         component: PanelAdminPedidos,
         title: 'Panel de Administración - Pedidos',
         canActivate: [authorizationAdminGuard]
+    },
+    {
+        path: 'seleccion-de-datos-de-envio',
+        component: SelectingShippingDataPage,
+        title: 'Seleccionar Datos de Envío',
+        canActivate: [authGuard]
     }
 ];
