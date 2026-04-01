@@ -2,12 +2,11 @@ import { Component, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
-import { ProductsPurchasedByCustomer } from '../../components/products-purchased-by-customer/products-purchased-by-customer';
 import { User } from '../../types/user';
 
 @Component({
   selector: 'app-user-account-page',
-  imports: [FormsModule, ProductsPurchasedByCustomer],
+  imports: [FormsModule],
   templateUrl: './user-account-page.html',
   styleUrl: './user-account-page.css',
 })
@@ -70,5 +69,13 @@ export class UserAccountPage implements OnInit {
 
   async onLogout() {
     await this.authService.logout();
+  }
+
+  navigateToCustomerPurchaseHistoryPage() {
+    this.router.navigate(['/customer-purchase-history']);
+  }
+
+  navigateToCustomerShippingDataPage() {
+    this.router.navigate(['/customer-shipping-data-page']);
   }
 }

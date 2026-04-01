@@ -1,29 +1,29 @@
 <app-header-section
-    [title]="adminMenuService.currentSection()"
-	[subtitle]="'Gestiona tus productos'"
-	[customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'"
-	[showCreateButton]="true"
-	[createButtonLabel]="createButtonLabel"
-	(createButtonClick)="openCreateModal()"
+  [title]="adminMenuService.currentSection()"
+  [subtitle]="'Gestiona tus productos'"
+  [customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'"
+  [showCreateButton]="true"
+  [createButtonLabel]="createButtonLabel"
+  (createButtonClick)="openCreateModal()"
 ></app-header-section>
 
 @if(isModalCreateOpen()){
-    <div class="fixed flex-col items-center justify-center z-50 h-[80vh] bg-white w-[40vw] top-[10vh] left-[30vw] rounded-xl border border-[#d6e0d6] shadow-lg p-5">
-        <div>
-        <p>Modal de creación de pedido</p>
-        <button (click)="isModalCreateOpen.set(false)">Cerrar</button>
-        </div>
-        <div>
-        <p>Aquí iría el formulario para crear un nuevo pedido</p>
-        </div>
-    </div>
+<div
+  class="fixed flex-col items-center justify-center z-50 h-[80vh] bg-white w-[40vw] top-[10vh] left-[30vw] rounded-xl border border-[#d6e0d6] shadow-lg p-5"
+>
+  <div>
+    <p>Modal de creación de pedido</p>
+    <button (click)="isModalCreateOpen.set(false)">Cerrar</button>
+  </div>
+  <div>
+    <p>Aquí iría el formulario para crear un nuevo pedido</p>
+  </div>
+</div>
 }
 
 <div class="pt-[21vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
-
   <!-- 🔝 CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-
     <div class="bg-green-50 rounded-xl p-5 shadow-sm">
       <p class="text-3xl font-bold">5</p>
       <p class="text-sm text-gray-600">Pendientes</p>
@@ -43,40 +43,42 @@
       <p class="text-3xl font-bold">156</p>
       <p class="text-sm text-gray-600">Completados</p>
     </div>
-
   </div>
 
   <!-- 🔎 FILTROS -->
-  <div class="bg-green-50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
+  <div
+    class="bg-green-50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+  >
     <!-- Tabs -->
     <div class="flex flex-wrap gap-2">
       @for(filtro of ['Todos', 'no entregado', 'entregado']; track filtro) {
-          <button
-              (click)="cambiarFiltro(filtro)"
-              class="px-3 py-1 rounded-lg text-sm"
-              [class.bg-white]="this.filtro() === filtro"
-          >
-              {{ filtro }}
-          </button>
+      <button
+        (click)="cambiarFiltro(filtro)"
+        class="px-3 py-1 rounded-lg text-sm"
+        [class.bg-white]="this.filtro() === filtro"
+      >
+        {{ filtro }}
+      </button>
       }
     </div>
 
     <!-- Buscador -->
     <div class="flex items-center gap-2 w-full lg:w-auto">
-      <input type="text"
+      <input
+        type="text"
         placeholder="Buscar pedido..."
         (input)="setBusqueda($event.target.value)"
-        class="border rounded-lg px-3 py-2 text-sm w-full lg:w-64" />
+        class="border rounded-lg px-3 py-2 text-sm w-full lg:w-64"
+      />
 
-      <button class="border px-3 py-2 rounded-lg text-sm bg-white">Exportar</button>
+      <button class="border px-3 py-2 rounded-lg text-sm bg-white">
+        Exportar
+      </button>
     </div>
-
   </div>
 
   <!-- 📋 TABLA -->
   <div class="bg-green-50 rounded-xl p-4 overflow-x-auto">
-
     <table class="w-full text-sm">
       <thead class="text-left text-gray-600">
         <tr>
@@ -105,7 +107,7 @@
           <td>
             <ul class="list-disc list-inside">
               @for(producto of pedido.productos; track producto.id) {
-                <li>{{producto.producto.nombre}} x {{producto.cantidad}}</li>
+              <li>{{producto.producto.nombre}} x {{producto.cantidad}}</li>
               }
             </ul>
           </td>
@@ -113,21 +115,23 @@
           <td class="font-semibold">${{pedido.orden.total}}</td>
           <td>{{this.formatearFecha(pedido.orden.fecha)}}</td>
           <td>
-            <span class="px-2 py-1 rounded-full text-xs"
-             >
+            <span class="px-2 py-1 rounded-full text-xs">
               {{pedido.orden.estado}}
             </span>
           </td>
 
-
           <td>
             <span class="px-2 py-1 rounded-full text-xs">
-              <button class="text-blue-600 hover:underline" (click)="this.openOrderDetailsModal(pedido.orden_id)">Ver detalles</button>
+              <button
+                class="text-blue-600 hover:underline"
+                (click)="this.openOrderDetailsModal(pedido.orden_id)"
+              >
+                Ver detalles
+              </button>
             </span>
           </td>
-
         </tr>
-      }
+        }
       </tbody>
     </table>
 
@@ -136,114 +140,162 @@
       <p>Mostrando 1-7 de 156 pedidos</p>
 
       <div class="flex gap-2">
-        <button class="px-3 py-1 border rounded-lg bg-gray-200">Anterior</button>
+        <button class="px-3 py-1 border rounded-lg bg-gray-200">
+          Anterior
+        </button>
         <button class="px-3 py-1 border rounded-lg bg-white">Siguiente</button>
       </div>
     </div>
-
   </div>
-
 </div>
 
 <p-toast position="top-right"></p-toast>
 <!-- Modal de detalles del pedido -->
 @if(this.orderDetailsModalOpen() && this.selectedOrder()){
-  <div id="modalOverlay"
-     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+<div
+  id="modalOverlay"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-100"
+>
+  <!-- Modal -->
+  <div
+    class="bg-white rounded-2xl shadow-xl w-[90vw] h-[80vh] sm:w-[70vw] md:w-[60vw] lg:w-[40vw] flex flex-col overflow-hidden"
+  >
+    <!-- Header -->
+    <div class="flex justify-between items-center p-4 border-b">
+      <h2 class="text-lg font-semibold">
+        Detalles del Pedido #{{this.selectedOrder()?.orden_id}}
+      </h2>
+      <button
+        (click)="this.closeOrderDetailsModal()"
+        class="text-gray-500 hover:text-black text-xl"
+      >
+        ✕
+      </button>
+    </div>
 
-    <!-- Modal -->
-    <div class="bg-white rounded-2xl shadow-xl 
-                w-[90vw] h-[80vh] 
-                sm:w-[70vw] md:w-[60vw] lg:w-[40vw]
-                flex flex-col overflow-hidden">
-
-      <!-- Header -->
-      <div class="flex justify-between items-center p-4 border-b">
-        <h2 class="text-lg font-semibold">Detalles del Pedido #{{this.selectedOrder()?.orden_id}}</h2>
-        <button (click)="this.closeOrderDetailsModal()" class="text-gray-500 hover:text-black text-xl">
-          ✕
-        </button>
+    <!-- Body -->
+    <div class="flex-1 p-4 overflow-y-auto">
+      <div class="mb-4">
+        <h3 class="font-semibold">Cliente:</h3>
+        <p>
+          {{this.selectedOrder()?.orden?.usuario?.nombre}}
+          {{this.selectedOrder()?.orden?.usuario?.apellidos}}
+        </p>
       </div>
-
-      <!-- Body -->
-      <div class="flex-1 p-4 overflow-y-auto">
-        <div class="mb-4">
-          <h3 class="font-semibold">Cliente:</h3>
-          <p>{{this.selectedOrder()?.orden?.usuario?.nombre}} {{this.selectedOrder()?.orden?.usuario?.apellidos}}</p>
-        </div>
-        <div>
-          <h3 class="font-semibold">Telefono:</h3>
-          <p>{{this.selectedOrder()?.orden?.usuario?.telefono}}</p>
-        </div>
-        <div class="mb-4">
-          <h3 class="font-semibold">Productos:</h3>
-          <!-- <ul class="list-disc list-inside">
+      <div>
+        <h3 class="font-semibold">Telefono:</h3>
+        <p>{{this.selectedOrder()?.orden?.usuario?.telefono}}</p>
+      </div>
+      <div class="mb-4">
+        <h3 class="font-semibold">Productos:</h3>
+        <!-- <ul class="list-disc list-inside">
             @for(producto of this.selectedOrder()?.productos; track producto.id) {
               <li>{{producto.producto.nombre}} x {{producto.cantidad}}</li>
             }
           </ul> -->
-          <table class="w-full text-sm mt-2">
-            <thead class="text-left text-gray-600">
-              <tr>
-                <th class="py-2">Producto</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-              </tr>
-            </thead>
+        <table class="w-full text-sm mt-2">
+          <thead class="text-left text-gray-600">
+            <tr class="flex text-xl gap-2">
+              <th class="py-2">Producto</th>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
 
-            <tbody>
-              @for(producto of this.selectedOrder()?.productos; track producto.id) {
-              <tr>
-                <td class="py-3 font-medium"><img [src]="producto.producto.imagen" [alt]="producto.producto.nombre" class="h-[20vh] w-[20vw] object-cover"></td>
-                <td>{{producto.producto.nombre}}</td>
-                <td>{{producto.cantidad}}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
-
-        </div>
+          <tbody>
+            @for(producto of this.selectedOrder()?.productos; track producto.id; let e = $even)
+            {
+            <tr class="flex justify-around gap-2 border-t text-xl items-center"
+                [class.bg-green-200]="e"
+                [class.bg-green-300]="!e"
+            >
+              <td class="py-3 font-medium">
+                <img
+                  [src]="producto.producto.imagen"
+                  [alt]="producto.producto.nombre"
+                  class="h-[20vh] w-[20vw] object-cover"
+                />
+              </td>
+              <td>{{producto.producto.nombre}}</td>
+              <td>{{producto.cantidad}}</td>
+              <td>${{producto.producto.precio_unitario| number:'1.2-2'}}</td>
+              <td>
+                ${{producto.cantidad * producto.producto.precio_unitario |
+                number:'1.2-2'}}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="flex justify-between">
         <div>
           <h3 class="font-semibold">Es arreglo Personalizado</h3>
-          <p>{{this.selectedOrder()?.orden?.es_arreglo_personalizado ? 'Sí' : 'No'}}</p>
+          <p>
+            {{this.selectedOrder()?.orden?.es_arreglo_personalizado ? 'Sí' :
+            'No'}}
+          </p>
         </div>
         <div class="mb-4">
           <h3 class="font-semibold">Total:</h3>
           <p>${{this.selectedOrder()?.orden?.total}}</p>
         </div>
-        <div class="mb-4">
-          <h3 class="font-semibold">Fecha:</h3>
-          <p>{{this.formatearFecha(this.selectedOrder()?.orden?.fecha)}}</p>
-        </div>
-        <div class="mb-4">
-          <h3 class="font-semibold">Estado:</h3>
-          <p [ngClass]="estadoClass(this.selectedOrder()?.orden?.estado ?? 'no entregado')">
-            {{this.selectedOrder()?.orden?.estado}}
-          </p>
-          <!-- Mostar la fecha de entrega solo si el estado es "entregado" -->
-          @if(this.selectedOrder()?.orden?.estado === 'entregado' && this.selectedOrder()?.orden?.Entregado_El_Dia) {
-            <div class="mt-2">
-              <h3 class="font-semibold">Fecha de Entrega:</h3>
-              <p>{{this.formatearFecha(this.selectedOrder()?.orden?.Entregado_El_Dia ?? undefined)}}</p>
-            </div>
-
-          }
-          <!-- Botón para mostrar el desplegable -->
-          <button class="mt-2 px-3 py-1 rounded-lg bg-blue-100 text-blue-700 text-sm" (click)="this.showChangeStatusButton.set(true)">
-            Cambiar estado de orden
-          </button>
-          <!-- Desplegable para cambiar el estado -->
-          <div class="mt-2" *ngIf="this.showChangeStatusButton()">
-            <button class="px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm" (click)="this.changeOrderStatus()">
-              Cambiar a {{this.selectedOrder()?.orden?.estado === 'no entregado' ? 'entregado' : 'no entregado'}}
-            </button>
-            <button class="ml-2 px-3 py-1 rounded-lg bg-gray-200 text-gray-700 text-sm" (click)="this.showChangeStatusButton.set(false)">Cancelar</button>
-          </div>
-        </div>
       </div>
+      <div class="mb-4">
+        <h3 class="font-semibold">Fecha:</h3>
+        <p>{{this.formatearFecha(this.selectedOrder()?.orden?.fecha)}}</p>
+      </div>
+      <div class="mb-4">
+        <h3 class="font-semibold">Estado:</h3>
+        <p
+          [ngClass]="estadoClass(this.selectedOrder()?.orden?.estado ?? 'no entregado')"
+        >
+          {{this.selectedOrder()?.orden?.estado}}
+        </p>
+        <!-- Mostar la fecha de entrega solo si el estado es "entregado" -->
+        @if(this.selectedOrder()?.orden?.estado === 'entregado' &&
+        this.selectedOrder()?.orden?.Entregado_El_Dia) {
+        <div class="mt-2">
+          <h3 class="font-semibold">Fecha de Entrega:</h3>
+          <p>
+            {{this.formatearFecha(this.selectedOrder()?.orden?.Entregado_El_Dia
+            ?? undefined)}}
+          </p>
+        </div>
 
-      <!-- Footer (opcional) -->
-      <!-- <div class="p-4 border-t flex justify-end gap-2">
+        }
+        <!-- Botón para mostrar el desplegable -->
+        <button
+          class="mt-2 px-3 py-1 rounded-lg bg-blue-100 text-blue-700 text-sm"
+          (click)="this.showChangeStatusButton.set(true)"
+        >
+          Cambiar estado de orden
+        </button>
+        <!-- Desplegable para cambiar el estado -->
+         @if(this.showChangeStatusButton()) {
+        <div class="mt-2">
+          <button
+            class="px-3 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm"
+            (click)="this.changeOrderStatus()"
+          >
+            Cambiar a {{this.selectedOrder()?.orden?.estado === 'no entregado' ?
+            'entregado' : 'no entregado'}}
+          </button>
+          <button
+            class="ml-2 px-3 py-1 rounded-lg bg-gray-200 text-gray-700 text-sm"
+            (click)="this.showChangeStatusButton.set(false)"
+          >
+            Cancelar
+          </button>
+        </div>
+      }
+      </div>
+    </div>
+
+    <!-- Footer (opcional) -->
+    <!-- <div class="p-4 border-t flex justify-end gap-2">
         <button (click)="this.closeOrderDetailsModal()"
                 class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">
           Cancelar
@@ -253,8 +305,6 @@
           Guardar
         </button>
       </div> -->
-
-    </div>
   </div>
+</div>
 }
-

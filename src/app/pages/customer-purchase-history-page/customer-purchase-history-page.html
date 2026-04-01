@@ -1,0 +1,6 @@
+<div class="h-[82vh] overflow-hidden overflow-y-scroll">
+<!-- Productos adquiridos -->
+    @if (user()?.id; as userId) {
+    <app-products-purchased-by-customer [userId]="userId" />
+}
+</div>

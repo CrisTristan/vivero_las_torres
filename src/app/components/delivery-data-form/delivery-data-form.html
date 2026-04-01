@@ -1,0 +1,96 @@
+<div class="max-w-xl mx-auto p-4">
+  <p-toast position="top-right"></p-toast>
+  <h2 class="flex items-center gap-2 text-gray-800 text-xl font-semibold">
+    <span class="text-green-600 text-2xl">📦</span>
+    Datos de Envío
+  </h2>
+
+  <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <!-- Helper -->
+      @for (field of numericFields; track field.key) {
+
+        <div class="flex flex-col">
+          <label class="label">{{ field.label }}</label>
+          <input type="text"
+            class="input"
+            [class.border-red-500]="errors()[field.key]"
+            (input)="updateField(field.key, $any($event.target).value)" />
+
+          @if (errors()[field.key]) {
+            <span class="error">{{ errors()[field.key] }}</span>
+          }
+        </div>
+      }
+
+      <!-- Colonia -->
+      <div class="flex flex-col">
+        <label class="label">Colonia</label>
+        <input class="input"
+          [class.border-red-500]="errors().colonia"
+          (input)="updateField('colonia', $any($event.target).value)" />
+        @if (errors().colonia) {
+          <span class="error">{{ errors().colonia }}</span>
+        }
+      </div>
+
+      <!-- Calle -->
+      <div class="flex flex-col md:col-span-2">
+        <label class="label">Calle</label>
+        <input class="input"
+          [class.border-red-500]="errors().calle"
+          (input)="updateField('calle', $any($event.target).value)" />
+        @if (errors().calle) {
+          <span class="error">{{ errors().calle }}</span>
+        }
+      </div>
+
+      <!-- Num interior -->
+      <div class="flex flex-col">
+        <label class="label">Número interior</label>
+        <input class="input"
+          [class.border-red-500]="errors().numero_interior"
+          (input)="updateField('numero_interior', $any($event.target).value)" />
+        @if (errors().numero_interior) {
+          <span class="error">{{ errors().numero_interior }}</span>
+        }
+      </div>
+
+      <!-- Num exterior -->
+      <div class="flex flex-col">
+        <label class="label">Número exterior (opcional)</label>
+        <input class="input"
+          (input)="updateField('numero_exterior', $any($event.target).value)" />
+      </div>
+
+      <!-- CP -->
+      <div class="flex flex-col">
+        <label class="label">Código postal</label>
+        <input class="input"
+          [class.border-red-500]="errors().codigo_postal"
+          (input)="updateField('codigo_postal', $any($event.target).value)" />
+        @if (errors().codigo_postal) {
+          <span class="error">{{ errors().codigo_postal }}</span>
+        }
+      </div>
+
+      <!-- Referencia -->
+      <div class="flex flex-col md:col-span-2">
+        <label class="label">Referencia (opcional)</label>
+          <textarea rows="3" class="input"
+            (input)="updateField('referencia', $any($event.target).value)"></textarea>
+      </div>
+
+    </div>
+
+    <button
+      class="mt-5 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+      [disabled]="!isValid()"
+      (click)="onSubmit()">
+      Guardar dirección
+    </button>
+  </div>
+
+</div>

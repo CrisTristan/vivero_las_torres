@@ -16,6 +16,8 @@ import { PanelAdministrador } from './pages/panel-admin-main/panel-admin-main';
 import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { PanelAdminProductos } from './pages/panel-admin-productos/panel-admin-productos';
 import { PanelAdminPedidos } from './pages/panel-admin-pedidos/panel-admin-pedidos';
+import { CustomerPurchaseHistoryPage } from './pages/customer-purchase-history-page/customer-purchase-history-page';
+import { CustomerShippingDataPage } from './pages/customer-shipping-data-page/customer-shipping-data-page';
 
 export const routes: Routes = [
     {
@@ -74,6 +76,18 @@ export const routes: Routes = [
         path: 'userAccount',
         component: UserAccountPage,
         title: 'Mi Cuenta',
+        canActivate: [authGuard]
+    },
+    {
+        path: 'customer-purchase-history',
+        component: CustomerPurchaseHistoryPage,
+        title: 'Historial de Compras',
+        canActivate: [authGuard]
+    },
+    {
+        path: 'customer-shipping-data-page',
+        component: CustomerShippingDataPage,
+        title: 'Datos de Envío',
         canActivate: [authGuard]
     },
     {
