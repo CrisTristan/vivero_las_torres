@@ -14,7 +14,7 @@ export default class OrderController {
   // datos del usuario y los items del carrito,
   // el backend se encarga de procesar la orden y devolver una respuesta, para esto se hace
   // una peticion a /createOrder con {usuario_id, total, estado, productos: [{producto_id, cantidad}]}
-  async placeNormalOrder() {
+  async placeNormalOrder() : Promise<{message: string, order: Order, productos: {cantidad: number, id: number, order_id: number, precio_unitario: number, producto_id: number}[]}>{
     const user: User | null = this.authService.getUser();
     if (!user) {
       throw new Error("Usuario no autenticado");
@@ -46,13 +46,14 @@ export default class OrderController {
       }
       const result = await response.json();
       console.log("Orden creada:", result);
+      return result;
     } catch (error) {
       console.error("Error al crear la orden:", error);
       throw error;
     }
   }
 
-  async placePersonalizedArrangementOrder() {
+  async placePersonalizedArrangementOrder() : Promise<{message: string, order: Order, productos: {cantidad: number, id: number, order_id: number, precio_unitario: number, producto_id: number}[]}> {
     const user: User | null = this.authService.getUser();
     if (!user) {
       throw new Error("Usuario no autenticado");
@@ -91,6 +92,7 @@ export default class OrderController {
       }
       const result = await response.json();
       console.log("Orden creada:", result);
+      return result;
     } catch (error) {
       console.error("Error al crear la orden:", error);
       throw error;

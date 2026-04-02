@@ -17,7 +17,7 @@
         </div>
       } -->
       <span>Dirección #{{i+1 }}</span>
-      <span class="font-semibold text-green-700">{{ shippingData.calle }}, {{ shippingData.numero_exterior }}{{ shippingData.numero_interior ? ' Int. ' + shippingData.numero_interior : '' }}</span>
+      <span class="font-semibold text-green-700">Calle: {{ shippingData.calle }}, Num. Ext: {{ shippingData.numero_exterior }}, {{ shippingData.numero_interior ? ' Num. Int. ' + shippingData.numero_interior : '' }}</span>
       <span class="text-gray-700">Col. {{ shippingData.colonia }}</span>
       <span class="text-gray-700">CP: {{ shippingData.codigo_postal }}</span>
     </div>

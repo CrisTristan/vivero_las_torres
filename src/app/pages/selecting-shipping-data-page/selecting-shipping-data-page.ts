@@ -18,14 +18,14 @@ export class SelectingShippingDataPage implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Usar el signal del servicio directamente
-    const allData = this.userShippingDataService.getAllUserShippingData();
-    console.log('All user shipping data in component:', allData);
+    // // Usar el signal del servicio directamente
+    // const allData = this.userShippingDataService.getAllUserShippingData();
+    // console.log('All user shipping data in component:', allData);
     
-    // Si no hay datos de envío, redirigir a la página de datos de envío del cliente
-    if (allData.length === 0) {
-      this.navigateToCustomerShippingDataPage();
-    }
+    // // Si no hay datos de envío, redirigir a la página de datos de envío del cliente
+    // if (allData.length === 0) {
+    //   this.navigateToCustomerShippingDataPage();
+    // }
   }
 
   // Obtener todas las direcciones
@@ -49,8 +49,12 @@ export class SelectingShippingDataPage implements OnInit {
     }
   }
 
-  // Navegar a agregar/editar dirección
+  //navegar a agregar/editar dirección
   navigateToCustomerShippingDataPage() {
     this.router.navigate(['/customer-shipping-data-page']);
+  }
+  // Navegar a agregar/editar dirección
+  navigateToShoppingCart() {
+    this.router.navigate(['/shoppingCart']);
   }
 }

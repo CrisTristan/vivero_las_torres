@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from "@angular/core";
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
@@ -9,6 +9,8 @@ import { AuthService } from "../../services/auth-service";
 import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { UserShippingDataService } from "../../services/user-shipping-data-service";
+import { RouteTrackerService } from "../../services/route-tracker-service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-delivery-data-form",
@@ -16,8 +18,13 @@ import { UserShippingDataService } from "../../services/user-shipping-data-servi
   providers: [MessageService],
   templateUrl: "./delivery-data-form.html",
   styleUrl: "./delivery-data-form.css",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeliveryDataForm implements OnInit {
+
+  //Importante ---------------------->
+  // para se deberia redirigir el usuario a la pantalla de pago una vez que se haya completado los datos de envio.
+  public routeTrackerService = inject(RouteTrackerService);
   private messageService = inject(MessageService);
 
   //Importante: inyectamos el servicio de userShippingDataService para poder acceder a los datos de envío del usuario y mostrarlos en el formulario.
@@ -51,6 +58,20 @@ export class DeliveryDataForm implements OnInit {
   errors = signal<Omit<DireccionErrors, "id">>({});
   submitted = signal(false);
 
+  constructor(private router: Router) {
+    // Escuchar cambios en las direcciones de envío del usuario desde el servicio
+    effect(() => {
+      const allShippingData = this.userShippingDataService.getAllUserShippingData();
+      const shouldRedirectToPayment =this.routeTrackerService.shouldRedirectUserToPaymentPage();
+      if(shouldRedirectToPayment && allShippingData.length > 0){
+        //Establecemos la propiedad shouldRedirectUserToPaymentPage en false para evitar redirecciones infinitas
+        this.routeTrackerService.shouldRedirectUserToPaymentPage.set(false);
+        //redirigimos al usuario automaticamente a la pantalla de pago si se cumplen las condiciones
+        this.router.navigate(['/seleccion-de-datos-de-envio']);
+      }
+    });
+  }
+
   ngOnInit(): void {
     if (this.form()) {
       console.log("Datos de envío cargados en el formulario:", this.form());
@@ -76,6 +97,7 @@ export class DeliveryDataForm implements OnInit {
     });
     this.errors.set({});
     this.submitted.set(false);
+    this.userShippingDataService.reloadAllShippingData(); // Limpiar la dirección seleccionada en el servicio
   }
 
   handleEditShippingDataForm(shippingData: DireccionEnvio) {
@@ -214,6 +236,12 @@ export class DeliveryDataForm implements OnInit {
         });
         // await this.reloadAllShippingData(); // Espera a que se recarguen los datos
         this.cancelEditShippingDataForm(); // Limpia el formulario
+      } else if (response.status === 400) {
+          this.messageService.add({
+          severity: "warn",
+          summary: "Advertencia",
+          detail: response.data.message,
+        });
       } else {
         this.messageService.add({
           severity: "error",
@@ -270,6 +298,12 @@ export class DeliveryDataForm implements OnInit {
               detail: "Dirección de envío actualizada correctamente",
             });
             this.cancelEditShippingDataForm();
+          } else if (response.status === 400) {
+            this.messageService.add({
+              severity: "warn",
+              summary: "Advertencia",
+              detail: response.data.message,
+            });
           } else {
             this.messageService.add({
               severity: "error",

@@ -5,6 +5,7 @@ import { Product } from '../../types/product.type';
 import { PaymentService } from '../../services/payment-service';
 import { AuthService } from '../../services/auth-service';
 import { FilterCategoryService } from '../../services/filter-category-service';
+import { UserShippingDataService } from '../../services/user-shipping-data-service';
 
 @Component({
   selector: 'app-shopping-cart-page',
@@ -18,7 +19,7 @@ export class ShoppingCartPage implements OnInit {
 
   public authService = inject(AuthService);
   public filterCategoryService = inject(FilterCategoryService);
-
+  public userShippingDataService = inject(UserShippingDataService);
 
   constructor(private shoppingCartService: ShoppingCartService, private router: Router, private paymentService: PaymentService) {
     effect(() => {
@@ -78,6 +79,10 @@ export class ShoppingCartPage implements OnInit {
   finalizePurchase() {
     // Antes de navegar a la página de pago, establecemos la señal para indicar que el pago es para productos normales (no personalizados)
     this.paymentService.isPaymentForPersonalizedArrangement.set(false);
+    if(this.userShippingDataService.getAllUserShippingData().length === 0) {
+      this.router.navigate(['/customer-shipping-data-page']);
+      return;
+    }
     this.router.navigate(['/seleccion-de-datos-de-envio']);
     // this.shoppingCartService.clearCart();
     // this.productsInCart = [];

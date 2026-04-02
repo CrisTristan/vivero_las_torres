@@ -8,6 +8,7 @@ import { HomeComponent } from './components/home-component/home-component';
 import { AdminMenuService } from './services/admin-menu-service';
 import { AdminMenu } from './components/admin-menu/admin-menu';
 import { filter } from 'rxjs';
+import { RouteTrackerService } from './services/route-tracker-service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,8 @@ export class App {
 
   public adminMenuService = inject(AdminMenuService);
   private readonly destroyRef = inject(DestroyRef);
+  //Importante para ejecutar un efecto cuando se cumpla el patrón de rutas definido en RouteTrackerService
+  private routeTrackerService = inject(RouteTrackerService);
 
   constructor(private router: Router) {
     this.currentRoute.set(this.router.url);
