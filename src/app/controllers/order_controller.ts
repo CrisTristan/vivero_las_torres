@@ -3,6 +3,7 @@ import { ShoppingCartService } from "../services/shopping-cart-service";
 import { User } from "../types/user";
 import { Product } from "../types/product.type";
 import { Order } from "../types/order.type";
+import {environment } from "../../environments/environment";
 
 export default class OrderController {
   constructor(
@@ -34,7 +35,7 @@ export default class OrderController {
     };
     // console.log('Datos de la orden a enviar:', orderData);
     try {
-      const response = await fetch("http://localhost:3000/createOrder", {
+      const response = await fetch(`${environment.apiUrl}/createOrder`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +81,7 @@ export default class OrderController {
     };
     // console.log('Datos de la orden a enviar:', orderData);
     try {
-      const response = await fetch("http://localhost:3000/createOrder", {
+      const response = await fetch(`${environment.apiUrl}/createOrder`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,5 +119,25 @@ export default class OrderController {
         cartItems.find((item) => item.productos.id === Number(id))?.productos
           .precio || 0,
     }));
+  }
+
+  async getLast10Orders(): Promise<Order[]> {
+    try {
+      const response = await fetch(`${environment.apiUrl}/ordenes/getLast10Orders`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error al obtener las últimas 10 órdenes: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log("Últimas 10 órdenes:", result);
+      return result;
+    } catch (error) {
+      console.error("Error al obtener las últimas 10 órdenes:", error);
+      throw error;
+    }
   }
 }

@@ -35,6 +35,8 @@ export class PanelAdminPedidos implements OnInit {
   busqueda = signal<string>("");
   public orderDetailsModalOpen = signal(false);
   public selectedOrder = signal<OrdenesUsuarioProductos | null>(null);
+  public isImageModalOpen = signal(false);
+  public selectedImageUrl = signal<string>("");
 
   @ViewChild("adminMenuHost", { read: ElementRef })
   adminMenuHost?: ElementRef<HTMLElement>; // Referencia al contenedor del menú para detectar clicks fuera de él
@@ -69,6 +71,31 @@ export class PanelAdminPedidos implements OnInit {
           .includes(this.busqueda().toLowerCase()) ||
           String(p.orden_id).includes(this.busqueda().toLowerCase())),
     );
+  });
+
+  // Contar pedidos no entregados
+  totalNoEntregados = computed(() => {
+    return this.pedidos().filter(p => p.orden.estado === "no entregado").length;
+  });
+
+  // Contar entregas realizadas hoy
+  totalEntregadosHoy = computed(() => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    return this.pedidos().filter(p => {
+      if (p.orden.estado !== "entregado" || !p.orden.Entregado_El_Dia) {
+        return false;
+      }
+      const fechaEntrega = new Date(p.orden.Entregado_El_Dia);
+      fechaEntrega.setHours(0, 0, 0, 0);
+      return fechaEntrega.getTime() === hoy.getTime();
+    }).length;
+  });
+
+  // Contar pedidos entregados (total)
+  totalEntregados = computed(() => {
+    return this.pedidos().filter(p => p.orden.estado === "entregado").length;
   });
 
   // Cambia el estado de la orden seleccionada
@@ -166,6 +193,18 @@ export class PanelAdminPedidos implements OnInit {
     this.orderDetailsModalOpen.set(false);
     this.selectedOrder.set(null);
     this.showChangeStatusButton.set(false);
+  }
+
+  // Abre el modal de imagen agrandada
+  openImageModal(imageUrl: string) {
+    this.selectedImageUrl.set(imageUrl);
+    this.isImageModalOpen.set(true);
+  }
+
+  // Cierra el modal de imagen agrandada
+  closeImageModal() {
+    this.isImageModalOpen.set(false);
+    this.selectedImageUrl.set("");
   }
 
   updateSelectedOrderStatusAndDeliveryDate(

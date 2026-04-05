@@ -35,7 +35,7 @@
                     <div class="p-4">
                         <p class="text-sm text-[#374151]">Notificaciones</p>
                         <ul class="mt-2 max-h-60 overflow-y-auto">
-                            <li class="py-2 border-b border-[#e5e7eb]">
+                            <!-- <li class="py-2 border-b border-[#e5e7eb]">
                                 <p class="text-[14px] text-[#4b5563]">Nuevo pedido recibido</p>
                                 <p class="text-[12px] text-[#9ca3af]">Hace 5 minutos</p>
                                 <button>
@@ -47,11 +47,13 @@
                             <li class="py-2 border-b border-[#e5e7eb]">
                                 <p class="text-[14px] text-[#4b5563]">Producto "Maceta de barro" agotado</p>
                                 <p class="text-[12px] text-[#9ca3af]">Hace 20 minutos</p>
-                            </li>
-                            <li class="py-2">
-                                <p class="text-[14px] text-[#4b5563]">Nuevo mensaje de cliente</p>
-                                <p class="text-[12px] text-[#9ca3af]">Hace 1 hora</p>
-                            </li>
+                            </li> -->
+                            @for (notification of this.notificationService.messageHistory(); track $index) {
+                                <li class="py-2 border-b border-[#e5e7eb]">
+                                    <p class="text-[14px] text-[#4b5563]">Nuevo Pedido</p>
+                                    <p class="text-[12px] text-[#9ca3af]">{{formatearFecha(notification.fecha ?? '')}}</p>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>

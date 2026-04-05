@@ -4,6 +4,18 @@ interface User {
   telefono: string;
 }
 
+interface DireccionEnvio {
+  region: string;
+  manzana: string;
+  lote: string;
+  colonia: string;
+  calle: string;
+  numero_interior: string;
+  numero_exterior?: string | undefined;
+  codigo_postal: string;
+  referencia?: string | undefined;
+}
+
 interface Order {
   fecha: string;
   total: number;
@@ -11,6 +23,7 @@ interface Order {
   usuario: User;
   Entregado_El_Dia: string | null;
   es_arreglo_personalizado: boolean;
+  direccion_envio: DireccionEnvio[];
 }
 
 interface Product {
