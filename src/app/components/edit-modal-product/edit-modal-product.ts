@@ -11,6 +11,10 @@ interface EditPlantForm {
   isPiedraSuelta: boolean;
   careLevel: CareLevel;
   description: string;
+  volumen?: 'Grande' | 'Mediana' | 'Pequeña';
+  diametro_superior?: string;
+  diametro_inferior?: string;
+  altura?: string;
   price: number;
   stock: number;
 }
@@ -48,11 +52,22 @@ export class EditModalProduct implements OnChanges {
     return this.getTypeOptionsByCategory(this.getProductCategory(), this.formState().type);
   }
 
+  get isPlantasCategory(): boolean {
+    return this.getProductCategory() === 'plantas';
+  }
+
   get isPiedrasCategory(): boolean {
     return this.getProductCategory() === 'piedras';
   }
 
+  get isMacetasCategory(): boolean {
+    return this.getProductCategory() === 'macetas';
+  }
+
+
+
   ngOnChanges(changes: SimpleChanges): void {
+    console.log("[DEBUG] EditModalProduct - ngOnChanges triggered with changes:", changes);
     if (changes['product'] && this.product) {
       // Evita reusar una imagen seleccionada en una edición anterior.
       this.imageUploaderService.setFileImage = null;
@@ -66,7 +81,11 @@ export class EditModalProduct implements OnChanges {
         type: currentType || this.getDefaultTypeByCategory(category),
         isPiedraSuelta: this.extractPiedraSueltaValue(this.product),
         careLevel: this.normalizeCareLevel(this.product.nivel_cuidado),
-        description: this.stringifyDescription(this.product.descripcion),
+        description: this.product.descripcion.descripcion, // Convertimos la descripción a string para mostrarla en el textarea, ya sea como JSON o texto plano.
+        volumen: this.isMacetasCategory ? this.normalizeVolumen(this.product.descripcion.volumen) : undefined,
+        diametro_superior: this.isMacetasCategory ? this.product.descripcion.diametro_superior : undefined,
+        diametro_inferior: this.isMacetasCategory ? this.product.descripcion.diametro_inferior : undefined,
+        altura: this.isMacetasCategory ? this.product.descripcion.altura : undefined,
         price: Number(this.product.productos.precio) || 0,
         stock: this.extractStockValue(String(this.product.productos.stock)),
       });
@@ -126,12 +145,29 @@ export class EditModalProduct implements OnChanges {
     const stock = Math.max(0, Number(state.stock) || 0);
     const price = Math.max(0, Number(state.price) || 0);
     const category = this.getProductCategory();
-    const parsedDescription = this.parseDescription(state.description, this.product.descripcion);
+    // const parsedDescription = this.parsePlantaDescription(state.description);
+    let parsedDescription;
+
+    switch (category) { 
+      case 'plantas':
+      case 'piedras':
+        parsedDescription = this.parsePlantaDescription(state.description);
+        break;
+      case 'macetas':
+        parsedDescription = this.parseMacetaDescription(
+          state.description,
+          state.volumen ?? '',
+          state.diametro_superior ?? '',
+          state.diametro_inferior ?? '',
+          state.altura ?? ''
+        );
+        break;
+    }
 
     const updatedProduct = {
       ...this.product,
       ...(category === 'piedras'
-        ? { esPiedraSuelta: state.isPiedraSuelta, es_piedra_suelta: state.isPiedraSuelta }
+        ? { esPiedraSuelta: state.isPiedraSuelta, es_piedra_suelta: state.isPiedraSuelta } //???????????
         : {}),
       nivel_cuidado: (state.careLevel ?? 'Bajo').toLowerCase(),
       tipo: this.normalizeType(state.type) || this.getDefaultTypeByCategory(category),
@@ -148,6 +184,7 @@ export class EditModalProduct implements OnChanges {
       },
     } as Product;
 
+    console.log("[DEBUG] EditModalProduct - Producto actualizado preparado para guardar:", updatedProduct);
     this.saveProduct.emit(updatedProduct);
   }
 
@@ -173,6 +210,14 @@ export class EditModalProduct implements OnChanges {
     }
 
     return 'Bajo';
+  }
+
+  private normalizeVolumen(value: unknown): EditPlantForm['volumen'] {
+    if (value === 'Grande' || value === 'Mediana' || value === 'Pequeña') {
+      return value;
+    }
+
+    return undefined;
   }
 
   formatTypeLabel(value: string): string {
@@ -230,13 +275,12 @@ export class EditModalProduct implements OnChanges {
     }
   }
 
-  private parseDescription(value: string, fallback: unknown): Product['descripcion'] {
-    const trimmed = value.trim();
 
-    if (!trimmed) {
-      return (fallback ?? {}) as Product['descripcion'];
-    }
+  private parsePlantaDescription(desc: string): Product['descripcion'] {
+    console.log("[DEBUG] EditModalProduct - parsePlantaDescription called with value:", desc);
+    const trimmed = desc.trim();
 
+  
     try {
       const parsed = JSON.parse(trimmed);
 
@@ -248,10 +292,30 @@ export class EditModalProduct implements OnChanges {
     }
 
     return {
-      ...(typeof fallback === 'object' && fallback !== null ? fallback : {}),
       descripcion: trimmed,
     } as Product['descripcion'];
   }
+
+  private parseMacetaDescription(desc: string, volumen: string, diametro_superior: string, diametro_inferior: string, altura: string): Product['descripcion'] {
+    console.log("[DEBUG] EditModalProduct - parseMacetaDescription called with value:", desc);
+    const trimmed = desc.trim();
+    try {      const parsed = JSON.parse(trimmed);
+
+      if (parsed && typeof parsed === 'object') {
+        return parsed as Product['descripcion'];
+      }
+    } catch {
+      // Si el admin escribe texto plano, se conserva en la propiedad descripcion.
+    }
+    return {
+      descripcion: trimmed,
+      volumen: volumen,
+      diametro_superior: diametro_superior,
+      diametro_inferior: diametro_inferior,
+      altura: altura
+    } as Product['descripcion'];
+  }
+
 
   private getEmptyForm(): EditPlantForm {
     return {

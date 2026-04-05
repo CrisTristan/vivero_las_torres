@@ -2,7 +2,7 @@ import { MacetaDescription } from "./maceta_description";
 import { Piedra } from "./piedra.type";
 
 export interface ProductDescription extends MacetaDescription {
-    id: number;
+    id?: number;
 	descripcion: string;
 }
 

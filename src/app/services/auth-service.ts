@@ -125,7 +125,7 @@ export class AuthService {
     return result.user;
   }
 
-  async login(correo: string, password: string): Promise<User> {
+  async login(correo: string, password: string): Promise<{status: number, user?: User}> {
     const response = await fetch(this.API_URL + '/loginUser', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -134,12 +134,13 @@ export class AuthService {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al iniciar sesión');
+      // throw new Error(errorData.message || 'Error al iniciar sesión');
+      return {status: response.status, user: undefined};
     }
 
     const result = (await response.json()) as AuthResponse;
     this.persistSession(result);
-    return result.user;
+    return {status: response.status, user: result.user};
   }
 
   async refreshAccessToken(): Promise<boolean> {

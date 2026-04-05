@@ -19,6 +19,8 @@ import { PanelAdminPedidos } from './pages/panel-admin-pedidos/panel-admin-pedid
 import { CustomerPurchaseHistoryPage } from './pages/customer-purchase-history-page/customer-purchase-history-page';
 import { CustomerShippingDataPage } from './pages/customer-shipping-data-page/customer-shipping-data-page';
 import { SelectingShippingDataPage } from './pages/selecting-shipping-data-page/selecting-shipping-data-page';
+import { ResetPasswordPage } from './pages/reset-password-page/reset-password-page';
+import { passwordResetGuard } from './Guards/password-reset-guard';
 
 export const routes: Routes = [
     {
@@ -119,5 +121,12 @@ export const routes: Routes = [
         component: SelectingShippingDataPage,
         title: 'Seleccionar Datos de Envío',
         canActivate: [authGuard]
+    },
+    {
+        path: 'reset-password',
+        component: ResetPasswordPage,
+        title: 'Restablecer Contraseña',
+        canActivate: [passwordResetGuard]
     }
+
 ];

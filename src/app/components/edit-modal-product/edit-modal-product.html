@@ -1,37 +1,26 @@
 @if (isOpen) {
-  <div class="fixed inset-0 z-80 bg-black/45 flex items-center justify-center p-4" (click)="requestClose()">
-    <div class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
-        <h2 class="text-[24px] font-bold text-[#1f2937]">Editar planta</h2>
-        <button
-          type="button"
-          (click)="requestClose()"
-          class="h-9 w-9 rounded-full flex items-center justify-center text-[#6b7280] hover:bg-[#f3f4f6]"
-          aria-label="Cerrar modal"
-        >
-          <span class="material-symbols-outlined text-[20px] leading-none">close</span>
-        </button>
-      </div>
+<div class="fixed inset-0 z-80 bg-black/45 flex items-center justify-center p-4" (click)="requestClose()">
+  <div class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl max-h-[90vh] overflow-y-auto"
+    (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
+      <h2 class="text-[24px] font-bold text-[#1f2937]">Editar planta</h2>
+      <button type="button" (click)="requestClose()"
+        class="h-9 w-9 rounded-full flex items-center justify-center text-[#6b7280] hover:bg-[#f3f4f6]"
+        aria-label="Cerrar modal">
+        <span class="material-symbols-outlined text-[20px] leading-none">close</span>
+      </button>
+    </div>
 
-      <form class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="saveChanges()">
-        <div class="sm:col-span-2">
-          <label class="block text-[14px] font-semibold text-[#374151] mb-1">Imagen del producto</label>
-          <input
-            #fileInput
-            type="file"
-            accept="image/*"
-            class="hidden"
-            (change)="onImageFileSelected($event)"
-          />
-          <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-            <button
-              type="button"
-              (click)="openFilePicker(fileInput)"
-              class="h-10 px-4 rounded-xl border border-[#d1d5db] text-[#374151] hover:bg-[#f8fafc]"
-            >
-              Cambiar imagen
-            </button>
-            <!-- <input
+    <form class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="saveChanges()">
+      <div class="sm:col-span-2">
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Imagen del producto</label>
+        <input #fileInput type="file" accept="image/*" class="hidden" (change)="onImageFileSelected($event)" />
+        <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <button type="button" (click)="openFilePicker(fileInput)"
+            class="h-10 px-4 rounded-xl border border-[#d1d5db] text-[#374151] hover:bg-[#f8fafc]">
+            Cambiar imagen
+          </button>
+          <!-- <input
               type="url"
               name="imageUrl"
               [ngModel]="formState().imageUrl"
@@ -39,103 +28,69 @@
               placeholder="O pega la URL de la imagen"
               class="w-full h-10 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
             /> -->
-          </div>
         </div>
+      </div>
 
-        <div class="sm:col-span-2">
-          <img
-            [src]="formState().imageUrl || 'https://placehold.co/800x500?text=Sin+imagen'"
-            alt="Vista previa de producto"
-            class="w-full h-44 object-cover rounded-xl border border-[#e5e7eb]"
-          />
-        </div>
+      <div class="sm:col-span-2">
+        <img [src]="formState().imageUrl || 'https://placehold.co/800x500?text=Sin+imagen'"
+          alt="Vista previa de producto" class="w-full h-44 object-cover rounded-xl border border-[#e5e7eb]" />
+      </div>
 
-        <div>
-          <label class="block text-[14px] font-semibold text-[#374151] mb-1">Nombre</label>
-          <input
-            type="text"
-            name="name"
-            required
-            [ngModel]="formState().name"
-            (ngModelChange)="updateField('name', $event)"
-            class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-          />
-        </div>
+      <div>
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Nombre</label>
+        <input type="text" name="name" required [ngModel]="formState().name"
+          (ngModelChange)="updateField('name', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" />
+      </div>
 
-        <div>
-          <label class="block text-[14px] font-semibold text-[#374151] mb-1">Tipo</label>
-          <select
-            name="type"
-            required
-            [ngModel]="formState().type"
-            (ngModelChange)="updateField('type', $event)"
-            class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-          >
-            @for (typeOption of typeOptions; track typeOption) {
-              <option [value]="typeOption">{{ formatTypeLabel(typeOption) }}</option>
-            }
-          </select>
-        </div>
+      <div>
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Tipo</label>
+        <select name="type" required [ngModel]="formState().type" (ngModelChange)="updateField('type', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+          @for (typeOption of typeOptions; track typeOption) {
+          <option [value]="typeOption">{{ formatTypeLabel(typeOption) }}</option>
+          }
+        </select>
+      </div>
 
-        @if (isPiedrasCategory) {
-          <div class="sm:col-span-2">
-            <label class="inline-flex items-center gap-2 text-[14px] font-semibold text-[#374151]">
-              <input
-                type="checkbox"
-                name="isPiedraSuelta"
-                [ngModel]="formState().isPiedraSuelta"
-                (ngModelChange)="updateField('isPiedraSuelta', $event)"
-                class="h-4 w-4 rounded border border-[#d1d5db]"
-              />
-              Es piedra suelta
-            </label>
-          </div>
-        }
+      @if (isPiedrasCategory) {
+      <div class="sm:col-span-2">
+        <label class="inline-flex items-center gap-2 text-[14px] font-semibold text-[#374151]">
+          <input type="checkbox" name="isPiedraSuelta" [ngModel]="formState().isPiedraSuelta"
+            (ngModelChange)="updateField('isPiedraSuelta', $event)" class="h-4 w-4 rounded border border-[#d1d5db]" />
+          Es piedra suelta
+        </label>
+      </div>
+      }
 
-        <div>
-          <label class="block text-[14px] font-semibold text-[#374151] mb-1">Nivel de cuidado</label>
-          <select
-            name="careLevel"
-            required
-            [ngModel]="formState().careLevel"
-            (ngModelChange)="updateField('careLevel', $event)"
-            class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-          >
-            @for (level of careLevelOptions; track level) {
-              <option [value]="level">{{ level }}</option>
-            }
-          </select>
-        </div>
+      @if(isPlantasCategory) {
+      <div>
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Nivel de cuidado</label>
+        <select name="careLevel" required [ngModel]="formState().careLevel"
+          (ngModelChange)="updateField('careLevel', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+          @for (level of careLevelOptions; track level) {
+          <option [value]="level">{{ level }}</option>
+          }
+        </select>
+      </div>
+      }
 
-        <div>
-          <label class="block text-[14px] font-semibold text-[#374151] mb-1">Precio</label>
-          <input
-            type="number"
-            name="price"
-            required
-            min="0"
-            step="0.01"
-            [ngModel]="formState().price"
-            (ngModelChange)="updateField('price', $event)"
-            class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-          />
-        </div>
+      <div>
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Precio</label>
+        <input type="number" name="price" required min="0" step="0.01" [ngModel]="formState().price"
+          (ngModelChange)="updateField('price', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" />
+      </div>
 
-        <div>
-          <label class="block text-[14px] font-semibold text-[#374151] mb-1">Stock</label>
-          <input
-            type="number"
-            name="stock"
-            required
-            min="0"
-            step="1"
-            [ngModel]="formState().stock"
-            (ngModelChange)="updateField('stock', $event)"
-            class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-          />
-        </div>
+      <div>
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Stock</label>
+        <input type="number" name="stock" required min="0" step="1" [ngModel]="formState().stock"
+          (ngModelChange)="updateField('stock', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" />
+      </div>
 
-        <div class="sm:col-span-2">
+      <!-- <div class="sm:col-span-2">
           <label class="block text-[14px] font-semibold text-[#374151] mb-1">Descripcion</label>
           <textarea
             name="description"
@@ -145,24 +100,54 @@
             (ngModelChange)="updateField('description', $event)"
             class="w-full px-3 py-2 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f] resize-none"
           ></textarea>
-        </div>
+        </div> -->
 
-        <div class="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
-          <button
-            type="button"
-            (click)="requestClose()"
-            class="h-11 px-5 rounded-xl border border-[#d1d5db] text-[#4b5563] hover:bg-[#f3f4f6]"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="h-11 px-5 rounded-xl bg-[#5f7f5f] text-white font-semibold hover:bg-[#4f6f4f]"
-          >
-            Guardar cambios
-          </button>
-        </div>
-      </form>
-    </div>
+      <div>
+        <label>Descripción</label>
+        <input type="text" name="description" required [ngModel]="formState().description"
+          (ngModelChange)="updateField('description', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+      </div>
+      @if(this.isMacetasCategory){
+      <div>
+        <label>Volumen</label>
+        <select name="volumen" required [ngModel]="formState().volumen" (ngModelChange)="updateField('volumen', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+          <option value="Grande">Grande</option>
+          <option value="Mediana">Mediana</option>
+          <option value="Pequeña">Pequeña</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Diámetro Superior</label>
+        <input type="text" name="diametro_superior" [ngModel]="formState().diametro_superior"
+          (ngModelChange)="updateField('diametro_superior', $event)" class="w-full" />
+      </div>
+
+      <div>
+        <label>Diámetro Inferior</label>
+        <input type="text" name="diametro_inferior" [ngModel]="formState().diametro_inferior"
+          (ngModelChange)="updateField('diametro_inferior', $event)" class="w-full" />
+      </div>
+
+      <div>
+        <label>Altura</label>
+        <input type="text" name="altura" [ngModel]="formState().altura" (ngModelChange)="updateField('altura', $event)"
+          class="w-full" />
+      </div>
+      }
+
+      <div class="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
+        <button type="button" (click)="requestClose()"
+          class="h-11 px-5 rounded-xl border border-[#d1d5db] text-[#4b5563] hover:bg-[#f3f4f6]">
+          Cancelar
+        </button>
+        <button type="submit" class="h-11 px-5 rounded-xl bg-[#5f7f5f] text-white font-semibold hover:bg-[#4f6f4f]">
+          Guardar cambios
+        </button>
+      </div>
+    </form>
   </div>
+</div>
 }
