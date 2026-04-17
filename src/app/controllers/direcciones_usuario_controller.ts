@@ -1,7 +1,7 @@
 import {environment} from '../../environments/environment';
 
-// Controlador para interactuar con el endpoint de direcciones_usuario
-export async function createUserShippingDataById(usuario_id: number | undefined, data: {
+export interface datosEnvio {
+	id?: number;
 	region: string;
 	manzana: string;
 	lote: string;
@@ -11,7 +11,10 @@ export async function createUserShippingDataById(usuario_id: number | undefined,
 	numero_exterior?: string | undefined;
 	codigo_postal: string;
 	referencia?: string | undefined;
-}): Promise<{ status: number; data: any }> {
+}
+
+// Controlador para interactuar con el endpoint de direcciones_usuario
+export async function createUserShippingDataById(usuario_id: number | undefined, data: datosEnvio): Promise<{ status: number; data: any }> {
 	const response = await fetch(`${environment.apiUrl}/direcciones_usuario/createUserShippingDataByUserId/${usuario_id}`, {
 		method: 'POST',
 		headers: {
@@ -48,17 +51,7 @@ export async function getUserShippingDataByUserId(usuario_id: number | undefined
     }
 }
 
-export async function updateUserShippingDataById(id: number, data: {
-    region: string;
-    manzana: string;
-    lote: string;
-    colonia: string;
-    calle: string;
-    numero_interior: string;
-    numero_exterior?: string | undefined;
-    codigo_postal: string;
-    referencia?: string | undefined;
-}): Promise<{ status: number; data: any }> {
+export async function updateUserShippingDataById(id: number, data: datosEnvio): Promise<{ status: number; data: any }> {
     const response = await fetch(`${environment.apiUrl}/direcciones_usuario/updateUserShippingDataById/${id}`, {
         method: 'PUT',
         headers: {

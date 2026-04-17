@@ -28,68 +28,57 @@
   <div class="grid grid-cols-2 grid-rows-2 gap-2">
     @for (product of filteredProducts(); track product.id) {
     @if(product.esPiedraSuelta !== true){
-    <div class="border rounded-xl p-4 shadow mb-2.5"
+    <div class="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden mb-2.5 transition-all duration-300 transform hover:scale-105 cursor-pointer border border-gray-100"
       (click)="navigateToProductDetails(product.id, this.getSelectedCategory())">
-      <div class="flex justify-end">
-        <h2 class="p-2 m-2 rounded-full text-xl px-5" [class.interior]="product.tipo === 'interior'"
-          [class.exterior]="product.tipo === 'exterior'" [class.barro]="product.tipo === 'barro'">
+      
+      <!-- Badge de tipo -->
+      <div class="absolute top-3 right-3 z-10">
+        <h2 class="p-2 rounded-full text-xs font-bold px-3 uppercase tracking-widest" [class.bg-red-100]="product.tipo === 'interior' && this.getSelectedCategory() === 'plantas'"
+          [class.text-red-700]="product.tipo === 'interior' && this.getSelectedCategory() === 'plantas'"
+          [class.bg-blue-100]="product.tipo === 'exterior' && this.getSelectedCategory() === 'plantas'"
+          [class.text-blue-700]="product.tipo === 'exterior' && this.getSelectedCategory() === 'plantas'"
+          [class.bg-orange-100]="product.tipo === 'barro'"
+          [class.text-orange-700]="product.tipo === 'barro'"
+          [class.bg-gray-100]="product.tipo !== 'interior' && product.tipo !== 'exterior' && product.tipo !== 'barro'"
+          [class.text-gray-700]="product.tipo !== 'interior' && product.tipo !== 'exterior' && product.tipo !== 'barro'">
           {{ product.tipo }}
         </h2>
       </div>
-      <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="shadow-2xl" />
-      <div class="space-y-2 mt-2">
-        <h2 class="text-2xl font-bold text-center">{{ product.productos.nombre }}</h2>
-        <!-- <h3 class="text-green-600 font-semibold">$ {{ product.price }}</h3> -->
+
+      <!-- Sección de imagen -->
+      <div class="relative w-full h-48 overflow-hidden bg-gray-100">
+        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+      </div>
+
+      <!-- Sección de contenido -->
+      <div class="p-4 space-y-3">
+        <!-- Nombre del producto -->
+        <h2 class="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors">{{ product.productos.nombre }}</h2>
+
+        <!-- Tipo del producto -->
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-gray-500">category</span>
+          <p class="text-xs text-gray-700 font-semibold p-3"
+             [class]="{ 'bg-aqua-200': product.tipo === 'interior' }"
+             [class]="{ 'bg-yellow-200': product.tipo === 'exterior' }"
+            >{{ product.tipo }}</p>
+        </div>
+
+        <!-- Nivel de Cuidado (Solo Plantas) -->
         @if(this.getSelectedCategory() === 'plantas') {
-        <p class="text-2xl">Nivel de Cuidado: {{ product.nivel_cuidado }}</p>
+        <div class="flex items-center gap-2 bg-green-50 rounded-lg p-2">
+          <span class="material-symbols-outlined text-sm text-green-600">local_florist</span>
+          <p class="text-xs text-green-700 font-semibold">Cuidado: {{ product.nivel_cuidado }}</p>
+        </div>
         }
 
-
-        <div class="flex flex-col gap-2" [class.hidden]="!isProductSelected(product.id)">
-          <div class="bg-green-300 border-2 border-green-600 rounded-lg p-4">
-            <h3 class="text-xl font-bold">Descripción</h3>
-            <p class="text-xl">
-              @if(this.getSelectedCategory() === 'plantas'){
-              {{ product.descripcion.descripcion }}
-              }@else if(this.getSelectedCategory() === 'macetas'){
-            <ol class="list-disc list-inside">
-              <li>Volumen: {{ product.descripcion.volumen }}</li>
-              <li>Altura: {{ product.descripcion.altura }}</li>
-              <li>Diámetro Superior: {{ product.descripcion.diametro_superior }}</li>
-              <li>Diámetro Inferior: {{ product.descripcion.diametro_inferior }}</li>
-            </ol>
-            }@else if(this.getSelectedCategory() === 'piedras'){
-            {{ product.descripcion.descripcion }}
-            }@else if(this.getSelectedCategory() === 'tierra'){
-            {{ product.descripcion.descripcion }}
-            }
-
-            </p>
+        <!-- Precio -->
+        <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-3 text-white">
+          <p class="text-xs font-semibold uppercase tracking-widest opacity-90 mb-1">Precio</p>
+          <div class="flex items-baseline gap-1">
+            <span class="text-2xl font-bold">${{ product.productos.precio }}</span>
+            <span class="text-xs opacity-85">MXN</span>
           </div>
-          <div class="flex justify-between items-center">
-            <p>Añadir a favoritos</p>
-            @if (this.getSelectedCategory() === 'plantas') {
-            <span class="material-symbols-outlined" [class.favorite-selected]="isProductInMyPlantsDesigns(product.id)"
-              (click)="isProductInMyPlantsDesigns(product.id) ? removeFromMyPlantsDesigns(product.id) : addToMyPlantsDesigns(product); $event.stopPropagation()">
-              favorite
-            </span>
-            } @else if (this.getSelectedCategory() === 'macetas') {
-
-            <span class="material-symbols-outlined" [class.favorite-selected]="isProductInMyPotsDesigns(product.id)"
-              (click)="isProductInMyPotsDesigns(product.id) ? removeFromMyPotsDesigns(product.id) : addToMyPotsDesigns(product); $event.stopPropagation()">
-              favorite
-            </span>
-            } @else if(this.getSelectedCategory() === 'piedras') {
-            <span class="material-symbols-outlined" [class.favorite-selected]="isProductInMyRocksDesigns(product.id)"
-              (click)="isProductInMyRocksDesigns(product.id) ? removeFromMyRocksDesigns(product.id) : addToMyRocksDesigns(product); $event.stopPropagation()">
-              favorite
-            </span>
-            }
-          </div>
-          <button class="bg-green-400 text-white rounded-md p-2 mt-5 w-full"
-            (click)="addToCart(product); $event.stopPropagation()">
-            Añadir al Carrito
-          </button>
         </div>
       </div>
     </div>

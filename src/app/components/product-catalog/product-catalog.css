@@ -1,8 +1,8 @@
-h2.interior {
+.interior {
     background-color:  cyan;
 }
 
-h2.exterior {
+.exterior {
     background-color: yellow;
 }
 

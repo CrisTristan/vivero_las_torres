@@ -16,7 +16,7 @@ export async function getAllHerbicidas(): Promise<Product[]> {
   try {
     const { data: herbicidas, error } = await supabase
       .from('herbicidas')
-      .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))');
+      .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))');
 
     if (error) {
       throw new Error(error.message);
@@ -32,7 +32,7 @@ export async function getHerbicidaById(id: number): Promise<Product | null> {
     try {
         const { data: herbicida, error } = await supabase
             .from('herbicidas')
-            .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))')
+            .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))')
             .eq('id', id)
              .single();
         if (error) {

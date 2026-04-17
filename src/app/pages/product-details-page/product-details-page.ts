@@ -10,6 +10,7 @@ import { Product } from '../../types/product.type';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { ShoppingCartService } from '../../services/shopping-cart-service';
 import { FilterCategoryService } from '../../services/filter-category-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-details-page',
@@ -25,7 +26,7 @@ export class ProductDetailsPage {
   public shoppingCartService = inject(ShoppingCartService);
   public filterCategoryService = inject(FilterCategoryService);
   
-  constructor() {
+  constructor(private router: Router) {
     const urlParams = new URLSearchParams(window.location.search);
     this.productId = urlParams.has('id') ? Number(urlParams.get('id')) : null;
     this.productCategory = urlParams.get('category') || null;
@@ -138,17 +139,21 @@ export class ProductDetailsPage {
     }
   }
 
-  addToMyPlantsDesigns(product: any) {
+    navigateToCatalog() {
+      this.router.navigate(['/productCatalog']);
+    }
+
+  addToMyFavoritePlants(product: any) {
       // console.log("Adding product to My Plants Designs:", product);
       // console.log("Service instance:", this.designService);
       this.designService.selectedPlants.update(current => {
         const updatedPlants = current ? [...current, product] : [product];
-        localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));
+        localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));  //<----- Si se desea persistir en localStorage, descomentar esta línea
         return updatedPlants;
       });
     }
 
-    removeFromMyPlantsDesigns(productId: number) {
+    removeFromMyFavoritePlants(productId: number) {
       this.designService.selectedPlants.update(current => {
         const updatedPlants = current ? current.filter((plant: any) => plant.id !== productId) : [];
         localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));
@@ -156,7 +161,7 @@ export class ProductDetailsPage {
       });
     }
 
-    addToMyPotsDesigns(product: any) {
+    addToMyFavoritePots(product: any) {
       this.designService.selectedPots.update(current => {
         const updatedPots = current ? [...current, product] : [product];
         localStorage.setItem('selectedPots', JSON.stringify(updatedPots));
@@ -164,7 +169,7 @@ export class ProductDetailsPage {
       });
     }
 
-    removeFromMyPotsDesigns(productId: number) {
+    removeFromMyFavoritePots(productId: number) {
       this.designService.selectedPots.update(current => {
         const updatedPots = current ? current.filter((pot: any) => pot.id !== productId) : [];
         localStorage.setItem('selectedPots', JSON.stringify(updatedPots));
@@ -172,7 +177,7 @@ export class ProductDetailsPage {
       });
     }
 
-    addToMyRocksDesigns(product: any) {
+    addToMyFavoriteRocks(product: any) {
       this.designService.selectedStones.update(current => {
         const updatedStones = current ? [...current, product] : [product];
         localStorage.setItem('selectedStones', JSON.stringify(updatedStones));
@@ -180,7 +185,7 @@ export class ProductDetailsPage {
       });
     }
 
-    removeFromMyRocksDesigns(productId: number) {
+    removeFromMyFavoriteRocks(productId: number) {
       this.designService.selectedStones.update(current => {
         const updatedStones = current ? current.filter((stone: any) => stone.id !== productId) : [];
         localStorage.setItem('selectedStones', JSON.stringify(updatedStones));
@@ -188,23 +193,23 @@ export class ProductDetailsPage {
       });
     }
 
-    isProductInMyPlantsDesigns(productId: number): boolean {
+    isProductInMyFavoritePlants(productId: number): boolean {
       const selectedPlants = this.designService.selectedPlants();
       return !!selectedPlants?.some((plant: any) => plant.id === productId);
     }
 
-    isProductInMyPotsDesigns(productId: number): boolean {
+    isProductInMyFavoritePots(productId: number): boolean {
       const selectedPots = this.designService.selectedPots();
       return !!selectedPots?.some((pot: any) => pot.id === productId);
     }
 
-    isProductInMyRocksDesigns(productId: number): boolean {
+    isProductInMyFavoriteRocks(productId: number): boolean {
       const selectedStones = this.designService.selectedStones();
       return !!selectedStones?.some((stone: any) => stone.id === productId);
     }
 
     // Tierra
-    addToMyTierraDesigns(product: any) {
+    addToMyFavoriteTierra(product: any) {
       this.designService.selectedTierra.update(current => {
         const updated = current ? [...current, product] : [product];
         localStorage.setItem('selectedTierra', JSON.stringify(updated));
@@ -212,7 +217,7 @@ export class ProductDetailsPage {
       });
     }
 
-    removeFromMyTierraDesigns(productId: number) {
+    removeFromMyFavoriteTierra(productId: number) {
       this.designService.selectedTierra.update(current => {
         const updated = current ? current.filter((item: any) => item.id !== productId) : [];
         localStorage.setItem('selectedTierra', JSON.stringify(updated));
@@ -220,13 +225,13 @@ export class ProductDetailsPage {
       });
     }
 
-    isProductInMyTierraDesigns(productId: number): boolean {
+    isProductInMyFavoriteTierra(productId: number): boolean {
       const selectedTierra = this.designService.selectedTierra();
       return !!selectedTierra?.some((item: any) => item.id === productId);
     }
 
     // Pasto
-    addToMyPastoDesigns(product: any) {
+    addToMyFavoritePasto(product: any) {
       this.designService.selectedPasto.update(current => {
         const updated = current ? [...current, product] : [product];
         localStorage.setItem('selectedPasto', JSON.stringify(updated));
@@ -234,7 +239,7 @@ export class ProductDetailsPage {
       });
     }
 
-    removeFromMyPastoDesigns(productId: number) {
+    removeFromMyFavoritePasto(productId: number) {
       this.designService.selectedPasto.update(current => {
         const updated = current ? current.filter((item: any) => item.id !== productId) : [];
         localStorage.setItem('selectedPasto', JSON.stringify(updated));
@@ -242,13 +247,13 @@ export class ProductDetailsPage {
       });
     }
 
-    isProductInMyPastoDesigns(productId: number): boolean {
+    isProductInMyFavoritePasto(productId: number): boolean {
       const selectedPasto = this.designService.selectedPasto();
       return !!selectedPasto?.some((item: any) => item.id === productId);
     }
 
     // Plaguicidas
-    addToMyPlaguicidasDesigns(product: any) {
+    addToMyFavoritePlaguicidas(product: any) {
       this.designService.selectedPlaguicidas.update(current => {
         const updated = current ? [...current, product] : [product];
         localStorage.setItem('selectedPlaguicidas', JSON.stringify(updated));
@@ -256,7 +261,7 @@ export class ProductDetailsPage {
       });
     }
 
-    removeFromMyPlaguicidasDesigns(productId: number) {
+    removeFromMyFavoritePlaguicidas(productId: number) {
       this.designService.selectedPlaguicidas.update(current => {
         const updated = current ? current.filter((item: any) => item.id !== productId) : [];
         localStorage.setItem('selectedPlaguicidas', JSON.stringify(updated));
@@ -264,13 +269,13 @@ export class ProductDetailsPage {
       });
     }
 
-    isProductInMyPlaguicidasDesigns(productId: number): boolean {
+    isProductInMyFavoritePlaguicidas(productId: number): boolean {
       const selectedPlaguicidas = this.designService.selectedPlaguicidas();
       return !!selectedPlaguicidas?.some((item: any) => item.id === productId);
     }
 
     // Herbicidas
-    addToMyHerbicidasDesigns(product: any) {
+    addToMyFavoriteHerbicidas(product: any) {
       this.designService.selectedHerbicidas.update(current => {
         const updated = current ? [...current, product] : [product];
         localStorage.setItem('selectedHerbicidas', JSON.stringify(updated));
@@ -278,7 +283,7 @@ export class ProductDetailsPage {
       });
     }
 
-    removeFromMyHerbicidasDesigns(productId: number) {
+    removeFromMyFavoriteHerbicidas(productId: number) {
       this.designService.selectedHerbicidas.update(current => {
         const updated = current ? current.filter((item: any) => item.id !== productId) : [];
         localStorage.setItem('selectedHerbicidas', JSON.stringify(updated));
@@ -286,7 +291,7 @@ export class ProductDetailsPage {
       });
     }
 
-    isProductInMyHerbicidasDesigns(productId: number): boolean {
+    isProductInMyFavoriteHerbicidas(productId: number): boolean {
       const selectedHerbicidas = this.designService.selectedHerbicidas();
       return !!selectedHerbicidas?.some((item: any) => item.id === productId);
     }

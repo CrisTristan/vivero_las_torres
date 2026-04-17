@@ -6,19 +6,21 @@
       <li class="grid grid-cols-[24px_44px_1fr_auto] items-center gap-3">
         <span class="text-[#64748b] text-[20px] font-semibold">{{ product.rank }}</span>
 
-        <div class="h-11 w-11 rounded-lg bg-gradient-to-br from-[#e9efe9] to-[#d3ddd3] border border-[#cdd8cd]"></div>
+        <div class="h-11 w-11 rounded-lg bg-gradient-to-br from-[#e9efe9] to-[#d3ddd3] border border-[#cdd8cd]">
+          <img src="{{ product.imagen_producto }}" alt="{{ product.nombre_producto }}" class="h-full w-full object-cover rounded-lg" />
+        </div>
 
         <div class="min-w-0">
           <div class="flex items-baseline justify-between gap-3">
-            <p class="text-[#1f2937] text-[20px] leading-tight font-semibold truncate">{{ product.name }}</p>
-            <p class="text-[#1f2937] text-[20px] leading-tight font-bold shrink-0">{{ product.price }}</p>
+            <p class="text-[#1f2937] text-[20px] leading-tight font-semibold truncate">{{ product.nombre_producto }}</p>
+            <p class="text-[#1f2937] text-[20px] leading-tight font-bold shrink-0">$ {{ product.total_ingresos }}</p>
           </div>
 
           <div class="mt-2 flex items-center justify-between gap-3">
             <div class="h-2 w-full bg-[#b7d1b7] rounded-full overflow-hidden">
-              <div class="h-full bg-[#0c7a21] rounded-full" [style.width.%]="product.progress"></div>
+              <div class="h-full bg-[#0c7a21] rounded-full" [style.width.%]="this.progressUntil100Sellings(product.total_vendidos)"></div>
             </div>
-            <span class="text-[#64748b] text-[27px] leading-none whitespace-nowrap">{{ product.salesText }}</span>
+            <span class="text-[#64748b] text-[27px] leading-none whitespace-nowrap">{{ product.total_vendidos }}</span>
           </div>
         </div>
       </li>

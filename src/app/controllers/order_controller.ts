@@ -21,6 +21,7 @@ export default class OrderController {
       throw new Error("Usuario no autenticado");
     }
     const cartItems = this.shoppingCartService.getCartItems();
+    console.log("Items del carrito de productos:", cartItems);
 
     if (cartItems.length === 0) {
       console.log("El carrito de productos está vacío");
@@ -103,21 +104,32 @@ export default class OrderController {
   filterRepeatedProductsOnShoppingCart(
     cartItems: Product[],
   ): { producto_id: number; cantidad: number }[] {
-    const productMap: { [key: number]: number } = {};
+    const productMap = new Map<number, { cantidad: number; precio_unitario: number; nombre_producto: string; imagen_producto: string }>();
+    
     cartItems.forEach((item) => {
+      if (!item?.productos?.id) return;
+      
       const prodId = item.productos.id;
-      if (productMap[prodId]) {
-        productMap[prodId] += 1;
+      const existing = productMap.get(prodId);
+      
+      if (existing) {
+        existing.cantidad += 1;
       } else {
-        productMap[prodId] = 1;
+        productMap.set(prodId, {
+          cantidad: 1,
+          precio_unitario: item.productos?.precio || 0,
+          nombre_producto: item.productos?.nombre || "",
+          imagen_producto: item.productos?.imagen || "",
+        });
       }
     });
-    return Object.entries(productMap).map(([id, cantidad]) => ({
-      producto_id: Number(id),
-      cantidad,
-      precio_unitario: //Precio que pago el cliente al momento de la compra por el producto
-        cartItems.find((item) => item.productos.id === Number(id))?.productos
-          .precio || 0,
+
+    return Array.from(productMap.entries()).map(([id, data]) => ({
+      producto_id: id,
+      cantidad: data.cantidad,
+      precio_unitario: data.precio_unitario,
+      nombre_producto: data.nombre_producto,
+      imagen_producto: data.imagen_producto,
     }));
   }
 

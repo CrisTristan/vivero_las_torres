@@ -3,6 +3,7 @@ import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
 import { Product } from '../../types/product.type';
 import { FilterCategoryService } from '../../services/filter-category-service';
+import { fetchAllMacetas } from '../../controllers/maceta_controller';
 
 @Component({
   selector: 'app-plantpots-designs',
@@ -20,12 +21,26 @@ export class PlantpotsDesigns {
   constructor(
     private router: Router
   ) { 
+    //Importante: -----------------------------------
+        // Sincronizar con con las plantas existente en el backend, para evitar inconsistencias en caso de que el usuario haya eliminado 
+        // plantas del catálogo después de haberlas guardado en el localStorage.
+        fetchAllMacetas().then((macetas) => {
+          const storedPots = localStorage.getItem('selectedPots');
+          if (storedPots) {
+            const parsedStoredPots: Product[] = JSON.parse(storedPots);
+            const validStoredPots = parsedStoredPots.filter(storedPot =>
+              macetas.some(maceta => maceta.id === storedPot.id)
+            );
+            this.designService.selectedPots.set(validStoredPots);
+            // Actualizar el localStorage con las plantas válidas después de la sincronización
+            localStorage.setItem('selectedPots', JSON.stringify(validStoredPots));
+          }
+          console.log('Macetas obtenidas:', macetas);
+        });
+    //const storedPots = localStorage.getItem('selectedPots');
+    //Se deberia implementar un mecanismo para obtener las plantas favoritas del usuario de la base de datos.
+    //AQUI -----------------------------------------
     
-    const storedPots = localStorage.getItem('selectedPots');
-    if (storedPots) {
-      // Si hay datos almacenados, parsearlos y asignarlos a la señal
-      this.designService.selectedPots.set(JSON.parse(storedPots));
-    }
   }
 
   // setSelectedPlantPot(product: any) {

@@ -1,9 +1,9 @@
 <app-header-section [title]="adminMenuService.currentSection()" [subtitle]="'Bienvenido de nuevo, '" [customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh]'"></app-header-section>
 <section class="pt-[21vh] px-4 md:px-6 lg:px-8 pb-6">
-	<app-summary-card-grid [cards]="dashboardCards" [customClass]="'mb-6'"></app-summary-card-grid>
+	<app-summary-card-grid [cards]="dashboardCards()" [customClass]="'mb-6'" [activeProducts]="this.activeProductsCard()" [inactiveProducts]="this.inactiveProductsCard()"></app-summary-card-grid>
 	<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 		<div class="xl:col-span-2 bg-[#dce5dc] border border-[#c6d0c7] rounded-2xl p-5 min-h-105">
-			<app-line-chart/>
+			<app-line-chart [ingresos]="ingresosMensuales"></app-line-chart>
 		</div>
 		<app-top-products-card [products]="topProducts"></app-top-products-card>
 	</div>

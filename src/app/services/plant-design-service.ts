@@ -28,7 +28,7 @@ export class PlantDesignService{
   constructor(private paymentService: PaymentService, private router: Router) {
     fetchAllPiedras().then((piedras) => {
       this.stones.set(piedras);
-      console.log('Piedras obtenidas:', piedras);
+      //console.log('Piedras obtenidas:', piedras);
     });
   }
 
@@ -37,6 +37,10 @@ export class PlantDesignService{
   //   this.paymentService.setTotalAmount(total);
   //   this.router.navigate(['/payment']);
   // }
+
+  get fetchedStones(): Product[] {
+    return this.stones();
+  }
 
   //este  metodo guardará la planta, maceta o piedra seleccionada por el usuario para el diseño personalizado
   personalizedArrangement = computed<Product[]>(() => {

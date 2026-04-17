@@ -16,7 +16,7 @@ export async function getAllTierra(): Promise<Product[]> {
   try {
     const { data: tierra, error } = await supabase
       .from('tierra')
-      .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))');
+      .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))');
 
     if (error) {
       throw new Error(error.message);
@@ -32,7 +32,7 @@ export async function getTierraById(id: number): Promise<Product | null> {
     try {
         const { data: tierra, error } = await supabase
             .from('tierra')
-            .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))')
+            .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))')
             .eq('id', id)
              .single();
         if (error) {

@@ -21,4 +21,35 @@
       </div>
     </article>
   }
+  <!-- Se mustran los resúmenes de productos activos e inactivos en el dashboard, se pasan desde el componente padre PanelAdministrador a través de los inputs activeProducts e inactiveProducts respectivamente. -->
+  <article class="bg-gradient-to-br from-[#dce5dc] to-[#c6dfb8] border border-[#c6d0c7] rounded-2xl p-6 min-h-[145px] col-span-1 sm:col-span-2 xl:col-span-1">
+        <h3 class="text-[#1f2937] text-[19px] font-bold leading-tight mb-6">Productos</h3>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Activos -->
+          <div class="bg-white/60 rounded-xl p-4 border border-[#b7d1b7] backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[#10b981] text-[14px] font-semibold uppercase tracking-wide">Activos</span>
+              <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-[#10b981] text-white text-[12px] font-bold">✓</span>
+            </div>
+            <p class="text-[#1f2937] text-[32px] font-bold leading-none">{{ this.activeProducts.value }}</p>
+            <p class="text-[#6b7280] text-[12px] mt-2">productos en venta</p>
+          </div>
+
+          <!-- Inactivos -->
+          <div class="bg-white/60 rounded-xl p-4 border border-[#fcd5ce] backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[#ef4444] text-[14px] font-semibold uppercase tracking-wide">Inactivos</span>
+              <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-[#ef4444] text-white text-[12px] font-bold">✕</span>
+            </div>
+            <p class="text-[#1f2937] text-[32px] font-bold leading-none">{{ this.inactiveProducts.value }}</p>
+            <p class="text-[#6b7280] text-[12px] mt-2">fuera de catálogo</p>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-[#b7d1b7] flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-[#0c7a21]"></span>
+          <span class="text-[#6b7280] text-[12px] font-medium">Total: {{ this.totalProductos }} productos</span>
+        </div>
+      </article>
 </section>

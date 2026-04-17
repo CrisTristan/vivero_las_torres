@@ -19,7 +19,9 @@ export interface ProductPurchasedByCustomer {
   orden_id: number;
   producto_id: number;
   cantidad: number;
-  producto: OrderedProductInfo;
+  precio_unitario: number;
+  nombre_producto: string;
+  imagen_producto: string;
   orden: OrderInfo;
 }
 

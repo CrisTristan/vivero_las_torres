@@ -1,125 +1,243 @@
-<div class="h-[82vh]">
-  <div class="flex flex-col md:flex-row gap-6 p-4">
-    <img
-      src="{{ productDetails()?.productos?.imagen }}"
-      alt="{{ productDetails()?.productos?.nombre }}"
-      class="w-full md:w-1/2 h-auto object-cover rounded-lg"
-    />
-    <div class="absolute top-45 right-6 bg-green-400 pt-2 rounded-xl px-2">
-    @if (this.productCategory === 'plantas') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyPlantsDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyPlantsDesigns(productDetails()?.id!)
-            ? removeFromMyPlantsDesigns(productDetails()?.id!)
-            : addToMyPlantsDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    } @else if (this.productCategory === 'macetas') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyPotsDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyPotsDesigns(productDetails()?.id!)
-            ? removeFromMyPotsDesigns(productDetails()?.id!)
-            : addToMyPotsDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    } @else if (this.productCategory === 'piedras') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyRocksDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyRocksDesigns(productDetails()?.id!)
-            ? removeFromMyRocksDesigns(productDetails()?.id!)
-            : addToMyRocksDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    } @else if (this.productCategory === 'tierra') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyTierraDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyTierraDesigns(productDetails()?.id!)
-            ? removeFromMyTierraDesigns(productDetails()?.id!)
-            : addToMyTierraDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    } @else if (this.productCategory === 'pasto') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyPastoDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyPastoDesigns(productDetails()?.id!)
-            ? removeFromMyPastoDesigns(productDetails()?.id!)
-            : addToMyPastoDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    } @else if (this.productCategory === 'plaguicidas') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyPlaguicidasDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyPlaguicidasDesigns(productDetails()?.id!)
-            ? removeFromMyPlaguicidasDesigns(productDetails()?.id!)
-            : addToMyPlaguicidasDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    } @else if (this.productCategory === 'herbicidas') {
-      <span
-        class="material-symbols-outlined text-red-600"
-        [class.favorite-selected]="this.isProductInMyHerbicidasDesigns(productDetails()?.id!)"
-        (click)="
-          isProductInMyHerbicidasDesigns(productDetails()?.id!)
-            ? removeFromMyHerbicidasDesigns(productDetails()?.id!)
-            : addToMyHerbicidasDesigns(productDetails()!);
-          $event.stopPropagation()
-        "
-      >
-        favorite
-      </span>
-    }
+<div
+  class="h-[82vh] overflow-hidden overflow-y-scroll bg-linear-to-b from-green-100 to-green-300 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+    <!-- Breadcrumb -->
+    <div class="mb-8">
+      <button (click)="navigateToCatalog()" class="text-xs text-gray-500 hover:text-gray-700 transition">← Volver al
+        catálogo</button>
     </div>
-    <div class="flex flex-col md:flex-row gap-6">
-      <div class="flex justify-center items-center">
-        <h1 class="text-3xl font-bold mb-4">{{ this.productDetails()?.productos?.nombre }}</h1>
+
+    <!-- Contenedor principal -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+
+      <!-- Sección de imagen -->
+      <div class="relative group">
+        <div class="relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
+          <img src="{{ productDetails()?.productos?.imagen }}" alt="{{ productDetails()?.productos?.nombre }}"
+            class="w-full h-auto object-cover hover:scale-110 transition-transform duration-500" />
+          <!-- Botón Favorito flotante -->
+          <div class="absolute top-3 right-3">
+            @if (this.productCategory === 'plantas') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoritePlants(productDetails()?.id!)" (click)="
+                  isProductInMyFavoritePlants(productDetails()?.id!)
+                    ? removeFromMyFavoritePlants(productDetails()?.id!)
+                    : addToMyFavoritePlants(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            } @else if (this.productCategory === 'macetas') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoritePots(productDetails()?.id!)" (click)="
+                  isProductInMyFavoritePots(productDetails()?.id!)
+                    ? removeFromMyFavoritePots(productDetails()?.id!)
+                    : addToMyFavoritePots(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            } @else if (this.productCategory === 'piedras') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoriteRocks(productDetails()?.id!)" (click)="
+                  isProductInMyFavoriteRocks(productDetails()?.id!)
+                    ? removeFromMyFavoriteRocks(productDetails()?.id!)
+                    : addToMyFavoriteRocks(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            } @else if (this.productCategory === 'tierra') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoriteTierra(productDetails()?.id!)" (click)="
+                  isProductInMyFavoriteTierra(productDetails()?.id!)
+                    ? removeFromMyFavoriteTierra(productDetails()?.id!)
+                    : addToMyFavoriteTierra(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            } @else if (this.productCategory === 'pasto') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoritePasto(productDetails()?.id!)" (click)="
+                  isProductInMyFavoritePasto(productDetails()?.id!)
+                    ? removeFromMyFavoritePasto(productDetails()?.id!)
+                    : addToMyFavoritePasto(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            } @else if (this.productCategory === 'plaguicidas') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoritePlaguicidas(productDetails()?.id!)" (click)="
+                  isProductInMyFavoritePlaguicidas(productDetails()?.id!)
+                    ? removeFromMyFavoritePlaguicidas(productDetails()?.id!)
+                    : addToMyFavoritePlaguicidas(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            } @else if (this.productCategory === 'herbicidas') {
+            <span
+              class="material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
+              [class.favorite-selected]="this.isProductInMyFavoriteHerbicidas(productDetails()?.id!)" (click)="
+                  isProductInMyFavoriteHerbicidas(productDetails()?.id!)
+                    ? removeFromMyFavoriteHerbicidas(productDetails()?.id!)
+                    : addToMyFavoriteHerbicidas(productDetails()!);
+                  $event.stopPropagation()
+                ">
+              favorite
+            </span>
+            }
+          </div>
+        </div>
       </div>
-      <div class="flex flex-col gap-4">
-        <div class="bg-green-300 p-5 rounded-lg">
-        <p class="text-xl font-semibold">Descripción:</p>
-        <p>
-          {{ productDetails()?.descripcion?.descripcion }}
-        </p>
+
+      <!-- Sección de detalles -->
+      <div class="flex flex-col gap-6">
+
+        <!-- Título del producto -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-lg p-4">
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">
+            {{ this.productDetails()?.productos?.nombre }}
+          </h1>
+          <div class="w-12 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"></div>
         </div>
-        <div class="flex justify-center items-center">
-          <p>Precio: <span class="text-green-600 text-2xl font-bold">${{ productDetails()?.productos?.precio }}</span></p>
+
+        <!-- Descripción -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-lg text-green-600">description</span>
+            <h2 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Descripción</h2>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            {{ productDetails()?.descripcion?.descripcion }}
+          </p>
         </div>
-        <button
-          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex justify-center items-center"
-          (click)="addToCart(productDetails()!)"
-        >
-          <p>Agregar al carrito</p>
-          <span class="material-symbols-outlined ml-2"> shopping_cart </span>
+
+        <!-- Detalles y Dimensiones (Macetas) -->
+        @if(this.productCategory === 'macetas'){
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5 space-y-4">
+          <!-- Encabezado de Detalles -->
+          <div class="border-b border-green-300 pb-3">
+            <h3 class="text-sm font-bold text-green-700 uppercase tracking-widest flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg">info</span>
+              Detalles del Producto
+            </h3>
+          </div>
+
+          <!-- Grid de Detalles -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Volumen -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="material-symbols-outlined text-base text-blue-500">format_list_bulleted_add</span>
+                <p class="text-xs font-semibold text-gray-500">Volumen</p>
+              </div>
+              <p class="text-sm font-bold text-gray-800">{{ productDetails()?.descripcion?.volumen }}</p>
+            </div>
+
+            <!-- Material -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="material-symbols-outlined text-base text-amber-500">texture</span>
+                <p class="text-xs font-semibold text-gray-500">Material</p>
+              </div>
+              <p class="text-sm font-bold text-gray-800">{{ productDetails()?.tipo }}</p>
+            </div>
+          </div>
+
+          <!-- Encabezado de Dimensiones -->
+          <div class="border-t border-green-300 pt-3 mt-2">
+            <h3 class="text-sm font-bold text-green-700 uppercase tracking-widest flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg">straighten</span>
+              Dimensiones
+            </h3>
+          </div>
+
+          <!-- Grid de Dimensiones -->
+          <div class="grid grid-cols-3 gap-2">
+            <!-- Alto -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-green-500">
+              <p class="text-xs font-semibold text-gray-500 mb-1">Alto</p>
+              <p class="text-lg font-bold text-green-600">{{ productDetails()?.descripcion?.altura }}</p>
+              <p class="text-xs text-gray-400">cm</p>
+            </div>
+
+            <!-- Diámetro Superior -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-emerald-500">
+              <p class="text-xs font-semibold text-gray-500 mb-1">Diám. Superior</p>
+              <p class="text-lg font-bold text-emerald-600">{{ productDetails()?.descripcion?.diametro_superior }}</p>
+              <p class="text-xs text-gray-400">cm</p>
+            </div>
+
+            <!-- Diámetro Inferior -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-teal-500">
+              <p class="text-xs font-semibold text-gray-500 mb-1">Diám. Inferior</p>
+              <p class="text-lg font-bold text-teal-600">{{ productDetails()?.descripcion?.diametro_inferior }}</p>
+              <p class="text-xs text-gray-400">cm</p>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Divider -->
+        <!-- <div class="flex items-center gap-3 my-2">
+          <div class="flex-1 h-0.5 bg-gradient-to-r from-green-200 to-transparent"></div>
+          <span class="material-symbols-outlined">
+            temp_preferences_eco
+          </span>
+          <div class="flex-1 h-0.5 bg-gradient-to-l from-green-200 to-transparent"></div>
+        </div> -->
+        <div class="border-t bg-green-700"></div>
+
+        <!-- Precio -->
+        <div
+          class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition">
+          <p class="text-xs font-semibold uppercase tracking-widest mb-2 opacity-90">Precio especial</p>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-4xl font-bold">${{ productDetails()?.productos?.precio }}</span>
+            <span class="text-sm opacity-90">MXN</span>
+          </div>
+        </div>
+
+        <!-- Botón Agregar al carrito -->
+        <button (click)="addToCart(productDetails()!)"
+          class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 flex justify-center items-center gap-2 mt-1 transform hover:scale-105">
+          <span class="material-symbols-outlined text-lg">shopping_cart</span>
+          <span>Agregar al carrito</span>
         </button>
+
+        <!-- Características -->
+        <div
+          class="grid grid-cols-2 gap-3 bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 border border-green-300">
+          <div
+            class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition transform hover:scale-105">
+            <div class="p-2 bg-green-100 rounded-full">
+              <span class="material-symbols-outlined text-lg text-green-600">local_shipping</span>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-gray-500 uppercase">Envío</p>
+              <p class="text-xs font-bold text-green-700">Rápido</p>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition transform hover:scale-105">
+            <div class="p-2 bg-blue-100 rounded-full">
+              <span class="material-symbols-outlined text-lg text-blue-600">verified</span>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-gray-500 uppercase">Garantía</p>
+              <p class="text-xs font-bold text-blue-700">100%</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

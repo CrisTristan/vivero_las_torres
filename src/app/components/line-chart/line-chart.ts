@@ -1,7 +1,9 @@
-import { PLATFORM_ID } from '@angular/core';
-import { Component, OnInit, inject } from '@angular/core';
+import { effect, Input, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
+import { IngresosMensualesController } from '../../controllers/ingresos_mensuales_controller';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-line-chart',
@@ -10,13 +12,27 @@ import { ChartModule } from 'primeng/chart';
   templateUrl: './line-chart.html',
   styleUrl: './line-chart.css',
 })
-export class LineChart implements OnInit {
-        data: any;
-        options: any;
+export class LineChart{
+        data = signal<any>(null);
+        options = signal<any>(null);
         platformId = inject(PLATFORM_ID);
+        private authService = inject(AuthService);
 
-    ngOnInit() {
-        this.initChart();
+        @Input() ingresos = signal<{ mes: string; ingresos: number }[]>([]);
+
+    constructor() {
+        const ingresosMensualesController = new IngresosMensualesController(this.authService);
+        void ingresosMensualesController.getIngresosMensuales().then((ingresos) => {
+            this.ingresos.set(ingresos);
+        });
+
+        effect(() => {
+            const ingresos = this.ingresos();
+            if (ingresos.length > 0) {
+                this.initChart();
+                console.log("Ingresos mensuales en el componente LineChart:", ingresos);
+            }         
+        });
     }
 
     initChart() {
@@ -26,27 +42,20 @@ export class LineChart implements OnInit {
             const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
             const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
         
-            this.data = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            this.data.set({
+                labels: this.ingresos().map((ingreso) => ingreso.mes),
                 datasets: [
                     {
                         label: 'First Dataset',
-                        data: [65, 59, 80, 81, 56, 55, 40],
+                        data: this.ingresos().map((ingreso) => ingreso.ingresos),
                         fill: false,
                         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
                         tension: 0.4
-                    },
-                    {
-                        label: 'Second Dataset',
-                        data: [28, 48, 40, 19, 86, 27, 90],
-                        fill: false,
-                        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                        tension: 0.4
                     }
                 ]
-            };
+            });
         
-            this.options = {
+            this.options.set({
                 maintainAspectRatio: false,
                 aspectRatio: 0.6,
                 plugins: {
@@ -76,7 +85,7 @@ export class LineChart implements OnInit {
                         }
                     }
                 }
-            };
+            });
         }
     }
 }

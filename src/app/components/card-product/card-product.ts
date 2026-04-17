@@ -39,7 +39,8 @@ export class CardProduct {
   }
 
   onRemove(event: MouseEvent): void {
-    event.stopPropagation();
-    this.remove.emit(this.product.id);
+    //Las siguientes lines fueron comentadas para evitar eliminar el producto 
+    //event.stopPropagation();
+    //this.remove.emit(this.product.id);
   }
 }

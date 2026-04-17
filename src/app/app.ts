@@ -9,6 +9,8 @@ import { AdminMenuService } from './services/admin-menu-service';
 import { AdminMenu } from './components/admin-menu/admin-menu';
 import { filter } from 'rxjs';
 import { RouteTrackerService } from './services/route-tracker-service';
+import { getUserShippingDataByUserId } from './controllers/direcciones_usuario_controller';
+import { AuthService } from './services/auth-service';
 
 @Component({
   selector: 'app-root',
@@ -22,10 +24,13 @@ export class App {
 
   public adminMenuService = inject(AdminMenuService);
   private readonly destroyRef = inject(DestroyRef);
-  //Importante para ejecutar un efecto cuando se cumpla el patrón de rutas definido en RouteTrackerService
-  private routeTrackerService = inject(RouteTrackerService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  
+  //Solo se inyecta si el usuario tiene 0 direcciones de envío
+  private routeTrackerService?: RouteTrackerService;
 
-  constructor(private router: Router) {
+  constructor() {
     this.currentRoute.set(this.router.url);
 
     this.router.events
@@ -36,6 +41,25 @@ export class App {
       .subscribe((event) => {
         this.currentRoute.set(event.urlAfterRedirects);
       });
+
+    // Verificar si el usuario tiene direcciones de envío registradas
+    this.initializeRouteTrackerIfNeeded();
+  }
+
+  private async initializeRouteTrackerIfNeeded(): Promise<void> {
+    try {
+      const userId = this.authService.getUser()?.id;
+      if (!userId) return;
+
+      const userShippingData = await getUserShippingDataByUserId(userId);
+      
+      // Solo inyectar RouteTrackerService si el usuario tiene 0 direcciones
+      if (!userShippingData || userShippingData.data.length === 0) {
+        this.routeTrackerService = inject(RouteTrackerService);
+      }
+    } catch (error) {
+      console.error('Error al verificar direcciones de envío:', error);
+    }
   }
 
   imprimirNombre() {

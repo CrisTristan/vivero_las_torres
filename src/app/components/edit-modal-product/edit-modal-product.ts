@@ -225,7 +225,7 @@ export class EditModalProduct implements OnChanges {
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   }
 
-  private getProductCategory(): string {
+  public getProductCategory(): string {
     return this.normalizeCategory(this.product?.productos?.categorias?.categoria ?? '');
   }
 

@@ -16,7 +16,7 @@ export async function getAllPasto(): Promise<Product[]> {
   try {
     const { data: pasto, error } = await supabase
       .from('pasto')
-      .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))');
+      .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))');
 
     if (error) {
       throw new Error(error.message);
@@ -32,7 +32,7 @@ export async function getPastoById(id: number): Promise<Product | null> {
     try {
         const { data: pasto, error } = await supabase
             .from('pasto')
-            .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))')
+            .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))')
             .eq('id', id)
              .single();
         if (error) {

@@ -17,6 +17,8 @@ export interface ProductData {
 	precio: number;
 	imagen: string;
 	stock: number;
+	activo: boolean;
+	vendido: boolean;
 	categorias: ProductCategory;
 	statusLabel?: string;
 }

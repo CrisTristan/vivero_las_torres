@@ -12,38 +12,38 @@ export interface CreatePlantResponse {
   product: Product | null;
 }
 
-export  async function getAllPlants(): Promise<Product[]> {
-    try {
-  const { data: plantas, error } = await supabase
-    .from('plantas')
-    .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))');
-  
-  console.log("Data received from Supabase:", plantas);
-  if (error) {
-    console.error("Error fetching data from Supabase:", error);
+export async function getAllPlants(): Promise<Product[]> {
+  try {
+    const { data: plantas, error } = await supabase
+      .from('plantas')
+      .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))');
+
+    console.log("Data received from Supabase:", plantas);
+    if (error) {
+      console.error("Error fetching data from Supabase:", error);
+    }
+    return plantas as Product[];
+  } catch (error) {
+    console.error("Error during Supabase query:", error);
+    return [];
   }
-  return plantas as Product[];
-} catch (error) {
-  console.error("Error during Supabase query:", error);
-  return [];
-}
 }
 
 export async function getPlantById(id: number): Promise<Product | null> {
-    try {
-        const { data: planta, error } = await supabase
-            .from('plantas')
-            .select('*, productos(id, nombre, precio, imagen, stock, categorias(id, categoria))')
-            .eq('id', id)
-             .single();
-        if (error) {
-            throw new Error(error.message);
-        }
-        return planta as Product;
-    }catch (error) {
-        console.error('Error fetching planta by ID from Supabase:', error);
-        return null;
+  try {
+    const { data: planta, error } = await supabase
+      .from('plantas')
+      .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))')
+      .eq('id', id)
+      .single();
+    if (error) {
+      throw new Error(error.message);
     }
+    return planta as Product;
+  } catch (error) {
+    console.error('Error fetching planta by ID from Supabase:', error);
+    return null;
+  }
 }
 
 export async function updatePlant(id: number, updatedData: Partial<Product>): Promise<UpdatePlantResponse> {
@@ -153,23 +153,23 @@ export async function createNewPlant(payload: Record<string, unknown>): Promise<
 
 // Función para eliminar una planta por ID
 export async function deletePlantById(id: number): Promise<{ status: number; data: any }> {
-    try {
-        const response = await fetch(`${environment.apiUrl}/plantas/deletePlantById/${id}`, {
-            method: 'DELETE'
-        });
+  try {
+    const response = await fetch(`${environment.apiUrl}/plantas/deletePlantById/${id}`, {
+      method: 'DELETE'
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        return {
-            status: response.status,
-            data
-        };
+    return {
+      status: response.status,
+      data
+    };
 
-    } catch (error) {
-        console.error("Error en deletePlantById:", error);
-        return {
-            status: 500,
-            data: { error: "Error de conexión con el servidor" }
-        };
-    }
+  } catch (error) {
+    console.error("Error en deletePlantById:", error);
+    return {
+      status: 500,
+      data: { error: "Error de conexión con el servidor" }
+    };
+  }
 }

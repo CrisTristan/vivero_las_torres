@@ -87,13 +87,13 @@
 								@for (product of item.productos; track product.id) {
 									<div class="group/img relative aspect-square overflow-hidden rounded-lg border border-purple-200 bg-gray-100">
 										<img
-											[src]="product.producto.imagen"
-											[alt]="product.producto.nombre"
+											[src]="product.imagen_producto"
+											[alt]="product.nombre_producto"
 											class="h-full w-full object-cover transition duration-300 group-hover/img:scale-110"
 										>
 										<div class="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover/img:bg-black/20"></div>
 										<p class="absolute bottom-1 left-1 right-1 line-clamp-1 rounded bg-black/70 px-2 py-1 text-xs font-semibold text-white">
-											{{ product.producto.nombre }}
+											{{ product.nombre_producto }}
 										</p>
 									</div>
 								}
@@ -104,7 +104,7 @@
 								<div class="flex flex-wrap justify-between gap-2">
 									@for (product of item.productos; track product.id) {
 										<span class="rounded-lg bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700">
-											{{ product.producto.nombre }}
+											{{ product.nombre_producto }}
 										</span>
 									}
 								</div>
@@ -130,8 +130,8 @@
 						<article class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
 							<div class="relative h-44 overflow-hidden bg-slate-100">
 								<img
-									[src]="item.producto.imagen"
-									[alt]="item.producto.nombre"
+									[src]="item.imagen_producto"
+									[alt]="item.nombre_producto"
 									class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
 								>
 								<span
@@ -144,7 +144,7 @@
 
 							<div class="space-y-3 p-4">
 								<h4 class="line-clamp-2 min-h-12 text-base font-bold text-slate-900">
-									{{ item.producto.nombre }}
+									{{ item.nombre_producto }}
 								</h4>
 
 								<div class="space-y-2 text-sm text-slate-600">
