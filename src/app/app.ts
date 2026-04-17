@@ -11,6 +11,7 @@ import { filter } from 'rxjs';
 import { RouteTrackerService } from './services/route-tracker-service';
 import { getUserShippingDataByUserId } from './controllers/direcciones_usuario_controller';
 import { AuthService } from './services/auth-service';
+import { StockNotificationsService } from './services/stock-notifications-service';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +30,9 @@ export class App {
   
   //Solo se inyecta si el usuario tiene 0 direcciones de envío
   private routeTrackerService?: RouteTrackerService;
+
+  // Servicio para escuchar notificaciones de stock
+  private readonly stockNotificationsService = inject(StockNotificationsService);
 
   constructor() {
     this.currentRoute.set(this.router.url);

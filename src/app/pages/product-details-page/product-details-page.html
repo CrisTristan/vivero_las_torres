@@ -110,6 +110,11 @@
           <div class="w-12 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"></div>
         </div>
 
+        <!-- Unidades restantes en stock: -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800">Quedan {{ this.productDetails()?.productos?.stock }} unidades en stock</h3>
+        </div>
+
         <!-- Descripción -->
         <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition">
           <div class="flex items-center gap-2 mb-3">

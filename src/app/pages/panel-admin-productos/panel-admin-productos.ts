@@ -89,6 +89,7 @@ export class PanelAdminProductos implements OnInit {
   public searchTerm = '';
   public selectedMenuProductId: number | null = null; //almacena el id del producto al que se le hizo click en el menu para mostrar/ocultar el menu de ese producto
   public isGridView = true;
+  public activeFilter = signal<'todos' | 'activos' | 'inactivos'>('activos'); // Nueva señal para el filtro de activos/inactivos
   public isMobileViewport = window.innerWidth < 640;
   public isEditModalOpen = false;
   public isCreateModalOpen = false;
@@ -172,12 +173,23 @@ export class PanelAdminProductos implements OnInit {
     const normalizedTerm = this.searchService.getCurrentSearchTerm().toLowerCase().trim();
     const products = this.products();
     const selectedCategoryNormalized = this.normalizeCategory(this.selectedCategory());
+    const filter = this.activeFilter();
 
-    const byFilter = products.filter((product) => {
+    // Filtrar por categoría
+    let byFilter = products.filter((product) => {
       const productCategoryNormalized = this.normalizeCategory(product.productos.categorias.categoria);
       return productCategoryNormalized.includes(selectedCategoryNormalized);
     });
 
+    // Filtrar por activos/inactivos
+    if (filter === 'activos') {
+      byFilter = byFilter.filter((product) => product.productos.activo === true);
+    } else if (filter === 'inactivos') {
+      byFilter = byFilter.filter((product) => product.productos.activo === false);
+    }
+    // Si es 'todos', no aplicamos filtro adicional
+
+    // Filtrar por término de búsqueda
     if (!normalizedTerm) {
       return byFilter;
     }
@@ -204,6 +216,10 @@ export class PanelAdminProductos implements OnInit {
 
   setCategory(category: ProductCategoryType): void {
     this.selectedCategory.set(category);
+  }
+
+  filterByStatus(status: 'todos' | 'activos' | 'inactivos'): void {
+    this.activeFilter.set(status);
   }
 
   get createButtonLabel(): string {
@@ -800,6 +816,18 @@ export class PanelAdminProductos implements OnInit {
     };
   }
 
+  get totalActiveProducts(): number {
+    return this.products().filter((product) => product.productos.activo).length;
+  }
+
+  get totalInactiveProducts(): number {
+    return this.products().filter((product) => !product.productos.activo).length;
+  }
+
+  get total0StockProducts(): number {
+    return this.products().filter((product) => product.productos.stock === 0).length;
+  }
+  
   @HostListener('document:click')
   closeCardMenu(): void {
     this.selectedMenuProductId = null;

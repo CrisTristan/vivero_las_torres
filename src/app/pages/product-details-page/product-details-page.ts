@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
 import { getPlantById } from '../../models/planta_model';
 import { getMacetaById } from '../../models/macetas_mode';
 import { getTierraById } from '../../models/tierra_model';
@@ -11,6 +11,9 @@ import { PlantDesignService } from '../../services/plant-design-service';
 import { ShoppingCartService } from '../../services/shopping-cart-service';
 import { FilterCategoryService } from '../../services/filter-category-service';
 import { Router } from '@angular/router';
+import { listenToStockNotifications } from '../../models/stock_notifications_model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RealtimeBroadcast } from '../../models/stock_notifications_model';
 
 @Component({
   selector: 'app-product-details-page',
@@ -19,7 +22,13 @@ import { Router } from '@angular/router';
   styleUrl: './product-details-page.css',
 })
 export class ProductDetailsPage {
-  private productId: number | null = null;
+  // Inyectar DestroyRef para manejar la destrucción del componente
+   private readonly destroyRef = inject(DestroyRef);
+
+   //Este ID es el id de la tabla de plantas, macetas, etc. No es el id de la tabla de 
+   // productos, por eso se hace la consulta a cada tabla según la categoría para obtener 
+   // el producto completo con su información y stock actualizado
+  private productId: number | null = null; 
   public productCategory: string | null = null;
   public productDetails = signal<Product | null>(null);
   public designService = inject(PlantDesignService);
@@ -137,6 +146,49 @@ export class ProductDetailsPage {
           console.error('Unknown product category:', this.productCategory);
       }
     }
+
+    // Escuchar notificaciones de stock
+    listenToStockNotifications()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (notification: RealtimeBroadcast) => {
+      console.log('📢 Notificación recibida:', notification);
+      // console.log('🔍 IDs comparando:', {
+      //   notificationId: notification.payload.record.id,
+      //   productId: this.productDetails()?.productos?.id,
+      //   tiposIguales: typeof notification.payload.record.id === typeof this.productDetails()?.productos?.id
+      // });
+      
+      // Asegurar que ambos sean números
+      const notificationProductId = Number(notification.payload.record.id);
+      
+      if (notificationProductId === this.productDetails()?.productos?.id) {
+        console.log('✅ ID coincide! Actualizando stock...');
+        const updatedStock = notification.payload.record.stock;
+        
+        this.productDetails.update(current => {
+          if (current) {
+            // console.log('📊 Stock anterior:', current.productos?.stock);
+            // console.log('📊 Stock nuevo:', updatedStock);
+            
+            return {
+              ...current,
+              productos: {
+                ...current.productos,
+                stock: updatedStock
+              }
+            };
+          }
+          return current;
+        });
+      } else {
+        console.log('❌ ID no coincide. Notificación es para otro producto');
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error en notificaciones de stock:', error);
+    }
+      });
   }
 
     navigateToCatalog() {

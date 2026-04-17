@@ -13,6 +13,7 @@ export interface ProductCategory {
 
 export interface ProductData {
 	id: number;
+	categoria_id?: number;
 	nombre: string;
 	precio: number;
 	imagen: string;
