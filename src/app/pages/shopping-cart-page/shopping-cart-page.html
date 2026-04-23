@@ -60,12 +60,30 @@
     </div>
     } @if(this.totalPrice() > 0){
     <div class="mb-10">
-      <div class="flex flex-row justify-between mt-5">
-        <p class="text-2xl">Total:</p>
+
+      <div class="flex flex-col justify-between mt-5">
+        <!-- subtotal -->
+        <div class="flex justify-between">
+        <p class="text-2xl">Subtotal:</p>
         <p class="text-2xl font-bold text-green-600">
           $ {{this.totalPrice().toFixed(2)}}
         </p>
-      </div>
+        </div>
+        <!-- costo de envío -->
+        <div class="flex justify-between">
+        <p class="text-2xl">Costo de Envío:</p>
+        <p class="text-2xl font-bold text-green-600">
+          $ {{configPanelAdminService.shippingCost().toFixed(2)}}
+        </p>
+        </div>
+        <!-- total con envío incluido -->
+        <div class="flex justify-between">
+        <p class="text-2xl">Total:</p>
+        <p class="text-2xl font-bold text-green-600">
+          $ {{(this.totalPrice() + configPanelAdminService.shippingCost()).toFixed(2)}}
+        </p>
+        </div>
+      </div>      
 
       <p class="text-sm text-gray-600 mt-1">¡Ya casi terminas tu compra!</p>
       <div class="flex justify-center">

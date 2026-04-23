@@ -10,6 +10,7 @@ import { createDireccionEnvioByOrderId } from '../../controllers/direcciones_env
 import { UserShippingDataService } from '../../services/user-shipping-data-service';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ConfigPanelAdminService } from '../../services/config-panel-admin-service';
 
 @Component({
   selector: 'app-payment-component',
@@ -27,6 +28,9 @@ export class PaymentComponent {
   public userShippingDataService = inject(UserShippingDataService);
   public messageService = inject(MessageService);
 
+  //Inyectamos el servicio de configuración para poder acceder al costo de envío en la página de pago
+  public configPanelAdminService = inject(ConfigPanelAdminService);
+  
   constructor(
     private http: HttpClient,
     private PaymentService: PaymentService,
@@ -42,9 +46,10 @@ export class PaymentComponent {
       'pk_test_51Rijp4FZsAB8H75089YhCtEnYvjLc7PpwCEmFKkI7xRUdolcyEBgYgtMYKOpSbdCJgTD9l2FNSxJEP0LWz1paIRG00xIzrzSf8',
     );
 
+    //importante sumar el costo de envío al monto total a pagar, el costo de envío se obtiene del servicio de configuración
     this.http
       .post<any>('http://localhost:3000/create-payment-intent', {
-        amount: this.paymentService.getTotalAmount() * 100, // Monto en centavos (ejemplo: $50.00),
+        amount: this.paymentService.getTotalAmount() * 100 + this.configPanelAdminService.shippingCost() * 100, // Monto en centavos (ejemplo: $50.00),
       })
       .subscribe(async (res) => {
         this.clientSecret = res.clientSecret;
@@ -131,5 +136,9 @@ export class PaymentComponent {
         this.loading.set(false);
       }
     }
+  }
+
+  get TotalAmountWithShipping(): number {
+    return (this.paymentService.getTotalAmount() + this.configPanelAdminService.shippingCost()).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) as unknown as number;
   }
 }

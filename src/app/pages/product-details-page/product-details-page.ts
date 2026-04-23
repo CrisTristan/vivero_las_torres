@@ -349,7 +349,14 @@ export class ProductDetailsPage {
     }
 
     addToCart(product: Product) {
-       
+       //validar que el producto no se pueda agregar mayor a la cantidad disponible en stock
+       const stockReal = product.productos.stock;
+       const cantidadEnCarrito = this.shoppingCartService.getCartItems().filter(item => item.producto_id === product.producto_id).length;
+       if (cantidadEnCarrito >= stockReal) {
+         alert('No hay suficiente stock para agregar más unidades de este producto');
+         return;
+       }
+
       this.shoppingCartService.addToCart(product);
       alert(`${product.productos.nombre} ha sido añadido al carrito de compras.`);
     }

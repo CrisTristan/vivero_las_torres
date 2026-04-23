@@ -42,13 +42,27 @@ export class RegisterPage {
       return;
     }
 
+    // Validar que el número de teléfono tenga exactamente 10 dígitos numéricos
+    const telefonoRegex = /^\d{10}$/; // Expresión regular para validar 10 dígitos numéricos
+    if (!telefonoRegex.test(this.telefono)) {
+      this.errorMessage.set('El número de teléfono debe tener exactamente 10 dígitos.');
+      return;
+    }
+
+    // Validar que el correo sea válido
+    const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar un correo electrónico básico
+    if (!correoRegex.test(this.correo)) {
+      this.errorMessage.set('El correo electrónico no es válido.');
+      return;
+    }
+
     if (this.contrasena !== this.confirmarContrasena) {
       this.errorMessage.set('Las contraseñas no coinciden.');
       return;
     }
 
-    if (this.contrasena.length < 6) {
-      this.errorMessage.set('La contraseña debe tener al menos 6 caracteres.');
+    if (this.contrasena.length < 8) {
+      this.errorMessage.set('La contraseña debe tener al menos 8 caracteres.');
       return;
     }
 

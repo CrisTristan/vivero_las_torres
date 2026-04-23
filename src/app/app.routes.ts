@@ -21,6 +21,7 @@ import { CustomerShippingDataPage } from './pages/customer-shipping-data-page/cu
 import { SelectingShippingDataPage } from './pages/selecting-shipping-data-page/selecting-shipping-data-page';
 import { ResetPasswordPage } from './pages/reset-password-page/reset-password-page';
 import { passwordResetGuard } from './Guards/password-reset-guard';
+import { ConfigurationAdminPage } from './pages/configuration-admin-page/configuration-admin-page';
 
 export const routes: Routes = [
     {
@@ -127,6 +128,12 @@ export const routes: Routes = [
         component: ResetPasswordPage,
         title: 'Restablecer Contraseña',
         canActivate: [passwordResetGuard]
+    },
+    {
+        path: 'panel-admin-configuración',
+        component: ConfigurationAdminPage,
+        title: 'Configuración del Panel de Administrador',
+        canActivate: [authorizationAdminGuard]    
     }
 
 ];
