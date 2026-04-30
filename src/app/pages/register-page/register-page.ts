@@ -24,6 +24,8 @@ export class RegisterPage {
   errorMessage = signal('');
   loading = signal(false);
 
+  public submitted = signal(false);  // Nueva señal para rastrear el estado de envío del formulario
+
   constructor(private router: Router, private authService: AuthService) { }
 
   toggleShowPassword() {
@@ -77,7 +79,9 @@ export class RegisterPage {
         password: this.contrasena,
       });
 
-      await this.router.navigate(['/']);
+      //await this.router.navigate(['/']);
+      this.submitted.set(true);
+      
     } catch (error) {
       this.errorMessage.set('Ocurrió un error al registrarse. Intenta de nuevo.');
     } finally {

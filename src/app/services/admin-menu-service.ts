@@ -11,7 +11,7 @@ export class AdminMenuService {
     { section: 'Productos', route: '/panel-admin-productos', icon: 'inventory' },
     { section: 'Pedidos', route: '/panel-admin-pedidos', icon: 'shopping_cart' },
     { section: 'Clientes', route: '/panel-admin-clientes', icon: 'people' },
-    {section: 'Configuración', route: '/panel-admin-configuración', icon: 'settings'},
+    {section: 'Configuracion', route: '/panel-admin-configuracion', icon: 'settings'},
     {section: 'Notificaciones', route: '/panel-admin-notificaciones', icon: 'notifications'},
   ];
 

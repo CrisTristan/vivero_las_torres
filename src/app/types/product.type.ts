@@ -1,4 +1,4 @@
-import { MacetaDescription } from "./maceta_description";
+import { MacetaDescription, Maceta } from "./maceta_description";
 import { Piedra } from "./piedra.type";
 
 export interface ProductDescription extends MacetaDescription {
@@ -24,7 +24,7 @@ export interface ProductData {
 	statusLabel?: string;
 }
 
-export interface Product extends Piedra{
+export interface Product extends Piedra, Maceta {
 	id: number;
 	producto_id: number;
 	nivel_cuidado: string;

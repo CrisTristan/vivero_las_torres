@@ -40,7 +40,7 @@ export class CardProduct {
 
   onRemove(event: MouseEvent): void {
     //Las siguientes lines fueron comentadas para evitar eliminar el producto 
-    //event.stopPropagation();
-    //this.remove.emit(this.product.id);
+    event.stopPropagation();
+    this.remove.emit(this.product.id);
   }
 }

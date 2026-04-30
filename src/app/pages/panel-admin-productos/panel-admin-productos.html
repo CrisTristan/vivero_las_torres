@@ -1,11 +1,6 @@
-<app-header-section
-	[title]="adminMenuService.currentSection()"
-	[subtitle]="'Gestiona tus productos'"
-	[customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'"
-	[showCreateButton]="true"
-	[createButtonLabel]="createButtonLabel"
-	(createButtonClick)="openCreateModal()"
-></app-header-section>
+<app-header-section [title]="adminMenuService.currentSection()" [subtitle]="'Gestiona tus productos'"
+	[customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'" [showCreateButton]="true"
+	[createButtonLabel]="createButtonLabel" (createButtonClick)="openCreateModal()"></app-header-section>
 
 <p-toast position="top-right"></p-toast>
 
@@ -13,13 +8,10 @@
 	<div class="flex flex-col gap-4 mb-5">
 		<div class="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#d4dae4] p-1 w-fit border border-[#bcc6d3]">
 			@for (category of categoryOptions; track category) {
-				<button
-					type="button"
-					(click)="setCategory(category)"
-					[class]="'h-10 px-5 rounded-lg text-[20px] font-semibold transition-colors ' + (selectedCategory() === category ? 'bg-[#16f27a] text-[#0f172a]' : 'bg-[#f3f4f6] text-[#111827] hover:bg-[#e5e7eb]')"
-				>
-					{{ category }}
-				</button>
+			<button type="button" (click)="setCategory(category)"
+				[class]="'h-10 px-5 rounded-lg text-[20px] font-semibold transition-colors ' + (selectedCategory() === category ? 'bg-[#16f27a] text-[#0f172a]' : 'bg-[#f3f4f6] text-[#111827] hover:bg-[#e5e7eb]')">
+				{{ category }}
+			</button>
 			}
 		</div>
 
@@ -34,10 +26,11 @@
 				/>
 			</div> -->
 
-			<div class="h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] flex items-center px-4 text-[#4b5563] text-[16px] font-medium">
+			<div
+				class="h-11 rounded-xl bg-[#e7ece7] border border-[#d8e0d8] flex items-center px-4 text-[#4b5563] text-[16px] font-medium">
 				{{ selectedCategory() }}
 			</div>
-			
+
 			<!-- <div class="flex flex-row items-center justify-around gap-2">
 				<h2 class="text-xl text-black">Filtrar por:</h2>
 				<button 
@@ -59,36 +52,28 @@
 					Inactivos	<span class="material-symbols-outlined text-[20px] leading-none">thumb_down</span>
 				</button>
 			</div> -->
-			
+
 
 			<div class="h-11 rounded-xl bg-[#e6ebe6] px-2 flex items-center justify-center gap-2">
-				<button
-					type="button"
-					(click)="setGridView()"
-					[class]="'h-8 w-8 rounded-lg flex items-center justify-center transition-colors ' + (isGridView ? 'bg-white border border-[#d3dcd3] text-[#4f5b4f]' : 'text-[#5f695f]')"
-				>
+				<button type="button" (click)="setGridView()"
+					[class]="'h-8 w-8 rounded-lg flex items-center justify-center transition-colors ' + (isGridView ? 'bg-white border border-[#d3dcd3] text-[#4f5b4f]' : 'text-[#5f695f]')">
 					<span class="material-symbols-outlined text-[18px] leading-none">grid_view</span>
 				</button>
-				<button
-					type="button"
-					(click)="setListView()"
-					[class]="'h-8 w-8 rounded-lg flex items-center justify-center transition-colors ' + (!isGridView ? 'bg-white border border-[#d3dcd3] text-[#4f5b4f]' : 'text-[#5f695f]')"
-				>
+				<button type="button" (click)="setListView()"
+					[class]="'h-8 w-8 rounded-lg flex items-center justify-center transition-colors ' + (!isGridView ? 'bg-white border border-[#d3dcd3] text-[#4f5b4f]' : 'text-[#5f695f]')">
 					<span class="material-symbols-outlined text-[18px] leading-none">list</span>
 				</button>
 			</div>
 		</div>
 
 		<div class="flex flex-wrap gap-2">
-			<span 
-				(click)="this.filterByStatus('activos')"
+			<span (click)="this.filterByStatus('activos')"
 				class="inline-flex items-center gap-2 rounded-full bg-[#e4ebe4] border border-[#d5dfd5] px-4 py-1.5 text-[#526152] text-[16px]">
 				<span class="h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span>
 				Activos:
 				<strong>{{ totalActiveProducts }}</strong>
 			</span>
-			<span 
-				(click)="this.filterByStatus('inactivos')"
+			<span (click)="this.filterByStatus('inactivos')"
 				class="inline-flex items-center gap-2 rounded-full bg-[#e4ebe4] border border-[#d5dfd5] px-4 py-1.5 text-[#526152] text-[16px]">
 				<span class="h-2.5 w-2.5 rounded-full bg-[#f59e0b]"></span>
 				Inactivos:
@@ -104,41 +89,32 @@
 
 	<div [class]="productsGridClass">
 		@for (product of filteredProducts; track product.id) {
-			<app-card-product
-				[product]="product"
-				[menuOpen]="selectedMenuProductId === product.id"
-				(toggleMenu)="toggleCardMenu($event)"
-				(edit)="onEditProduct($event)"
-				(remove)="onDeleteProduct($event)"
-			></app-card-product>
+		<app-card-product [product]="product" [menuOpen]="selectedMenuProductId === product.id"
+			(toggleMenu)="toggleCardMenu($event)" (edit)="onEditProduct($event)"
+			(remove)="onDeleteProduct($event)"></app-card-product>
 		}
 	</div>
 </section>
 
-<app-edit-modal-product
-	[isOpen]="isEditModalOpen"
-	[product]="editingProduct"
-	(closeModal)="closeEditModal()"
-	(saveProduct)="onProductEdited($event)"
-></app-edit-modal-product>
+<app-edit-modal-product [isOpen]="isEditModalOpen" [product]="editingProduct" (closeModal)="closeEditModal()"
+	(saveProduct)="onProductEdited($event)"></app-edit-modal-product>
 
 @if (isCreateModalOpen) {
-	<div class="fixed inset-0 z-80 bg-black/45 flex items-center justify-center p-4" (click)="closeCreateModal()">
-		<div class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
-			<div class="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
-				<h2 class="text-[24px] font-bold text-[#1f2937]">{{ createButtonLabel }}</h2>
-				<button
-					type="button"
-					(click)="closeCreateModal()"
-					class="h-9 w-9 rounded-full flex items-center justify-center text-[#6b7280] hover:bg-[#f3f4f6]"
-					aria-label="Cerrar modal"
-				>
-					<span class="material-symbols-outlined text-[20px] leading-none">close</span>
-				</button>
-			</div>
+<div class="fixed inset-0 z-80 bg-black/45 flex items-center justify-center p-4" (click)="closeCreateModal()">
+	<div class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl max-h-[90vh] overflow-y-auto"
+		(click)="$event.stopPropagation()">
 
-			<form class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="onCreateProduct()">
-				<!-- <div class="sm:col-span-2">
+		<div class="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
+			<h2 class="text-[24px] font-bold text-[#1f2937]">{{ createButtonLabel }}</h2>
+			<button type="button" (click)="closeCreateModal()"
+				class="h-9 w-9 rounded-full flex items-center justify-center text-[#6b7280] hover:bg-[#f3f4f6]"
+				aria-label="Cerrar modal">
+				<span class="material-symbols-outlined text-[20px] leading-none">close</span>
+			</button>
+		</div>
+
+		<form class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4" (ngSubmit)="onCreateProduct()">
+			<!-- <div class="sm:col-span-2">
 					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Imagen del producto</label>
 					<input
 						#createFileInput
@@ -163,120 +139,126 @@
 						class="w-full h-44 object-cover rounded-xl border border-[#e5e7eb]"
 					/>
 				</div> -->
-				<app-image-uploader-cloudinary [currectCategory]="this.selectedCategory()" [tipoProducto]="createFormState().type.toLowerCase()"></app-image-uploader-cloudinary>
-				<div>
-					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Nombre</label>
-					<input
-						type="text"
-						name="createName"
-						required
-						[ngModel]="createFormState().name"
-						(ngModelChange)="updateCreateField('name', $event)"
-						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-					/>
-				</div>
+			<div>
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Nombre</label>
+				<input type="text" name="createName" required [ngModel]="createFormState().name"
+					(ngModelChange)="updateCreateField('name', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" />
+			</div>
 
-				<div>
-					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Tipo</label>
-					<select
-						name="createType"
-						required
-						[ngModel]="createFormState().type"
-						(ngModelChange)="updateCreateField('type', $event)"
-						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-					>
-						@for (typeOption of createTypeOptions; track typeOption) {
-							<option [value]="typeOption">{{ formatTypeLabel(typeOption) }}</option>
-						}
-					</select>
-				</div>
+			<app-image-uploader-cloudinary [currectCategory]="this.selectedCategory()"
+				[tipoProducto]="createFormState().type.toLowerCase()"></app-image-uploader-cloudinary>
 
-				@if (isPiedrasCategorySelected) {
-					<div class="sm:col-span-2">
-						<label class="inline-flex items-center gap-2 text-[14px] font-semibold text-[#374151]">
-							<input
-								type="checkbox"
-								name="createEsPiedraSuelta"
-								[ngModel]="createFormState().esPiedraSuelta"
-								(ngModelChange)="updateCreateField('esPiedraSuelta', $event)"
-								class="h-4 w-4 rounded border border-[#d1d5db]"
-							/>
-							Es piedra suelta
-						</label>
-					</div>
-				}
+			@if(this.selectedCategory() === 'macetas') {
+			<div>
+				<label>¿Es Jardinera?</label>
+				<select name="es_jardinera" required [ngModel]="createFormState().es_jardinera ?? false"
+					(ngModelChange)="updateCreateField('es_jardinera', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+					<option [ngValue]="true">Sí</option>
+					<option [ngValue]="false" selected>No</option>
+				</select>
+			</div>
+			}
 
-				<div>
-					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Nivel de cuidado</label>
-					<select
-						name="createCareLevel"
-						required
-						[ngModel]="createFormState().careLevel"
-						(ngModelChange)="updateCreateField('careLevel', $event)"
-						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-					>
-						@for (level of careLevelOptions; track level) {
-							<option [value]="level">{{ level }}</option>
-						}
-					</select>
-				</div>
+			<div>
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Material</label>
+				<select name="createType" required [ngModel]="createFormState().type"
+					(ngModelChange)="updateCreateField('type', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+					@for (typeOption of createTypeOptions; track typeOption) {
+					<option [value]="typeOption">{{ formatTypeLabel(typeOption) }}</option>
+					}
+				</select>
+			</div>
 
-				<div>
-					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Precio</label>
-					<input
-						type="number"
-						name="createPrice"
-						required
-						min="0"
-						step="0.01"
-						[ngModel]="createFormState().price"
-						(ngModelChange)="updateCreateField('price', $event)"
-						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-					/>
-				</div>
+			@if (isPiedrasCategorySelected) {
+			<div class="sm:col-span-2">
+				<label class="inline-flex items-center gap-2 text-[14px] font-semibold text-[#374151]">
+					<input type="checkbox" name="createEsPiedraSuelta" [ngModel]="createFormState().esPiedraSuelta"
+						(ngModelChange)="updateCreateField('esPiedraSuelta', $event)"
+						class="h-4 w-4 rounded border border-[#d1d5db]" />
+					Es piedra suelta
+				</label>
+			</div>
+			}
 
-				<div>
-					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Stock</label>
-					<input
-						type="number"
-						name="createStock"
-						required
-						min="0"
-						step="1"
-						[ngModel]="createFormState().stock"
-						(ngModelChange)="updateCreateField('stock', $event)"
-						class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
-					/>
-				</div>
+			@if(this.selectedCategory() === 'plantas'){
+			<div>
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Nivel de cuidado</label>
+				<select name="createCareLevel" required [ngModel]="createFormState().careLevel"
+					(ngModelChange)="updateCreateField('careLevel', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+					@for (level of careLevelOptions; track level) {
+					<option [value]="level">{{ level }}</option>
+					}
+				</select>
+			</div>
+			}
 
-				<div class="sm:col-span-2">
-					<label class="block text-[14px] font-semibold text-[#374151] mb-1">Descripcion</label>
-					<textarea
-						name="createDescription"
-						required
-						rows="4"
-						[ngModel]="createFormState().description"
-						(ngModelChange)="updateCreateField('description', $event)"
-						class="w-full px-3 py-2 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f] resize-none"
-					></textarea>
-				</div>
+			<div>
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Precio</label>
+				<input type="number" name="createPrice" required min="0" step="0.01" [ngModel]="createFormState().price"
+					(ngModelChange)="updateCreateField('price', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" />
+			</div>
 
-				<div class="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
-					<button
-						type="button"
-						(click)="closeCreateModal()"
-						class="h-11 px-5 rounded-xl border border-[#d1d5db] text-[#4b5563] hover:bg-[#f3f4f6]"
-					>
-						Cancelar
-					</button>
-					<button
-						type="submit"
-						class="h-11 px-5 rounded-xl bg-[#0f766e] text-white font-semibold hover:bg-[#115e59]"
-					>
-						Crear producto
-					</button>
-				</div>
-			</form>
-		</div>
+			<div>
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Stock</label>
+				<input type="number" name="createStock" required min="0" step="1" [ngModel]="createFormState().stock"
+					(ngModelChange)="updateCreateField('stock', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" />
+			</div>
+
+			<div class="sm:col-span-2">
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Descripcion</label>
+				<textarea name="createDescription" required rows="4" [ngModel]="createFormState().description"
+					(ngModelChange)="updateCreateField('description', $event)"
+					class="w-full px-3 py-2 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f] resize-none"></textarea>
+			</div>
+
+			@if(this.selectedCategory() === 'macetas') {
+			<div>
+				<label>Volumen</label>
+				<select name="volumen" required [ngModel]="createFormState().volumen"
+					(ngModelChange)="updateCreateField('volumen', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+					<option value="Grande">Grande</option>
+					<option value="Mediana">Mediana</option>
+					<option value="Pequeña">Pequeña</option>
+				</select>
+			</div>
+
+			<div>
+				<label>Diámetro Superior</label>
+				<input type="text" name="diametro_superior" [ngModel]="createFormState().diametro_superior"
+					(ngModelChange)="updateCreateField('diametro_superior', $event)" class="w-full" />
+			</div>
+
+			<div>
+				<label>Diámetro Inferior</label>
+				<input type="text" name="diametro_inferior" [ngModel]="createFormState().diametro_inferior"
+					(ngModelChange)="updateCreateField('diametro_inferior', $event)" class="w-full" />
+			</div>
+
+			<div>
+				<label>Altura</label>
+				<input type="text" name="altura" [ngModel]="createFormState().altura"
+					(ngModelChange)="updateCreateField('altura', $event)" class="w-full" />
+			</div>
+			}
+
+			<div class="sm:col-span-2 flex items-center justify-end gap-3 pt-2">
+				<button type="button" (click)="closeCreateModal()"
+					class="h-11 px-5 rounded-xl border border-[#d1d5db] text-[#4b5563] hover:bg-[#f3f4f6]">
+					Cancelar
+				</button>
+				<button type="submit"
+					class="h-11 px-5 rounded-xl bg-[#0f766e] text-white font-semibold hover:bg-[#115e59]">
+					Crear producto
+				</button>
+			</div>
+		</form>
 	</div>
+</div>
 }

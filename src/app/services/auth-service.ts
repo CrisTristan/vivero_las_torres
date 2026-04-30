@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { User } from '../types/user';
 import { environment } from '../../environments/environment';
 import { ShoppingCartService } from './shopping-cart-service';
+import { UserController } from '../controllers/user_controller';
 
 type AuthResponse = {
   user: User;
@@ -82,23 +83,31 @@ export class AuthService {
   }
 
   async verifyCurrentTokenWithMe(): Promise<boolean> {
-    const accessToken = this.getAccessToken();
-    if (!accessToken) return false;
+    // const accessToken = this.getAccessToken();
+    // if (!accessToken) return false;
 
     try {
-      const response = await fetch(this.API_URL + '/me', {
-        method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-        },
-      });
-
-      if (!response.ok) {
+      // const response = await fetch(this.API_URL + '/me', {
+      //   method: 'GET',
+      //   headers: {
+      //     Authorization: 'Bearer ' + accessToken,
+      //   },
+      // });
+      const userController = new UserController();
+      const response = await userController.verifyTokenWithMe();
+      
+      if(response.hasToken === false) {
         this.clearSession();
         return false;
       }
 
-      const data = (await response.json()) as { user: User };
+      //si el token es inválido o ha expirado, el backend debería responder con un status 401, lo que nos indicaría que debemos limpiar la sesión
+      if (response.status >= 400) {
+        this.clearSession();
+        return false;
+      }
+
+      const data = (response) as { user: User };
       this.currentUser.set(data.user);
       localStorage.setItem('currentUser', JSON.stringify(data.user));
       return true;
@@ -109,45 +118,55 @@ export class AuthService {
   }
 
   async register(input: RegisterInput): Promise<User> {
-    const response = await fetch(this.API_URL + '/registerUser', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
-    });
+    // const response = await fetch(this.API_URL + '/registerUser', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(input),
+    // });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al registrar');
+    const userController = new UserController();
+    const response = await userController.registerUser(input);
+
+     if (!response?.status || response.status >= 400) {
+      throw new Error('Error al registrar');
+     }
+     
+    if (response.status >= 400) {
+      const errorData = response as { status: number, authResponse: AuthResponse | null, error?: string };
+      throw new Error(errorData.error || 'Error al registrar');
     }
 
-    const result = (await response.json()) as AuthResponse;
+    const result = (response.authResponse) as AuthResponse;
     this.persistSession(result);
     return result.user;
   }
 
   async login(correo: string, password: string): Promise<{status: number, user?: User}> {
-    const response = await fetch(this.API_URL + '/loginUser', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ correo, password }),
-    });
+    // const response = await fetch(this.API_URL + '/loginUser', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ correo, password }),
+    // });
 
-    if (!response.ok) {
-      const errorData = await response.json();
+    const userController = new UserController();    
+    const response = await userController.loginUser(correo, password);
+
+    if (!response?.status || response.status >= 400) {
+      // const errorData = await response?.json();
       // throw new Error(errorData.message || 'Error al iniciar sesión');
-      return {status: response.status, user: undefined};
+      return {status: response?.status, user: undefined};
     }
 
-    const result = (await response.json()) as AuthResponse;
+    const result = (response.authResponse) as AuthResponse;
     this.persistSession(result);
-    return {status: response.status, user: result.user};
+    return {status: response?.status, user: result.user};
   }
 
   async refreshAccessToken(): Promise<boolean> {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) return false;
 
-    const response = await fetch(this.API_URL + '/refreshToken', {
+    const response = await fetch(this.API_URL + '/auth/refreshToken', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),
@@ -167,15 +186,18 @@ export class AuthService {
     const accessToken = this.getAccessToken();
     if (!accessToken) return false;
 
-    const response = await fetch(this.API_URL + '/me', {
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    });
+    // const response = await fetch(this.API_URL + '/me', {
+    //   method: 'GET',
+    //   headers: {
+    //     Authorization: 'Bearer ' + accessToken,
+    //   },
+    // });
 
-    if (response.ok) {
-      const data = (await response.json()) as { user: User };
+      const userController = new UserController();
+      const response = await userController.verifyTokenWithMe();
+
+    if (response.status === 200) {
+      const data = (response) as { user: User };
       this.currentUser.set(data.user);
       localStorage.setItem('currentUser', JSON.stringify(data.user));
       return true;
@@ -221,7 +243,7 @@ export class AuthService {
     }
 
     const callAdminEndpoint = async (token: string) => {
-      return fetch(this.API_URL + '/admin', {
+      return fetch(this.API_URL + '/auth/admin', {
         method: 'GET',
         headers: {
           Authorization: 'Bearer ' + token,

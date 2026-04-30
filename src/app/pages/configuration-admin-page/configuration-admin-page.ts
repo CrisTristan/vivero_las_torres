@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ConfigPanelAdminService } from '../../services/config-panel-admin-service';
@@ -11,12 +11,15 @@ export enum ConfigurationOption {
 }
 
 @Component({
-  selector: 'app-configuration-admin-page',
-  imports: [FormsModule, CommonModule, HeaderSection],
-  templateUrl: './configuration-admin-page.html',
-  styleUrl: './configuration-admin-page.css',
+    selector: 'app-configuration-admin-page',
+    imports: [FormsModule, CommonModule, HeaderSection],
+    templateUrl: './configuration-admin-page.html',
+    styleUrl: './configuration-admin-page.css',
 })
 export class ConfigurationAdminPage {
+    @ViewChild("adminMenuHost", { read: ElementRef })
+    adminMenuHost?: ElementRef<HTMLElement>; // Referencia al contenedor del menú para detectar clicks fuera de él
+
     public shippingCost = signal(200);
     public allowEmailNotifications = signal(false);
     public isSaving = signal(false);
@@ -26,7 +29,7 @@ export class ConfigurationAdminPage {
     public configurationOptions = ConfigurationOption;
     public selectedConfigOption = signal<ConfigurationOption | null>(null);
 
-    private configPanelAdminService= inject(ConfigPanelAdminService);
+    private configPanelAdminService = inject(ConfigPanelAdminService);
     public adminMenuService = inject(AdminMenuService);
 
     constructor() {
@@ -90,5 +93,14 @@ export class ConfigurationAdminPage {
         setTimeout(() => {
             this.successMessage.set(null);
         }, 3000);
+    }
+
+    //Metodo para cerrar el menú al hacer click fuera de él
+    @HostListener("document:click", ["$event"])
+    onDocumentClick(event: MouseEvent): void {
+        this.adminMenuService.closeMenuIfClickedOutside(
+            event,
+            this.adminMenuHost?.nativeElement ?? null,
+        );
     }
 }

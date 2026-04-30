@@ -1,6 +1,11 @@
 <div class="h-[82vh]">
   <p-toast position="top-center"></p-toast>
   <div class="w-full h-full flex flex-col items-center justify-center">
+      @if(showEmailVerificationMessage()) {
+        <div class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700" role="alert">
+          <p>Por favor, verifica tu correo electrónico antes de iniciar sesión.</p>
+        </div>
+      }
     <h1 class="text-3xl font-bold mb-6">Iniciar Sesión</h1>
     <form class="w-full max-w-sm bg-white p-8 rounded-lg shadow-md">
       <div class="mb-4">

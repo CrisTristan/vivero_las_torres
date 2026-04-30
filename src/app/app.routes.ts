@@ -22,6 +22,8 @@ import { SelectingShippingDataPage } from './pages/selecting-shipping-data-page/
 import { ResetPasswordPage } from './pages/reset-password-page/reset-password-page';
 import { passwordResetGuard } from './Guards/password-reset-guard';
 import { ConfigurationAdminPage } from './pages/configuration-admin-page/configuration-admin-page';
+import { VerificacionCorreo } from './pages/verificacion-correo/verificacion-correo';
+import { emailVerificationGuard } from './Guards/email-verification-guard';
 
 export const routes: Routes = [
     {
@@ -130,10 +132,16 @@ export const routes: Routes = [
         canActivate: [passwordResetGuard]
     },
     {
-        path: 'panel-admin-configuración',
+        path: 'panel-admin-configuracion',
         component: ConfigurationAdminPage,
         title: 'Configuración del Panel de Administrador',
         canActivate: [authorizationAdminGuard]    
+    },
+    {
+        path: 'email-verification',
+        component: VerificacionCorreo,
+        title: 'Verificación de Correo',
+        canActivate: [emailVerificationGuard]
     }
 
 ];

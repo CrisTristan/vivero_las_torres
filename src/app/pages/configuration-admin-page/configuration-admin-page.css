@@ -51,9 +51,9 @@
 }
 
 .config-card:hover {
-    transform: translateY(-4px);
+    /* transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-    border-color: #10b981;
+    border-color: #10b981; */
 }
 
 .config-card h2 {

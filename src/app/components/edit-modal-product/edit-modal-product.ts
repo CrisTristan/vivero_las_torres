@@ -11,6 +11,8 @@ interface EditPlantForm {
   isPiedraSuelta: boolean;
   careLevel: CareLevel;
   description: string;
+  // Campos específicos para macetas
+  es_jardinera?: boolean;
   volumen?: 'Grande' | 'Mediana' | 'Pequeña';
   diametro_superior?: string;
   diametro_inferior?: string;
@@ -86,6 +88,7 @@ export class EditModalProduct implements OnChanges {
         diametro_superior: this.isMacetasCategory ? this.product.descripcion.diametro_superior : undefined,
         diametro_inferior: this.isMacetasCategory ? this.product.descripcion.diametro_inferior : undefined,
         altura: this.isMacetasCategory ? this.product.descripcion.altura : undefined,
+        es_jardinera: this.isMacetasCategory ? this.product.es_jardinera : undefined,
         price: Number(this.product.productos.precio) || 0,
         stock: this.extractStockValue(String(this.product.productos.stock)),
       });
@@ -159,7 +162,7 @@ export class EditModalProduct implements OnChanges {
           state.volumen ?? '',
           state.diametro_superior ?? '',
           state.diametro_inferior ?? '',
-          state.altura ?? ''
+          state.altura ?? '',
         );
         break;
     }
@@ -168,6 +171,9 @@ export class EditModalProduct implements OnChanges {
       ...this.product,
       ...(category === 'piedras'
         ? { esPiedraSuelta: state.isPiedraSuelta, es_piedra_suelta: state.isPiedraSuelta } //???????????
+        : {}),
+      ...(category === 'macetas'
+        ? { es_jardinera: state.es_jardinera ?? this.product.es_jardinera }
         : {}),
       nivel_cuidado: (state.careLevel ?? 'Bajo').toLowerCase(),
       tipo: this.normalizeType(state.type) || this.getDefaultTypeByCategory(category),

@@ -1,5 +1,12 @@
 import { User } from "../types/user";
 import { environment } from "../../environments/environment";
+import { get } from "http";
+
+type AuthResponse = {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+};
 
 export class UserController {
     private user: User | null = null;
@@ -7,9 +14,13 @@ export class UserController {
 
     constructor() {}
 
-    async registerUser(userData: { nombre: string; apellidos: string; correo: string; telefono: string; password: string }): Promise<User | null> {
+    getAccessToken(): string | null {
+    return localStorage.getItem('accessToken');
+    }
+
+    async registerUser(userData: { nombre: string; apellidos: string; correo: string; telefono: string; password: string }): Promise<{status: number, authResponse: AuthResponse | null; error?: string}> {
         try {
-            const response = await fetch(`${this.API_URL}/registerUser`, {
+            const response = await fetch(`${this.API_URL}/auth/registerUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,16 +36,16 @@ export class UserController {
             const result = await response.json();
             const user = result.user as User;
             this.user = user;
-            return user;
+            return {status: response.status, authResponse: result as AuthResponse};
         } catch (error) {
             console.error('Error en registerUser:', error);
-            throw error;
+            return {status: 500, authResponse: null, error: (error as Error).message};
         }
     }
 
-    async loginUser(correo: string, password: string): Promise<User | null> {
+    async loginUser(correo: string, password: string): Promise<{status: number, authResponse?: AuthResponse}> {
         try {
-            const response = await fetch(`${this.API_URL}/loginUser`, {
+            const response = await fetch(`${this.API_URL}/auth/loginUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,10 +61,33 @@ export class UserController {
             const result = await response.json();
             const user = result.user as User;
             this.setUser(user);
-            return user;
+            return {status: response.status, authResponse: result as AuthResponse};
         } catch (error) {
             console.error('Error en loginUser:', error);
             throw error;
+        }
+    }
+
+    async verifyTokenWithMe(): Promise<{ status: number; user: User | null; hasToken: boolean }> {
+        try {
+            const response = await fetch(`${this.API_URL}/auth/me`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.getAccessToken()}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Token no válido');
+            }
+            const result = await response.json();
+            const user = result.user as User;
+            this.setUser(user);
+            return { status: response.status, user, hasToken: this.getAccessToken() !== null };
+        } catch (error) {
+            console.error('Error en verifyTokenWithMe:', error);
+            this.clearUser();
+            return { status: 500, user: null, hasToken: this.getAccessToken() !== null };
         }
     }
 

@@ -21,21 +21,6 @@ import { ImageUploaderCloudinary } from '../../components/image-uploader-cloudin
 import { ImageUploaderService } from '../../services/image-uploader-service';
 import { ImageUploaderController } from '../../controllers/image_uploader_controller';
 
-interface CreateProductPayload {
-  nombre: string;
-  precio: number;
-  imagen: string;
-  stock: number;
-  categoriaSeleccionada: { 
-    id: number;  
-    categoria: ProductCategoryType 
-  };
-  tipo?: string;
-  nivel_cuidado?: string;
-  descripcion: string;
-  esPiedraSuelta?: boolean;
-}
-
 interface CreateBasePayload {
   nombre: string;
   precio: number;
@@ -52,11 +37,17 @@ interface CreateProductForm {
   imageUrl: string;
   name: string;
   type: string;
-  esPiedraSuelta: boolean;
-  careLevel: CareLevel;
+  esPiedraSuelta?: boolean; //esta propiedad solo aplica para la categoria piedras, indica si la piedra es suelta o viene en bolsa
+  careLevel?: CareLevel;   //esta propiedad solo aplica a la categoria plantas, indica el nivel de cuidado que requiere la planta
   description: string;
   price: number;
   stock: number;
+  // Propiedades específicas para macetas
+  es_jardinera?: boolean;
+  volumen?: 'Grande' | 'Mediana' | 'Pequeña';
+  diametro_superior?: number;
+  diametro_inferior?: number;
+  altura?: number;
 }
 
 @Component({
@@ -68,7 +59,7 @@ interface CreateProductForm {
   styleUrl: './panel-admin-productos.css',
 })
 export class PanelAdminProductos implements OnInit {
-  private readonly MAX_BASE64_IMAGE_LENGTH = 380_000;
+  
   public adminMenuService = inject(AdminMenuService);
   public searchService = inject(SearchProductEvent);
   public messageService = inject(MessageService);
@@ -575,6 +566,7 @@ export class PanelAdminProductos implements OnInit {
 
   private buildCreatePayload(state: CreateProductForm, uploadedImageUrl: string): Record<string, unknown> {
     const category = this.selectedCategory();
+
     const basePayload: CreateBasePayload = {
       nombre: state.name.trim(),
       precio: Math.max(0, Number(state.price) || 0),
@@ -592,7 +584,19 @@ export class PanelAdminProductos implements OnInit {
       return {
         ...basePayload,
         tipo: state.type || this.getDefaultTypeByCategory(category),
-        nivel_cuidado: state.careLevel.toLowerCase(),
+        nivel_cuidado: state.careLevel?.toLowerCase(),
+      };
+    }
+
+    if(category === 'macetas') {
+      return {
+        ...basePayload,
+        es_jardinera: state.es_jardinera || false,
+        tipo: state.type || this.getDefaultTypeByCategory(category),
+        volumen: state.volumen || 'Mediana',
+        diametro_superior: state.diametro_superior || 0,
+        diametro_inferior: state.diametro_inferior || 0,
+        altura: state.altura || 0,
       };
     }
 
@@ -804,6 +808,24 @@ export class PanelAdminProductos implements OnInit {
   }
 
   private getEmptyCreateForm(category: ProductCategoryType = 'plantas'): CreateProductForm {
+
+    if(category === 'macetas'){
+
+      return {
+        imageUrl: '',
+        name: '',
+        type: this.getDefaultTypeByCategory(category),
+        price: 0,
+        stock: 0,
+        description: '',
+        volumen: 'Mediana',
+        diametro_superior: 0,
+        diametro_inferior: 0,
+        altura: 0,
+        es_jardinera: false,
+      }
+    }
+
     return {
       imageUrl: '',
       name: '',
