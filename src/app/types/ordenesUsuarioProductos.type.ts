@@ -24,6 +24,7 @@ interface Order {
   Entregado_El_Dia: string | null;
   es_arreglo_personalizado: boolean;
   direccion_envio: DireccionEnvio[];
+  metodo_entrega: 'enviar' | 'recoger';
 }
 
 interface Product {

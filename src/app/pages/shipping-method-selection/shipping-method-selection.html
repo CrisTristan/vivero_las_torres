@@ -1,0 +1,50 @@
+<section class="h-[82vh] bg-[#eff3ef] px-4 md:px-6 lg:px-8 py-12">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#0f172a] mb-2">Método de envío</h1>
+            <p class="text-lg text-[#4b5563]">Selecciona cómo prefieres recibir tu pedido</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <!-- Opción Recoger en Tienda -->
+            <button
+                (click)="selectShippingMethod('pickup')"
+                class="group relative flex flex-col items-center justify-center p-8 md:p-10 border-2 border-[#d8e0d8] rounded-2xl bg-white hover:border-[#0f766e] hover:bg-[#f0f8f7] transition-all duration-300 shadow-sm hover:shadow-lg overflow-hidden"
+            >
+                <!-- Fondo decorativo -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[#0f766e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <!-- Contenido -->
+                <div class="relative z-10 flex flex-col items-center gap-4">
+                    <div class="p-4 rounded-full bg-[#e7ece7] group-hover:bg-[#0f766e] transition-colors duration-300">
+                        <span class="material-symbols-outlined text-5xl text-[#0f766e] group-hover:text-white transition-colors duration-300">store</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#0f172a] mb-2">Recoger en tienda</h2>
+                        <p class="text-sm md:text-base text-[#4b5563]">Retira tu pedido en nuestras instalaciones</p>
+                    </div>
+                </div>
+            </button>
+
+            <!-- Opción Envío a Domicilio -->
+            <button
+                (click)="selectShippingMethod('delivery')"
+                class="group relative flex flex-col items-center justify-center p-8 md:p-10 border-2 border-[#d8e0d8] rounded-2xl bg-white hover:border-[#0f766e] hover:bg-[#f0f8f7] transition-all duration-300 shadow-sm hover:shadow-lg overflow-hidden"
+            >
+                <!-- Fondo decorativo -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[#0f766e]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <!-- Contenido -->
+                <div class="relative z-10 flex flex-col items-center gap-4">
+                    <div class="p-4 rounded-full bg-[#e7ece7] group-hover:bg-[#0f766e] transition-colors duration-300">
+                        <span class="material-symbols-outlined text-5xl text-[#0f766e] group-hover:text-white transition-colors duration-300">local_shipping</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#0f172a] mb-2">Envío a domicilio</h2>
+                        <p class="text-sm md:text-base text-[#4b5563]">Recibe tu pedido en tu dirección</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+</section>

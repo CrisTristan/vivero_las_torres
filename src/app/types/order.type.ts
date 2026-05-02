@@ -7,4 +7,5 @@ export interface Order {
     fecha?: string;
     Entregado_El_Dia?: string;
     es_arreglo_personalizado?: boolean;
+    metodo_entrega?: 'recoger' | 'envio';
 }

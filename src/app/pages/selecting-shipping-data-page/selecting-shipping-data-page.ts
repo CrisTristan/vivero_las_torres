@@ -45,7 +45,7 @@ export class SelectingShippingDataPage implements OnInit {
     const selectedData = this.userShippingDataService.getSelectedShippingData();
     if (selectedData) {
       console.log('Dirección confirmada para el pago:', selectedData);
-      this.router.navigate(['/payment']); // Ajusta la ruta según tu aplicación
+      this.router.navigate(['/resumen-de-compra']); // Ajusta la ruta según tu aplicación
     }
   }
 

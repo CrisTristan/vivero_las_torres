@@ -24,6 +24,8 @@ import { passwordResetGuard } from './Guards/password-reset-guard';
 import { ConfigurationAdminPage } from './pages/configuration-admin-page/configuration-admin-page';
 import { VerificacionCorreo } from './pages/verificacion-correo/verificacion-correo';
 import { emailVerificationGuard } from './Guards/email-verification-guard';
+import { ShippingMethodSelection } from './pages/shipping-method-selection/shipping-method-selection';
+import { PurchaseSummary } from './pages/purchase-summary/purchase-summary';
 
 export const routes: Routes = [
     {
@@ -142,6 +144,18 @@ export const routes: Routes = [
         component: VerificacionCorreo,
         title: 'Verificación de Correo',
         canActivate: [emailVerificationGuard]
+    },
+    {
+        path: 'metodo-de-envio',
+        component: ShippingMethodSelection,
+        title: 'Método de Envío',
+        canActivate: [authGuard]
+    },
+    {
+        path: 'resumen-de-compra',
+        component: PurchaseSummary,
+        title: 'Resumen de Compra',
+        canActivate: [authGuard]
     }
 
 ];

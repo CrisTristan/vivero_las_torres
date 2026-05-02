@@ -83,6 +83,6 @@ export class PlantDesignService{
       return;
     }
     this.paymentService.setTotalAmount(this.total());
-    this.router.navigate(['/seleccion-de-datos-de-envio']);
+    this.router.navigate(['/metodo-de-envio']);
   }
 }

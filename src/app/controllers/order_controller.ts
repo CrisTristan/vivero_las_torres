@@ -4,12 +4,22 @@ import { User } from "../types/user";
 import { Product } from "../types/product.type";
 import { Order } from "../types/order.type";
 import {environment } from "../../environments/environment";
+import { ConfigPanelAdminService } from "../services/config-panel-admin-service";
+import { inject } from "@angular/core";
+import { ShippingMethodService } from "../services/shipping-method-service";
 
 export default class OrderController {
   constructor(
     private authService: AuthService,
     private shoppingCartService: ShoppingCartService,
-  ) {}
+    private configPanelAdminService: ConfigPanelAdminService,  // Inyectamos el servicio de configuración para poder acceder al costo de envío al crear una orden.
+    private shippingMethodService: ShippingMethodService,  // Inyectamos el servicio de métodos de envío para poder acceder al método de envío seleccionado por el usuario al crear una orden.
+  ) {
+    this.authService = authService;
+    this.shoppingCartService = shoppingCartService;
+    this.configPanelAdminService = configPanelAdminService;
+    this.shippingMethodService = shippingMethodService;
+  }
 
   //esta funcion se encarga de hacer una orden, para eso se hace una peticion al backend con los
   // datos del usuario y los items del carrito,
@@ -27,11 +37,24 @@ export default class OrderController {
       console.log("El carrito de productos está vacío");
     }
 
+    //Calcular el total de la orden dependiendo del método de envío seleccionado por el usuario, para agregar el costo de envío al total de la orden
+    let totalAmountToPay = 0;
+    let metodo_entrega = '';
+    const selectedShippingMethod = this.shippingMethodService.getShippingMethod();
+    if (selectedShippingMethod === 'delivery') {
+      totalAmountToPay = this.configPanelAdminService.shippingCost() + this.shoppingCartService.total;
+      metodo_entrega = 'envio';
+    }else if (selectedShippingMethod === 'pickup') {
+      totalAmountToPay = this.shoppingCartService.total;
+      metodo_entrega = 'recoger';
+    }
+
     const orderData = {
       usuario_id: user?.id,
-      total: this.shoppingCartService.total,
+      total: totalAmountToPay,
       estado: "no entregado",
       es_arreglo_personalizado: false,
+      metodo_entrega: metodo_entrega,
       productos: this.filterRepeatedProductsOnShoppingCart(cartItems),
     };
     // console.log('Datos de la orden a enviar:', orderData);
@@ -70,12 +93,24 @@ export default class OrderController {
       console.log("El carrito de arrglo personalizado está vacío");
     }
 
+    //Verificar que tipo de envio selecciono el usuario para agregar el costo de envío al total de la orden
+    let totalAmountToPay = 0;
+    let metodo_entrega = '';
+    const selectedShippingMethod = this.shippingMethodService.getShippingMethod();
+    if (selectedShippingMethod === 'delivery') {
+      totalAmountToPay = this.configPanelAdminService.shippingCost() + this.shoppingCartService.totalInCartItemsForPersonalizedArrangement;
+      metodo_entrega = 'envio';
+    }else if (selectedShippingMethod === 'pickup') {
+      totalAmountToPay = this.shoppingCartService.totalInCartItemsForPersonalizedArrangement;
+      metodo_entrega = 'recoger';
+    }
+
     const orderData = {
       usuario_id: user?.id,
-      total:
-        this.shoppingCartService.totalInCartItemsForPersonalizedArrangement,
+      total: totalAmountToPay,
       estado: "no entregado",
       es_arreglo_personalizado: true,
+      metodo_entrega: metodo_entrega,
       productos: this.filterRepeatedProductsOnShoppingCart(
         cartPersonalizedArrangementItems,
       ),

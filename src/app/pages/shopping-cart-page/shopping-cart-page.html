@@ -69,20 +69,6 @@
           $ {{this.totalPrice().toFixed(2)}}
         </p>
         </div>
-        <!-- costo de envío -->
-        <div class="flex justify-between">
-        <p class="text-2xl">Costo de Envío:</p>
-        <p class="text-2xl font-bold text-green-600">
-          $ {{configPanelAdminService.shippingCost().toFixed(2)}}
-        </p>
-        </div>
-        <!-- total con envío incluido -->
-        <div class="flex justify-between">
-        <p class="text-2xl">Total:</p>
-        <p class="text-2xl font-bold text-green-600">
-          $ {{(this.totalPrice() + configPanelAdminService.shippingCost()).toFixed(2)}}
-        </p>
-        </div>
       </div>      
 
       <p class="text-sm text-gray-600 mt-1">¡Ya casi terminas tu compra!</p>

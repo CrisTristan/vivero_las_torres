@@ -25,10 +25,10 @@
     </div>
   </div>
 
-  <div class="grid grid-cols-2 grid-rows-2 gap-2">
+  <div class="grid grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:gap-4">
     @for (product of filteredProducts(); track product.id) {
     @if(product.esPiedraSuelta !== true && product.productos.activo){
-    <div class="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden mb-2.5 transition-all duration-300 transform hover:scale-105 cursor-pointer border border-gray-100"
+    <div class="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden mb-2.5 transition-all duration-300 transform hover:scale-105 cursor-pointer border border-gray-100 md:h-[70] md:max-w-lg"
       (click)="navigateToProductDetails(product.id, this.getSelectedCategory())">
       
       <!-- Badge de tipo -->
@@ -46,8 +46,8 @@
       </div>
 
       <!-- Sección de imagen -->
-      <div class="relative w-full h-48 overflow-hidden bg-gray-100">
-        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+      <div class="relative w-full h-60 overflow-hidden bg-gray-100 md:flex md:items-center md:justify-center lg:flex lg:justify-center lg:items-center">
+        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="w-full h-full md:max-w-full md:max-h-full object-cover lg:object-contain lg:max-w-full lg:max-h-full group-hover:scale-110 transition-transform duration-500" />
       </div>
 
       <!-- Sección de contenido -->

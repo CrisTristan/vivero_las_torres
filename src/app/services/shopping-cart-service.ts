@@ -157,5 +157,9 @@ export class ShoppingCartService {
     });
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems()));
   }
+
+  getCartItemsForPersonalizedArrangement() {
+    return this.cartItemsForPersonalizedArrangement();
+  }
       
 }

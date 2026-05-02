@@ -1,0 +1,167 @@
+<section class="h-[82vh] bg-[#eff3ef] px-4 md:px-6 lg:px-8 py-12 overflow-y-scroll">
+    <div class="max-w-6xl mx-auto">
+        <!-- Encabezado -->
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-[#0f172a] mb-2">Resumen de tu compra</h1>
+            <p class="text-lg text-[#4b5563]">Verifica los productos antes de confirmar</p>
+        </div>
+
+        <!-- Productos -->
+        @if(this.isNormalPurchase()) {
+        <div class="space-y-4 mb-8">
+            @for(product of this.productsInCart(); track product.id) {
+            <div
+                class="bg-white rounded-2xl border border-[#d8e0d8] p-4 hover:shadow-lg transition-shadow duration-300">
+                <div class="flex gap-4 items-center">
+                    <!-- Imagen -->
+                    <div
+                        class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-[#f3f4f6] border border-[#e5e7eb]">
+                        <img [src]="product.productos.imagen || 'https://placehold.co/200x200?text=Sin+imagen'"
+                            alt="{{ product.productos.nombre }}" class="w-full h-full object-cover" />
+                    </div>
+
+                    <!-- Nombre y Precio -->
+                    <div class="flex-grow min-w-0">
+                        <h3 class="text-lg font-bold text-[#0f172a] mb-1">{{ product.productos.nombre }}</h3>
+                        <p class="text-lg font-bold text-[#0f766e]">${{ product.productos.precio | number: '1.2-2' }}
+                        </p>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div class="flex-shrink-0 text-center">
+                        <p class="text-sm text-[#4b5563] mb-1">Cantidad</p>
+                        <span class="px-3 py-1 rounded-lg bg-[#e7ece7] text-[#0f172a] font-semibold text-lg">{{
+                            product.quantity }}</span>
+                        <!-- <div>
+                            <p class="text-sm text-[#4b5563] mb-1">Subtotal</p>
+                            <span class="px-3 py-1 rounded-lg bg-[#e7ece7] text-[#0f172a] font-semibold text-lg">${{
+                                (product.productos.precio * (product.quantity ?? 1)) | number: '1.2-2' }}</span>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Resumen Total -->
+        <div class="bg-gradient-to-r from-[#0f766e] to-[#115e59] rounded-2xl p-8 text-white shadow-lg">
+            @if(this.shippingMethodService.getShippingMethod() === 'delivery') {
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <p class="text-lg opacity-90">Subtotal:</p>
+                    <h2 class="text-2xl font-bold">
+                        ${{ getTotalPriceNormalOrder() | number: '1.2-2' }}
+                    </h2>
+                </div>
+                <div class="flex justify-between items-center">
+                    <p class="text-lg opacity-90">Envío:</p>
+                    <h2 class="text-2xl font-bold">
+                        ${{ this.configPanelAdminService.shippingCost()| number: '1.2-2' }}
+                    </h2>
+                </div>
+                <div class="flex justify-between items-center border-t border-white pt-4">
+                    <p class="text-lg opacity-90">Total:</p>
+                    <h2 class="text-3xl font-bold">${{ getTotalPriceNormalOrder() +
+                        this.configPanelAdminService.shippingCost() | number: '1.2-2' }}
+                    </h2>
+                </div>
+            </div>
+            }@else if(this.shippingMethodService.getShippingMethod() === 'pickup') {
+            <div class="flex justify-between items-center">
+                <p class="text-lg opacity-90">Total de la compra</p>
+                <h2 class="text-3xl font-bold">
+                    ${{ getTotalPriceNormalOrder() | number: '1.2-2' }}
+                </h2>
+            </div>
+            }
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex flex-col md:flex-row gap-4 mt-8">
+            <button
+                class="flex-1 h-12 px-6 rounded-xl bg-[#0f766e] text-white font-semibold hover:bg-[#115e59] transition-colors shadow-lg hover:shadow-xl p-3"
+                (click)="this.navigateToPayment()">
+                Proceder al pago
+            </button>
+        </div>
+
+        } @else if(!this.isNormalPurchase()){
+        <h2 class="text-2xl font-bold text-[#0f172a] mb-4">Arreglo Personalizado</h2>
+        @for (product of this.shoppingCartService.getCartItemsForPersonalizedArrangement(); track $index) {
+        <div class="bg-white rounded-2xl border border-[#d8e0d8] p-4 hover:shadow-lg transition-shadow duration-300">
+            <div class="flex gap-4 items-center">
+                <!-- Imagen -->
+                <div class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-[#f3f4f6] border border-[#e5e7eb]">
+                    <img [src]="product.productos.imagen || 'https://placehold.co/200x200?text=Sin+imagen'"
+                        alt="{{ product.productos.nombre }}" class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Nombre y Precio -->
+                <div class="flex-grow min-w-0">
+                    <h3 class="text-lg font-bold text-[#0f172a] mb-1">{{ product.productos.nombre }}</h3>
+                    <p class="text-lg font-bold text-[#0f766e]">${{ product.productos.precio | number: '1.2-2' }}</p>
+                </div>
+
+                <!-- Cantidad -->
+                <div class="flex-shrink-0 text-center">
+                    <p class="text-sm text-[#4b5563] mb-1">Cantidad</p>
+                    <span class="px-3 py-1 rounded-lg bg-[#e7ece7] text-[#0f172a] font-semibold text-lg">1</span>
+                </div>
+            </div>
+        </div>
+        }
+        <!-- Resumen Total -->
+        <div class="bg-gradient-to-r from-[#0f766e] to-[#115e59] rounded-2xl p-8 text-white shadow-lg">
+            @if(this.shippingMethodService.getShippingMethod() === 'delivery') {
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <p class="text-lg opacity-90">Subtotal:</p>
+                    <h2 class="text-2xl font-bold">
+                        ${{ getTotalPricePersonalizedArrangement() | number: '1.2-2' }}
+                    </h2>
+                </div>
+                <div class="flex justify-between items-center">
+                    <p class="text-lg opacity-90">Envío:</p>
+                    <h2 class="text-2xl font-bold">
+                        ${{ this.configPanelAdminService.shippingCost()| number: '1.2-2' }}
+                    </h2>
+                </div>
+                <div class="flex justify-between items-center border-t border-white pt-4">
+                    <p class="text-lg opacity-90">Total:</p>
+                    <h2 class="text-3xl font-bold">${{ getTotalPricePersonalizedArrangement() +
+                        this.configPanelAdminService.shippingCost() | number: '1.2-2' }}
+                    </h2>
+                </div>
+            </div>
+            }@else if(this.shippingMethodService.getShippingMethod() === 'pickup') {
+            <div class="flex justify-between items-center">
+                <p class="text-lg opacity-90">Total de la compra</p>
+                <h2 class="text-3xl font-bold">
+                    ${{ getTotalPricePersonalizedArrangement() | number: '1.2-2' }}
+                </h2>
+            </div>
+            }
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex flex-col md:flex-row gap-4 mt-8">
+            <button
+                class="flex-1 h-12 px-6 rounded-xl bg-[#0f766e] text-white font-semibold hover:bg-[#115e59] transition-colors shadow-lg hover:shadow-xl p-3"
+                (click)="this.navigateToPayment()">
+                Proceder al pago
+            </button>
+        </div>
+
+        }@else{
+        <div class="bg-white rounded-2xl border-2 border-dashed border-[#d8e0d8] p-12 text-center">
+            <span class="material-symbols-outlined text-6xl text-[#d1d5db] block mb-4">shopping_cart</span>
+            <h3 class="text-xl font-bold text-[#0f172a] mb-2">Tu carrito está vacío</h3>
+            <p class="text-[#4b5563] mb-6">Agrega productos para ver el resumen de tu compra</p>
+            <button
+                class="h-11 px-6 rounded-xl bg-[#0f766e] text-white font-semibold hover:bg-[#115e59] transition-colors">
+                Ir a productos
+            </button>
+        </div>
+        }
+    </div>
+</section>
