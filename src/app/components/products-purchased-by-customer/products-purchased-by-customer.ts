@@ -27,6 +27,7 @@ export class ProductsPurchasedByCustomer implements OnInit {
   public readonly isLoading = signal(true);
   public readonly errorMessage = signal('');
   public readonly showFullHistory = signal(false);
+  public viewOrderShippingDetails = signal<{orderId: number, show: boolean}>({ orderId: -1, show: false });
 
   ngOnInit(): void {
     void this.loadPurchasedProducts();
@@ -48,6 +49,22 @@ export class ProductsPurchasedByCustomer implements OnInit {
       }
       return item.orden.estado === 'no entregado';
     }).length;
+  }
+
+  viewPendingOrders(){
+     return this.purchasedProducts().filter((item) => {
+       return item.orden.estado === 'no entregado';
+     });
+  }
+
+  viewDeliveredOrders(){
+    console.log("Productos entregados:", this.purchasedProducts().filter((item) => {
+      return item.orden.estado === 'entregado';
+    }));
+    
+     return this.purchasedProducts().filter((item) => {
+       return item.orden.estado === 'entregado';
+     });
   }
 
   get displayedProducts(): PurchasedItem[] {
@@ -135,8 +152,10 @@ export class ProductsPurchasedByCustomer implements OnInit {
       timeStyle: 'short',
     }).format(parsedDate);
   }
-  
 
+  getDeliveryMethodText(item: PurchasedItem): string {
+    return item.orden.metodo_entrega || 'Método de entrega no disponible';
+  }
 
   getItemTrackId(item: PurchasedItem): string {
     if (this.isPersonalizedArrangement(item)) {
@@ -186,6 +205,8 @@ export class ProductsPurchasedByCustomer implements OnInit {
         ? parsed
         : parsed.ordersProducts ?? [];
 
+      console.log('Productos comprados recibidos del backend:', products);
+      
       const items = this.groupPersonalizedArrangements(products);
 
       const sortedItems = [...items].sort((a, b) => {
@@ -239,6 +260,7 @@ export class ProductsPurchasedByCustomer implements OnInit {
           Entregado_El_Dia: firstProduct.orden.Entregado_El_Dia,
           productos: productsInOrder,
           isGrouped: true,
+          orden: firstProduct.orden,
         };
         result.push(arrangement);
       }

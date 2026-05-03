@@ -21,3 +21,18 @@
 .stone-img.selected {
     transform: translateX(-5px) scale(1.5);
 }
+
+/* vista en desktop */
+@media (min-width: 769px) {
+    .plant-img.selected {
+        transform: translateY(-150px) translateX(80px) scale(0.75);
+    }
+
+    .plantPot-img.selected {
+        transform: translateY(0px) scale(0.75);
+    }
+
+    .stone-img.selected {
+        transform: translateX(100px) translateY(-40px) scale(0.75);
+    }
+}

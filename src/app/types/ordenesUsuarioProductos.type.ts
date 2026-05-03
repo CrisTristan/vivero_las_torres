@@ -23,7 +23,7 @@ interface Order {
   usuario: User;
   Entregado_El_Dia: string | null;
   es_arreglo_personalizado: boolean;
-  direccion_envio: DireccionEnvio[];
+  direccion_envio: DireccionEnvio;
   metodo_entrega: 'enviar' | 'recoger';
 }
 

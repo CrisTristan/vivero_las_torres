@@ -1,4 +1,5 @@
 import { User } from "./user";
+import { DireccionEnvio } from "./direccionEnvio.type";
 
 export interface OrderedProductInfo {
   imagen: string;
@@ -12,6 +13,8 @@ export interface OrderInfo {
   usuario?: User;
   Entregado_El_Dia: string | null;
   es_arreglo_personalizado?: boolean;
+  metodo_entrega: 'recoger' | 'enviar' | null;
+  direccion_envio: DireccionEnvio;
 }
 
 export interface ProductPurchasedByCustomer {
@@ -32,6 +35,7 @@ export interface PersonalizedArrangement {
   Entregado_El_Dia: string | null;
   productos: ProductPurchasedByCustomer[]; // Contiene los 3 productos (planta, maceta, piedra)
   isGrouped: true; // Identificador para distinguir de productos simples
+  orden: OrderInfo; // Información de la orden para el arreglo personalizado
 }
 
 export type PurchasedItem = ProductPurchasedByCustomer | PersonalizedArrangement;
