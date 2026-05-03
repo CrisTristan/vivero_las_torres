@@ -1,6 +1,7 @@
 <div class="bg-gray-300 w-screen pb-10">
   <div class="flex flex-row justify-between my-10">
-    <h2 class="text-xl font-bold">Tu arreglo</h2>
+    <h2>Arreglo</h2>
+    <h2 class="text-xl font-bold">Vista Previa</h2>
     @if (
       plantDesignService.isComplete()
     ) {
@@ -14,7 +15,6 @@
   <div class="flex flex-col justify-center">
     <div class="flex flex-row justify-around gap-4 my-20 design-preview">
       @if (plantDesignService.userSelectedPlant()) {
-        <div class="rounded-xl p-4 shadow mb-2.5">
           <img
             src="{{ plantDesignService.userSelectedPlant()?.productos?.imagen }}"
             alt="{{ plantDesignService.userSelectedPlant()?.productos?.nombre }}"
@@ -25,15 +25,14 @@
               plantDesignService.userSelectedStone()
             "
           />
-        </div>
       } @else {
-        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600">
+        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
           <h3>Planta</h3>
         </div>
       }
 
       @if (plantDesignService.userSelectedPot()) {
-        <div class="rounded-xl p-4 shadow mb-2.5">
+
           <img
             src="{{ plantDesignService.userSelectedPot()?.productos?.imagen }}"
             alt="{{ plantDesignService.userSelectedPot()?.productos?.nombre }}"
@@ -44,15 +43,13 @@
               plantDesignService.userSelectedStone()
             "
           />
-        </div>
       } @else {
-        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600">
+        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
           <h3>Maceta</h3>
         </div>
       }
 
       @if (plantDesignService.userSelectedStone()) {
-        <div class="rounded-xl p-4 shadow mb-2.5">
           <img
             src="{{ plantDesignService.userSelectedStone()?.productos?.imagen }}"
             alt="{{ plantDesignService.userSelectedStone()?.productos?.nombre }}"
@@ -63,9 +60,8 @@
               plantDesignService.userSelectedStone()
             "
           />
-        </div>
       } @else {
-        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600">
+        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
           <h3>Piedra</h3>
         </div>
       }

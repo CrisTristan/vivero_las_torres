@@ -1,38 +1,36 @@
-.plant-img {
-  transition: transform 2s ease, opacity 0.3s ease;
+.design-preview {
+    position: relative;
+    width: min(70vw, 650px);
+    height: clamp(200px, 40vh, 350px);
+    margin-inline: auto;
 }
 
-.plant-img.selected {
-  transform: translateY(-50px) translateX(130px) scale(1.5);
-}
-
-.plantPot-img{
-    transition: transform 2s ease, opacity 0.3s ease;
+.design-preview img {
+    position: absolute;
+    object-fit: contain;
 }
 
 .plantPot-img.selected {
-    transform: translateY(80px) scale(1.5);
+    width: clamp(180px, 22vw, 300px);
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    z-index: 2;
 }
 
-.stone-img{
-    transition: transform 2s ease, opacity 0.3s ease;
+.plant-img.selected {
+    width: clamp(180px, 23vw, 320px);
+    left: 50%;
+    bottom: calc(20px + clamp(180px, 22vw, 300px));
+    /* 👈 clave */
+    transform: translateX(-50%);
+    z-index: 3;
 }
 
 .stone-img.selected {
-    transform: translateX(-5px) scale(1.5);
-}
-
-/* vista en desktop */
-@media (min-width: 769px) {
-    .plant-img.selected {
-        transform: translateY(-150px) translateX(80px) scale(0.75);
-    }
-
-    .plantPot-img.selected {
-        transform: translateY(0px) scale(0.75);
-    }
-
-    .stone-img.selected {
-        transform: translateX(100px) translateY(-40px) scale(0.75);
-    }
+    width: clamp(150px, 20vw, 280px);
+    left: calc(50% + clamp(160px, 20vw, 280px));
+    bottom: 120px;
+    transform: translateX(-50%);
+    z-index: 1;
 }
