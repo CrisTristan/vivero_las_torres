@@ -1,6 +1,20 @@
 import { MacetaDescription, Maceta } from "./maceta_description";
 import { Piedra } from "./piedra.type";
 
+export enum ProductSize {
+	MINI = 'mini',
+	PEQUEÑO = 'pequeño',
+	MEDIANO = 'mediano',
+	GRANDE = 'grande',
+	EXTRA_GRANDE = 'extra_grande'
+}
+
+export interface Planta{
+	id: number;
+	producto_id: number;
+	volumen?: ProductSize;
+}
+
 export interface ProductDescription extends MacetaDescription {
     id?: number;
 	descripcion: string;
@@ -24,7 +38,7 @@ export interface ProductData {
 	statusLabel?: string;
 }
 
-export interface Product extends Piedra, Maceta {
+export interface Product extends Piedra, Maceta, Planta {
 	id: number;
 	producto_id: number;
 	nivel_cuidado: string;

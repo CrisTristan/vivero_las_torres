@@ -161,6 +161,21 @@
 			</div>
 			}
 
+			@if(this.selectedCategory() === 'macetas' || this.selectedCategory() === 'plantas') {
+			<div>
+				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Volumen (tamaño)</label>
+				<select name="volumen" required [ngModel]="createFormState().volumen ?? '' "
+					(ngModelChange)="updateCreateField('volumen', $event)"
+					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+					<!-- <option value="" disabled>Selecciona un tamaño</option>   -->
+					@for (volumenOption of createVolumenOptions; track volumenOption) {
+					<option [value]="volumenOption">{{ volumenOption }}</option>
+					}
+				</select>
+				<p class="text-[12px] text-[#6b7280]">El campo Volumen es importante</p>
+			</div>
+			}
+
 			<div>
 				<label class="block text-[14px] font-semibold text-[#374151] mb-1">Material</label>
 				<select name="createType" required [ngModel]="createFormState().type"

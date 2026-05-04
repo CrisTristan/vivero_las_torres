@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy, effect } from "@angular/core";
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy, effect, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import {
@@ -22,6 +22,7 @@ import { Router } from "@angular/router";
 })
 export class DeliveryDataForm implements OnInit {
 
+  @Input() createNewShippingData = signal(false); // Nueva propiedad para indicar si se está creando una nueva dirección de envío.
   //Importante ---------------------->
   // para se deberia redirigir el usuario a la pantalla de pago una vez que se haya completado los datos de envio.
   public routeTrackerService = inject(RouteTrackerService);
@@ -249,6 +250,8 @@ export class DeliveryDataForm implements OnInit {
           detail: "Error al crear dirección de envío",
         });
       }
+
+      this.createNewShippingData.set(false); // Restablecer el estado de creación después de intentar crear la dirección
     } catch (error) {
       this.messageService.add({
         severity: "error",

@@ -1,17 +1,10 @@
 <div class="h-[87vh] bg-gray-50 py-10 px-4">
   <div class="max-w-2xl mx-auto">
     <!-- Header con avatar -->
-    <div
-      class="bg-gradient-to-r from-green-500 to-green-700 rounded-t-2xl p-8 text-center relative"
-    >
+    <div class="bg-gradient-to-r from-green-500 to-green-700 rounded-t-2xl p-8 text-center relative">
       <div
-        class="w-24 h-24 bg-white rounded-full mx-auto flex items-center justify-center shadow-lg border-4 border-white"
-      >
-        <span
-          class="material-symbols-outlined text-green-600"
-          style="font-size: 56px"
-          >person</span
-        >
+        class="w-24 h-24 bg-white rounded-full mx-auto flex items-center justify-center shadow-lg border-4 border-white">
+        <span class="material-symbols-outlined text-green-600" style="font-size: 56px">person</span>
       </div>
       <h1 class="text-white text-2xl font-bold mt-4">
         {{ user()?.nombre }} {{ user()?.apellidos }}
@@ -21,9 +14,7 @@
 
     <!-- Datos del usuario -->
     <div class="bg-white shadow-lg rounded-b-2xl p-8 mb-8">
-      <h2
-        class="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2"
-      >
+      <h2 class="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
         <span class="material-symbols-outlined text-green-600">badge</span>
         Información Personal
       </h2>
@@ -31,9 +22,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <!-- Nombre -->
         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-          <p
-            class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1"
-          >
+          <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">
             Nombre
           </p>
           <p class="text-gray-800 font-medium text-lg">{{ user()?.nombre }}</p>
@@ -41,9 +30,7 @@
 
         <!-- Apellidos -->
         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-          <p
-            class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1"
-          >
+          <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">
             Apellidos
           </p>
           <p class="text-gray-800 font-medium text-lg">
@@ -54,12 +41,8 @@
         <!-- Correo -->
         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
           <div class="flex items-center gap-2 mb-1">
-            <span class="material-symbols-outlined text-green-500 text-base"
-              >mail</span
-            >
-            <p
-              class="text-xs text-gray-400 uppercase tracking-wider font-semibold"
-            >
+            <span class="material-symbols-outlined text-green-500 text-base">mail</span>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">
               Correo Electrónico
             </p>
           </div>
@@ -69,12 +52,8 @@
         <!-- Teléfono -->
         <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
           <div class="flex items-center gap-2 mb-1">
-            <span class="material-symbols-outlined text-green-500 text-base"
-              >phone</span
-            >
-            <p
-              class="text-xs text-gray-400 uppercase tracking-wider font-semibold"
-            >
+            <span class="material-symbols-outlined text-green-500 text-base">phone</span>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">
               Teléfono
             </p>
           </div>
@@ -83,129 +62,32 @@
       </div>
     </div>
 
-    <div class="border-t-2 border-gray-400 my-5">
-      <button class="flex items-center gap-2 text-green-600 font-medium"
-        (click)="navigateToCustomerPurchaseHistoryPage()"
-      >
-        <span class="material-symbols-outlined"> deployed_code_history </span>
-        Ver Historial de Compras
-      </button>
-    </div>
-
-    <div>
-      <button class="flex items-center gap-2 text-green-600 font-medium"
-        (click)="navigateToCustomerShippingDataPage()"
-      >
-        <span class="material-symbols-outlined"> delivery_truck_speed </span>
-        Ver y Editar mis Datos de Envío
-      </button>
-    </div>
-
-    <!-- Formulario cambiar contraseña -->
-    <!-- <div class="bg-white shadow-lg rounded-2xl p-8 mb-8">
-      <h2 class="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
-        <span class="material-symbols-outlined text-green-600">lock</span>
-        Cambiar Contraseña
-      </h2>
-
-      @if (passwordSuccess()) {
-        <div class="bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded-xl mb-5 flex items-center gap-2">
-          <span class="material-symbols-outlined text-green-600">check_circle</span>
-          Contraseña actualizada correctamente.
-        </div>
-      }
-
-      @if (passwordError()) {
-        <div class="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-xl mb-5 flex items-center gap-2">
-          <span class="material-symbols-outlined text-red-600">error</span>
-          {{ passwordError() }}
-        </div>
-      }
-
-      <form class="space-y-5">
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1" for="currentPassword">
-            Contraseña Actual
-          </label>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">key</span>
-            <input
-              [(ngModel)]="currentPassword"
-              name="currentPassword"
-              id="currentPassword"
-              type="password"
-              placeholder="Ingresa tu contraseña actual"
-              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-400 focus:border-transparent outline-none transition"
-            />
-          </div>
-        </div>
-
-       
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1" for="newPassword">
-            Nueva Contraseña
-          </label>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">lock_reset</span>
-            <input
-              [(ngModel)]="newPassword"
-              name="newPassword"
-              id="newPassword"
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-400 focus:border-transparent outline-none transition"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1" for="confirmPassword">
-            Confirmar Nueva Contraseña
-          </label>
-          <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">lock_clock</span>
-            <input
-              [(ngModel)]="confirmPassword"
-              name="confirmPassword"
-              id="confirmPassword"
-              type="password"
-              placeholder="Repite la nueva contraseña"
-              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-400 focus:border-transparent outline-none transition"
-            />
-          </div>
-        </div>
-
-        <button
-          type="button"
-          (click)="onChangePassword()"
-          [disabled]="passwordLoading()"
-          class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          @if (passwordLoading()) {
-            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-            Actualizando...
-          } @else {
-            <span class="material-symbols-outlined text-xl">save</span>
-            Cambiar Contraseña
-          }
+    <!-- acciones del usuario -->
+    <div class="flex flex-col gap-5">
+      <div class="border-t-2 border-gray-400">
+        <button class="flex items-center gap-2 text-green-600 font-medium"
+          (click)="navigateToCustomerPurchaseHistoryPage()">
+          <span class="material-symbols-outlined"> deployed_code_history </span>
+          Ver Historial de Compras
         </button>
-      </form>
-    </div> -->
+      </div>
 
+      <div>
+        <button class="flex items-center gap-2 text-green-600 font-medium"
+          (click)="navigateToCustomerShippingDataPage()">
+          <span class="material-symbols-outlined"> delivery_truck_speed </span>
+          Ver y Editar mis Datos de Envío
+        </button>
+      </div>
 
-    <!-- Botón cerrar sesión -->
-    <div class="text-center pb-20">
-      <button
-        (click)="onLogout()"
-        class="text-red-500 hover:text-red-700 font-medium py-3 px-6 rounded-xl border border-red-200 hover:border-red-400 hover:bg-red-50 transition duration-200 inline-flex items-center gap-2"
-      >
-        <span class="material-symbols-outlined">logout</span>
-        Cerrar Sesión
-      </button>
+      <!-- Botón cerrar sesión -->
+      <div class="text-center pb-20 mt-5">
+        <button (click)="onLogout()"
+          class="text-red-500 hover:text-red-700 font-medium py-3 px-6 rounded-xl border border-red-200 hover:border-red-400 hover:bg-red-50 transition duration-200 inline-flex items-center gap-2">
+          <span class="material-symbols-outlined">logout</span>
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
   </div>
 </div>

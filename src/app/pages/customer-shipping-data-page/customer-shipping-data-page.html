@@ -1,10 +1,16 @@
 <div class="h-[80vh] overflow-hidden overflow-y-scroll">
     <h1 class="text-2xl text-green-500 text-center">Datos de Envío</h1>
     <h2 class="text-lg text-red-700 text-center">Solo se realizan envios en Cancún</h2>
-     <app-delivery-data-form />
+     <app-delivery-data-form [createNewShippingData]="this.userIsCreatingNewShippingData" />
     <div class="flex justify-center">
-        <!-- <button class="text-xl text-white bg-green-500 hover:bg-green-600 py-2 px-4 rounded">
-            Añadir otra dirección de envío
-        </button> -->
+        @if(this.userShippingDataService.getAllUserShippingData().length === 1){
+        <button 
+            class="text-xl text-white bg-green-500 hover:bg-green-600 py-2 px-4 rounded"
+            (click)="onCreateNewShippingData()"
+        >
+             {{this.userIsCreatingNewShippingData() ? 'Cancelar nueva dirección' : 'Agregar nueva dirección de envío'}}
+        </button>
+        }
+        
     </div>
 </div>

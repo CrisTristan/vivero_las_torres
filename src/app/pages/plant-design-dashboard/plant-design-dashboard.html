@@ -1,51 +1,96 @@
 <div class="h-[82vh] overflow-hidden overflow-y-scroll">
-  <div class="flex flex-col justify-center items-center p-5 gap-3 text-center">
-    <h1 class="text-2xl">Crea tu propio Arreglo Personalizado</h1>
-    <h2 class="text-green-700 text-xl">
-      Combina
-      <div class="flex flex-col">
-        <p class="text-black font-bold">1.-<span class="text-red-600">PLANTA</span></p>
-        <p class="text-black font-bold">2.-<span class="text-yellow-600">MACETA</span></p>
-        <p class="text-black font-bold">3.-<span class="text-blue-600">PIEDRA DECORATIVA</span></p>
+  <div class="bg-gradient-to-br from-green-50 to-emerald-50 py-10 px-6 rounded-2xl shadow-md border-2 border-green-200 mb-4">
+    <div class="flex flex-col justify-center items-center gap-2 text-center max-w-3xl mx-auto">
+      <div class="flex items-center justify-center gap-3">
+        <span class="material-symbols-outlined text-5xl text-green-600">palette</span>
+        <h1 class="text-4xl font-bold text-gray-800">Arreglo Personalizado</h1>
+        <span class="material-symbols-outlined text-5xl text-green-600">favorite</span>
       </div>
-       para crear un arreglo único que refleje tu personalidad
-    </h2>
+      
+      <p class="text-gray-700 text-lg font-medium">Combina tres elementos para crear un arreglo único que refleje tu personalidad</p>
+      
+      <div class="flex flex-col gap-2 w-full">
+        <div class="flex items-center justify-center gap-3 bg-white rounded-lg p-4 shadow-sm border-l-4 border-green-500 hover:shadow-md transition-all">
+          <div class="bg-green-100 rounded-full p-3 flex items-center justify-center min-w-fit">
+            <span class="material-symbols-outlined text-2xl text-green-600">eco</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-green-600 text-lg">Paso 1</p>
+            <p class="text-gray-700">Selecciona una <span class="font-bold text-green-600">PLANTA</span></p>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-center gap-3 bg-white rounded-lg p-4 shadow-sm border-l-4 border-green-500 hover:shadow-md transition-all">
+          <div class="bg-green-100 rounded-full p-3 flex items-center justify-center min-w-fit">
+            <span class="material-symbols-outlined text-2xl text-green-600">potted_plant</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-green-600 text-lg">Paso 2</p>
+            <p class="text-gray-700">Elige una <span class="font-bold text-green-600">MACETA</span></p>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-center gap-3 bg-white rounded-lg p-4 shadow-sm border-l-4 border-green-500 hover:shadow-md transition-all">
+          <div class="bg-green-100 rounded-full p-3 flex items-center justify-center min-w-fit">
+            <span class="material-symbols-outlined text-2xl text-green-600">diamond</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-green-600 text-lg">Paso 3</p>
+            <p class="text-gray-700">Agrega <span class="font-bold text-green-600">PIEDRAS DECORATIVAS</span></p>
+          </div>
+        </div>
+      </div>
+      <p class="text-gray-600 italic text-center">Los pasos anteriores se pueden realizar en cualquier orden</p>
+    </div>
   </div>
   <div class="flex flex-col items-center">
-    <div class="flex flex-row justify-around gap-5 my-3 font-bold">
+    <div class="flex flex-row justify-center items-center gap-1.5 my-8 font-bold md:gap-4">
       <button
         [class.active]="selectedFilter() === 'plantas'"
-        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        class="bg-green-400 px-6 py-3 rounded-full filter-button shadow-lg hover:shadow-xl hover:scale-105 transition-all 
+        duration-300 cursor-pointer border-2 border-green-500 text-white font-bold text-lg"
         (click)="setFilter('plantas')"
+        title="Selecciona una planta"
       >
-        1
+        <span class="flex items-center gap-2 sm:flex flex-col">
+          <span class="material-symbols-outlined text-2xl">eco</span>
+          <span>Planta</span>
+        </span>
       </button>
-      <span class="material-symbols-outlined"> arrow_forward_ios </span>
+      <span class="material-symbols-outlined text-green-600 text-3xl animate-pulse"> arrow_forward_ios </span>
       <button
         [class.active]="selectedFilter() === 'macetas'"
-        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        class="bg-green-400 px-6 py-3 rounded-full filter-button shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 border-green-500 text-white font-bold text-lg"
         (click)="setFilter('macetas')"
+        title="Selecciona una maceta"
       >
-        2
+        <span class="flex items-center gap-2 flex-col">
+          <span class="material-symbols-outlined text-2xl">potted_plant</span>
+          <span>Maceta</span>
+        </span>
       </button>
-      <span class="material-symbols-outlined"> arrow_forward_ios </span>
+      <span class="material-symbols-outlined text-green-600 text-3xl animate-pulse"> arrow_forward_ios </span>
       <button
         [class.active]="selectedFilter() === 'piedras'"
-        class="bg-green-400 px-4 py-2 rounded-lg filter-button"
+        class="bg-green-400 px-6 py-3 rounded-full filter-button shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 border-green-500 text-white font-bold text-lg"
         (click)="setFilter('piedras')"
+        title="Selecciona piedras decorativas"
       >
-        3
+        <span class="flex items-center gap-2 flex-col">
+          <span class="material-symbols-outlined text-2xl">diamond</span>
+          <span>Piedras</span>
+        </span>
       </button>
     </div>
     <!-- Renderizar compoennete Plantas|Macetas|Piedras Decorativas Dependiendo de el filtro seleccionado de arriba -->
     <div class="content text-xl my-10">
       @switch (selectedFilter()) {
         @case ('plantas') {
-          <app-plants-designs />
+          <app-plants-designs [currentPotSize]="currentPotSize"/>
         }
 
         @case ('macetas') {
-          <app-plantpots-designs />
+          <app-plantpots-designs [currentPlantSize]="currentPlantSize"/>
         }
 
         @case ('piedras') {

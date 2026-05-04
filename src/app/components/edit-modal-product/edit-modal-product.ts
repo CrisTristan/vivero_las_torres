@@ -13,7 +13,7 @@ interface EditPlantForm {
   description: string;
   // Campos específicos para macetas
   es_jardinera?: boolean;
-  volumen?: 'Grande' | 'Mediana' | 'Pequeña';
+  volumen?: 'extra_grande' | 'grande' | 'mediano' | 'pequeño' | 'mini';
   diametro_superior?: string;
   diametro_inferior?: string;
   altura?: string;
@@ -37,6 +37,7 @@ export class EditModalProduct implements OnChanges {
   @Output() saveProduct = new EventEmitter<Product>();
 
   public readonly careLevelOptions: CareLevel[] = ['Bajo', 'Medio', 'Alto'];
+  public readonly volumenOptions: EditPlantForm['volumen'][] = ['extra_grande', 'grande', 'mediano', 'pequeño', 'mini'];
   private readonly typeOptionsByCategory: Record<string, string[]> = {
     plantas: ['interior', 'exterior'],
     macetas: ['barro', 'plastico', 'fibra_vidreo'],
@@ -77,6 +78,8 @@ export class EditModalProduct implements OnChanges {
       const category = this.getProductCategory();
       const currentType = this.normalizeType(this.product.tipo ?? '');
 
+      console.log('volumen es:', this.product.volumen);
+
       this.formState.set({
         imageUrl: this.product.productos.imagen ?? '',
         name: this.product.productos.nombre ?? '',
@@ -84,7 +87,7 @@ export class EditModalProduct implements OnChanges {
         isPiedraSuelta: this.extractPiedraSueltaValue(this.product),
         careLevel: this.normalizeCareLevel(this.product.nivel_cuidado),
         description: this.product.descripcion.descripcion, // Convertimos la descripción a string para mostrarla en el textarea, ya sea como JSON o texto plano.
-        volumen: this.isMacetasCategory ? this.normalizeVolumen(this.product.descripcion.volumen) : undefined,
+        volumen: this.isMacetasCategory || this.isPlantasCategory ? this.product.volumen : undefined,
         diametro_superior: this.isMacetasCategory ? this.product.descripcion.diametro_superior : undefined,
         diametro_inferior: this.isMacetasCategory ? this.product.descripcion.diametro_inferior : undefined,
         altura: this.isMacetasCategory ? this.product.descripcion.altura : undefined,
@@ -151,7 +154,7 @@ export class EditModalProduct implements OnChanges {
     // const parsedDescription = this.parsePlantaDescription(state.description);
     let parsedDescription;
 
-    switch (category) { 
+    switch (category) {
       case 'plantas':
       case 'piedras':
         parsedDescription = this.parsePlantaDescription(state.description);
@@ -159,7 +162,6 @@ export class EditModalProduct implements OnChanges {
       case 'macetas':
         parsedDescription = this.parseMacetaDescription(
           state.description,
-          state.volumen ?? '',
           state.diametro_superior ?? '',
           state.diametro_inferior ?? '',
           state.altura ?? '',
@@ -169,11 +171,13 @@ export class EditModalProduct implements OnChanges {
 
     const updatedProduct = {
       ...this.product,
+      ...(category === 'plantas' ? { volumen: state.volumen } : {}
+      ),
       ...(category === 'piedras'
         ? { esPiedraSuelta: state.isPiedraSuelta, es_piedra_suelta: state.isPiedraSuelta } //???????????
         : {}),
       ...(category === 'macetas'
-        ? { es_jardinera: state.es_jardinera ?? this.product.es_jardinera }
+        ? { es_jardinera: state.es_jardinera ?? this.product.es_jardinera, volumen: state.volumen ?? this.product.volumen }
         : {}),
       nivel_cuidado: (state.careLevel ?? 'Bajo').toLowerCase(),
       tipo: this.normalizeType(state.type) || this.getDefaultTypeByCategory(category),
@@ -219,7 +223,7 @@ export class EditModalProduct implements OnChanges {
   }
 
   private normalizeVolumen(value: unknown): EditPlantForm['volumen'] {
-    if (value === 'Grande' || value === 'Mediana' || value === 'Pequeña') {
+    if (value === 'grande' || value === 'mediano' || value === 'pequeño' || value === 'extra_grande' || value === 'mini') {
       return value;
     }
 
@@ -265,28 +269,12 @@ export class EditModalProduct implements OnChanges {
       .trim();
   }
 
-  private stringifyDescription(value: unknown): string {
-    if (value === null || value === undefined) {
-      return '';
-    }
-
-    if (typeof value === 'string') {
-      return value;
-    }
-
-    try {
-      return JSON.stringify(value, null, 2);
-    } catch {
-      return '';
-    }
-  }
-
 
   private parsePlantaDescription(desc: string): Product['descripcion'] {
     console.log("[DEBUG] EditModalProduct - parsePlantaDescription called with value:", desc);
     const trimmed = desc.trim();
 
-  
+
     try {
       const parsed = JSON.parse(trimmed);
 
@@ -302,10 +290,11 @@ export class EditModalProduct implements OnChanges {
     } as Product['descripcion'];
   }
 
-  private parseMacetaDescription(desc: string, volumen: string, diametro_superior: string, diametro_inferior: string, altura: string): Product['descripcion'] {
+  private parseMacetaDescription(desc: string, diametro_superior: string, diametro_inferior: string, altura: string): Product['descripcion'] {
     console.log("[DEBUG] EditModalProduct - parseMacetaDescription called with value:", desc);
     const trimmed = desc.trim();
-    try {      const parsed = JSON.parse(trimmed);
+    try {
+      const parsed = JSON.parse(trimmed);
 
       if (parsed && typeof parsed === 'object') {
         return parsed as Product['descripcion'];
@@ -315,7 +304,6 @@ export class EditModalProduct implements OnChanges {
     }
     return {
       descripcion: trimmed,
-      volumen: volumen,
       diametro_superior: diametro_superior,
       diametro_inferior: diametro_inferior,
       altura: altura
@@ -327,6 +315,7 @@ export class EditModalProduct implements OnChanges {
     return {
       imageUrl: '',
       name: '',
+      volumen: 'mediano',
       type: this.getDefaultTypeByCategory('plantas'),
       isPiedraSuelta: false,
       careLevel: 'Bajo',

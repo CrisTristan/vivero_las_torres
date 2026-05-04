@@ -1,7 +1,7 @@
-import { Component, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, inject, Input, signal } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
-import { Product } from '../../types/product.type';
+import { Product, ProductSize } from '../../types/product.type';
 import { FilterCategoryService } from '../../services/filter-category-service';
 import { fetchAllMacetas } from '../../controllers/maceta_controller';
 
@@ -17,6 +17,8 @@ export class PlantpotsDesigns {
   @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
   
   public filterCategoryService = inject(FilterCategoryService);
+
+  @Input() currentPlantSize = signal<ProductSize | undefined>(undefined); //Nueva propiedad de entrada para recibir el tamaño de la planta seleccionada en el dashboard
 
   constructor(
     private router: Router
@@ -62,6 +64,25 @@ export class PlantpotsDesigns {
     for (let i = 0; i < plantPots.length; i += 4) {
       groups.push(plantPots.slice(i, i + 4));
     }
+
+    if(this.currentPlantSize()){
+
+      // Obtener todos los valores del enum
+      const sizes = Object.values(ProductSize);
+      const currentIndex = sizes.indexOf(this.currentPlantSize()!);
+      const nextIndex = currentIndex + 1;
+
+      console.log(`Índice actual: ${currentIndex}, Siguiente índice: ${nextIndex}`);
+
+      //Obtener el siguiente tamaño:
+      const nextSize = nextIndex < sizes.length ? sizes[nextIndex] : null;
+
+      return groups.map(group => group.filter(plantPot => plantPot.volumen === this.currentPlantSize()  || 
+          (nextSize && plantPot.volumen === nextSize) || plantPot.id === this.designService.userSelectedPot()?.id // Permitir que la maceta seleccionada por el usuario siempre aparezca, independientemente de su tamaño
+        )
+      );
+    }
+
     return groups;
   }
 

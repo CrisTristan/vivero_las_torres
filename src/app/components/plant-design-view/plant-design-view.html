@@ -1,3 +1,25 @@
+<style>
+  @keyframes spin-pause {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    /* Gira en los primeros 30% del tiempo */
+    30% {
+      transform: rotate(-360deg);
+    }
+
+    /* Se queda detenido el resto del tiempo */
+    100% {
+      transform: rotate(-360deg);
+    }
+  }
+
+  .spin-counter {
+    animation: spin-pause 10s linear infinite;
+  }
+</style>
+
 <div class="bg-gray-300 w-screen pb-10">
   <div class="flex flex-row justify-between my-10">
     <h2>Arreglo</h2>
@@ -5,11 +27,12 @@
     @if (
       plantDesignService.isComplete()
     ) {
-      <button class="bg-red-200 rounded-xl p-2" (click)="resetDesign()">
-        <span class="material-symbols-outlined"> replay </span>
-        <br />
-        Reiniciar
-      </button>
+      <div class="flex flex-col items-center gap-3">
+        <button class="bg-red-400 hover:bg-red-600 active:bg-red-700 text-black rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex flex-col items-center gap-2" (click)="resetDesign()">
+          <span class="material-symbols-outlined text-2xl font-bold spin-counter"> replay </span>
+          <span class="font-semibold text-sm">Reiniciar Elección</span>
+        </button>
+      </div>
     }
   </div>
   <div class="flex flex-col justify-center">

@@ -17,17 +17,18 @@
         </div>
       } -->
       <span>Dirección #{{i+1 }}</span>
-      <span class="font-semibold text-green-700">Calle: {{ shippingData.calle }}, Num. Ext: {{ shippingData.numero_exterior }}, {{ shippingData.numero_interior ? ' Num. Int. ' + shippingData.numero_interior : '' }}</span>
+      <span class="font-semibold text-green-700">Calle: {{ shippingData.calle }}, Num. Ext: {{
+        shippingData.numero_exterior }}, {{ shippingData.numero_interior ? ' Num. Int. ' + shippingData.numero_interior
+        : '' }}</span>
       <span class="text-gray-700">Col. {{ shippingData.colonia }}</span>
       <span class="text-gray-700">CP: {{ shippingData.codigo_postal }}</span>
     </div>
-    <div class="text-xs text-gray-500">{{ shippingData.region }} - {{ shippingData.manzana }} - {{ shippingData.lote }}</div>
+    <div class="text-xs text-gray-500">{{ shippingData.region }} - {{ shippingData.manzana }} - {{ shippingData.lote }}
+    </div>
     <!-- Botones de acciones -->
     <div class="flex gap-2">
-      <button
-        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition"
-        (click)="this.handleEditShippingDataForm(shippingData)"
-      >
+      <button class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition"
+        (click)="this.handleEditShippingDataForm(shippingData)">
         Editar
       </button>
       <!-- <button
@@ -40,131 +41,93 @@
   </div>
   <!-- Mostrar solo el formulario expandido si está en edición -->
   @if (this.indexEditingShippingDataForm() === shippingData?.id) {
-      <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          @for (field of numericFields; track field.key) {
-            <div class="flex flex-col">
-              <label class="label">{{ field.label }}</label>
-              <input
-                type="text"
-                class="input"
-                [class.border-red-500]="errors()[field.key]"
-                [(ngModel)]="form()[field.key]"
-                [name]="field.key"
-                (ngModelChange)="updateField(field.key, $event)"
-              />
-              @if (errors()[field.key]) {
-                <span class="error">{{ errors()[field.key] }}</span>
-              }
-            </div>
-          }
-          <div class="flex flex-col">
-            <label class="label">Colonia</label>
-            <input
-              class="input"
-              [class.border-red-500]="errors().colonia"
-              [(ngModel)]="form().colonia"
-              name="colonia"
-              (ngModelChange)="updateField('colonia', $event)"
-            />
-            @if (errors().colonia) {
-              <span class="error">{{ errors().colonia }}</span>
-            }
-          </div>
-          <div class="flex flex-col md:col-span-2">
-            <label class="label">Calle</label>
-            <input
-              class="input"
-              [class.border-red-500]="errors().calle"
-              [(ngModel)]="form().calle"
-              name="calle"
-              (ngModelChange)="updateField('calle', $event)"
-            />
-            @if (errors().calle) {
-              <span class="error">{{ errors().calle }}</span>
-            }
-          </div>
-          <div class="flex flex-col">
-            <label class="label">Número interior</label>
-            <input
-              class="input"
-              [class.border-red-500]="errors().numero_interior"
-              [(ngModel)]="form().numero_interior"
-              name="numero_interior"
-              (ngModelChange)="updateField('numero_interior', $event)"
-            />
-            @if (errors().numero_interior) {
-              <span class="error">{{ errors().numero_interior }}</span>
-            }
-          </div>
-          <div class="flex flex-col">
-            <label class="label">Número exterior (opcional)</label>
-            <input
-              class="input"
-              [(ngModel)]="form().numero_exterior"
-              name="numero_exterior"
-              (ngModelChange)="updateField('numero_exterior', $event)"
-            />
-          </div>
-          <div class="flex flex-col">
-            <label class="label">Código postal</label>
-            <input
-              class="input"
-              [class.border-red-500]="errors().codigo_postal"
-              [(ngModel)]="form().codigo_postal"
-              name="codigo_postal"
-              (ngModelChange)="updateField('codigo_postal', $event)"
-            />
-            @if (errors().codigo_postal) {
-              <span class="error">{{ errors().codigo_postal }}</span>
-            }
-          </div>
-          <div class="flex flex-col md:col-span-2">
-            <label class="label">Referencia (opcional)</label>
-            <textarea
-              rows="3"
-              class="input"
-              [(ngModel)]="form().referencia"
-              name="referencia"
-              (ngModelChange)="updateField('referencia', $event)"
-            ></textarea>
-          </div>
-        </div>
-        <div class="flex gap-2 mt-4">
-          <button
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
-            [disabled]="!isValid()"
-            (click)="this.onSubmitEditedForm()"
-          >
-            Guardar cambios
-          </button>
-          <button
-            class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2.5 rounded-lg transition"
-            (click)="cancelEditShippingDataForm(); $event.stopPropagation()"
-          >
-            Cancelar
-          </button>
-        </div>
+  <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      @for (field of numericFields; track field.key) {
+      <div class="flex flex-col">
+        <label class="label">{{ field.label }}</label>
+        <input type="text" class="input" [class.border-red-500]="errors()[field.key]" [(ngModel)]="form()[field.key]"
+          [name]="field.key" (ngModelChange)="updateField(field.key, $event)" />
+        @if (errors()[field.key]) {
+        <span class="error">{{ errors()[field.key] }}</span>
+        }
       </div>
-    }
-  }@empty {
+      }
+      <div class="flex flex-col">
+        <label class="label">Colonia</label>
+        <input class="input" [class.border-red-500]="errors().colonia" [(ngModel)]="form().colonia" name="colonia"
+          (ngModelChange)="updateField('colonia', $event)" />
+        @if (errors().colonia) {
+        <span class="error">{{ errors().colonia }}</span>
+        }
+      </div>
+      <div class="flex flex-col md:col-span-2">
+        <label class="label">Calle</label>
+        <input class="input" [class.border-red-500]="errors().calle" [(ngModel)]="form().calle" name="calle"
+          (ngModelChange)="updateField('calle', $event)" />
+        @if (errors().calle) {
+        <span class="error">{{ errors().calle }}</span>
+        }
+      </div>
+      <div class="flex flex-col">
+        <label class="label">Número interior</label>
+        <input class="input" [class.border-red-500]="errors().numero_interior" [(ngModel)]="form().numero_interior"
+          name="numero_interior" (ngModelChange)="updateField('numero_interior', $event)" />
+        @if (errors().numero_interior) {
+        <span class="error">{{ errors().numero_interior }}</span>
+        }
+      </div>
+      <div class="flex flex-col">
+        <label class="label">Número exterior (opcional)</label>
+        <input class="input" [(ngModel)]="form().numero_exterior" name="numero_exterior"
+          (ngModelChange)="updateField('numero_exterior', $event)" />
+      </div>
+      <div class="flex flex-col">
+        <label class="label">Código postal</label>
+        <input class="input" [class.border-red-500]="errors().codigo_postal" [(ngModel)]="form().codigo_postal"
+          name="codigo_postal" (ngModelChange)="updateField('codigo_postal', $event)" />
+        @if (errors().codigo_postal) {
+        <span class="error">{{ errors().codigo_postal }}</span>
+        }
+      </div>
+      <div class="flex flex-col md:col-span-2">
+        <label class="label">Referencia (opcional)</label>
+        <textarea rows="3" class="input" [(ngModel)]="form().referencia" name="referencia"
+          (ngModelChange)="updateField('referencia', $event)"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-4">
+      <button
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+        [disabled]="!isValid()" (click)="this.onSubmitEditedForm()">
+        Guardar cambios
+      </button>
+      <button class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2.5 rounded-lg transition"
+        (click)="cancelEditShippingDataForm(); $event.stopPropagation()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+  }
+  }
+  @if(this.userShippingDataService.getAllUserShippingData().length === 0 || this.createNewShippingData()) {
   <div>
+    @if(this.userShippingDataService.getAllUserShippingData().length === 0){
     <h1>No tienes direcciones guardadas</h1>
     <p>Agrega una dirección de envío para facilitar tus compras futuras</p>
+    }
+
+    @if(this.createNewShippingData()){
+    <h2 class="text-lg text-green-600 font-semibold">Agregar nueva dirección de envío</h2>
+    }
     <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @for (field of numericFields; track field.key) {
 
         <div class="flex flex-col">
           <label class="label">{{ field.label }}</label>
-          <input
-            type="text"
-            class="input"
-            [class.border-red-500]="errors()[field.key]"
-            [(ngModel)]="form()[field.key]"
-            [name]="field.key"
-            (ngModelChange)="updateField(field.key, $event)"
-          />
+          <input type="text" class="input" [class.border-red-500]="errors()[field.key]" [(ngModel)]="form()[field.key]"
+            [name]="field.key" (ngModelChange)="updateField(field.key, $event)" />
 
           @if (errors()[field.key]) {
           <span class="error">{{ errors()[field.key] }}</span>
@@ -174,13 +137,8 @@
 
         <div class="flex flex-col">
           <label class="label">Colonia</label>
-          <input
-            class="input"
-            [class.border-red-500]="errors().colonia"
-            [(ngModel)]="form().colonia"
-            name="colonia"
-            (ngModelChange)="updateField('colonia', $event)"
-          />
+          <input class="input" [class.border-red-500]="errors().colonia" [(ngModel)]="form().colonia" name="colonia"
+            (ngModelChange)="updateField('colonia', $event)" />
           @if (errors().colonia) {
           <span class="error">{{ errors().colonia }}</span>
           }
@@ -188,13 +146,8 @@
 
         <div class="flex flex-col md:col-span-2">
           <label class="label">Calle</label>
-          <input
-            class="input"
-            [class.border-red-500]="errors().calle"
-            [(ngModel)]="form().calle"
-            name="calle"
-            (ngModelChange)="updateField('calle', $event)"
-          />
+          <input class="input" [class.border-red-500]="errors().calle" [(ngModel)]="form().calle" name="calle"
+            (ngModelChange)="updateField('calle', $event)" />
           @if (errors().calle) {
           <span class="error">{{ errors().calle }}</span>
           }
@@ -202,13 +155,8 @@
 
         <div class="flex flex-col">
           <label class="label">Número interior</label>
-          <input
-            class="input"
-            [class.border-red-500]="errors().numero_interior"
-            [(ngModel)]="form().numero_interior"
-            name="numero_interior"
-            (ngModelChange)="updateField('numero_interior', $event)"
-          />
+          <input class="input" [class.border-red-500]="errors().numero_interior" [(ngModel)]="form().numero_interior"
+            name="numero_interior" (ngModelChange)="updateField('numero_interior', $event)" />
           @if (errors().numero_interior) {
           <span class="error">{{ errors().numero_interior }}</span>
           }
@@ -216,23 +164,14 @@
 
         <div class="flex flex-col">
           <label class="label">Número exterior (opcional)</label>
-          <input
-            class="input"
-            [(ngModel)]="form().numero_exterior"
-            name="numero_exterior"
-            (ngModelChange)="updateField('numero_exterior', $event)"
-          />
+          <input class="input" [(ngModel)]="form().numero_exterior" name="numero_exterior"
+            (ngModelChange)="updateField('numero_exterior', $event)" />
         </div>
 
         <div class="flex flex-col">
           <label class="label">Código postal</label>
-          <input
-            class="input"
-            [class.border-red-500]="errors().codigo_postal"
-            [(ngModel)]="form().codigo_postal"
-            name="codigo_postal"
-            (ngModelChange)="updateField('codigo_postal', $event)"
-          />
+          <input class="input" [class.border-red-500]="errors().codigo_postal" [(ngModel)]="form().codigo_postal"
+            name="codigo_postal" (ngModelChange)="updateField('codigo_postal', $event)" />
           @if (errors().codigo_postal) {
           <span class="error">{{ errors().codigo_postal }}</span>
           }
@@ -240,21 +179,14 @@
 
         <div class="flex flex-col md:col-span-2">
           <label class="label">Referencia (opcional)</label>
-          <textarea
-            rows="3"
-            class="input"
-            [(ngModel)]="form().referencia"
-            name="referencia"
-            (ngModelChange)="updateField('referencia', $event)"
-          ></textarea>
+          <textarea rows="3" class="input" [(ngModel)]="form().referencia" name="referencia"
+            (ngModelChange)="updateField('referencia', $event)"></textarea>
         </div>
       </div>
 
       <button
         class="mt-5 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
-        [disabled]="!isValid()"
-        (click)="onSubmit()"
-      >
+        [disabled]="!isValid()" (click)="onSubmit()">
         Guardar dirección
       </button>
     </div>

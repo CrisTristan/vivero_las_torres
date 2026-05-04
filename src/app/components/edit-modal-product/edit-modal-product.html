@@ -1,6 +1,7 @@
 @if (isOpen) {
 <div class="fixed inset-0 z-100 bg-black/45 flex items-center justify-center p-4" (click)="requestClose()">
-  <div class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl h-[80vh] overflow-y-scroll overflow-hidden"
+  <div
+    class="w-full max-w-2xl rounded-2xl border border-[#d6e0d6] bg-white shadow-2xl h-[80vh] overflow-y-scroll overflow-hidden"
     (click)="$event.stopPropagation()">
     <div class="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
       <h2 class="text-[24px] font-bold text-[#1f2937]">Editar {{ this.getProductCategory() }}</h2>
@@ -15,11 +16,10 @@
 
       <div>
         <label class="block text-[14px] font-semibold text-[#374151] mb-1">Nombre del Producto</label>
-        <input type="text" name="name" required [ngModel]="formState().name" disabled="{{this.product?.productos?.vendido}}"
-          (ngModelChange)="updateField('name', $event)"
-          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]" 
-          [class.disabled]="this.product?.productos?.vendido"
-          />
+        <input type="text" name="name" required [ngModel]="formState().name"
+          disabled="{{this.product?.productos?.vendido}}" (ngModelChange)="updateField('name', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]"
+          [class.disabled]="this.product?.productos?.vendido" />
       </div>
 
       <div class="sm:col-span-2">
@@ -47,16 +47,30 @@
       </div>
 
       @if(this.getProductCategory() === 'macetas') {
-			<div>
-				<label>¿Es Jardinera?</label>
-				<select name="es_jardinera" required [ngModel]="formState().es_jardinera ?? false"
-					(ngModelChange)="updateField('es_jardinera', $event)"
-					class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
-					<option [ngValue]="true">Sí</option>
-					<option [ngValue]="false" selected>No</option>
-				</select>
-			</div>
-			}
+      <div>
+        <label>¿Es Jardinera?</label>
+        <select name="es_jardinera" required [ngModel]="formState().es_jardinera ?? false"
+          (ngModelChange)="updateField('es_jardinera', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+          <option [ngValue]="true">Sí</option>
+          <option [ngValue]="false" selected>No</option>
+        </select>
+      </div>
+      }
+
+      @if(this.isMacetasCategory || this.isPlantasCategory) {
+      <div>
+        <label class="block text-[14px] font-semibold text-[#374151] mb-1">Volumen (tamaño)</label>
+        <select name="volumen" required [ngModel]="formState().volumen ?? '' "
+          (ngModelChange)="updateField('volumen', $event)"
+          class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
+          <!-- <option value="" disabled>Selecciona un tamaño</option>   -->
+          @for (volumenOption of volumenOptions; track volumenOption) {
+          <option [value]="volumenOption">{{ volumenOption }}</option>
+          }
+        </select>
+      </div>
+      }
 
       <div>
         <label class="block text-[14px] font-semibold text-[#374151] mb-1">Tipo</label>
@@ -124,7 +138,7 @@
           class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
       </div>
       @if(this.isMacetasCategory){
-      <div>
+      <!-- <div>
         <label>Volumen</label>
         <select name="volumen" required [ngModel]="formState().volumen" (ngModelChange)="updateField('volumen', $event)"
           class="w-full h-11 px-3 rounded-xl border border-[#d1d5db] outline-none focus:border-[#6f8f6f]">
@@ -132,7 +146,7 @@
           <option value="Mediana">Mediana</option>
           <option value="Pequeña">Pequeña</option>
         </select>
-      </div>
+      </div> -->
 
       <div>
         <label>Diámetro Superior</label>

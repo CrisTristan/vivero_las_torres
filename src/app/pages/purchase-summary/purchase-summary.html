@@ -43,6 +43,56 @@
             }
         </div>
 
+        @if(this.shippingMethodService.getShippingMethod() === 'delivery') {
+            <div class="mb-8">
+            <h2 class="text-xl font-bold text-[#0f172a] mb-4">Enviar a esta dirección:</h2>
+            <div class="bg-white rounded-2xl border border-[#d8e0d8] p-6">
+                @if(this.getShippinginformation(); as shippingData) {
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-[#0f172a]">
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Calle:</p>
+                            <p class="text-base">{{ shippingData.calle }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Colonia:</p>
+                            <p class="text-base">{{ shippingData.colonia }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Manzana:</p>
+                            <p class="text-base">{{ shippingData.manzana }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Lote:</p>
+                            <p class="text-base">{{ shippingData.lote }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Número Exterior:</p>
+                            <p class="text-base">{{ shippingData.numero_exterior || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Número Interior:</p>
+                            <p class="text-base">{{ shippingData.numero_interior || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Código Postal:</p>
+                            <p class="text-base">{{ shippingData.codigo_postal }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Región:</p>
+                            <p class="text-base">{{ shippingData.region }}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-sm text-[#4b5563] font-semibold">Referencia:</p>
+                            <p class="text-base">{{ shippingData.referencia }}</p>
+                        </div>
+                    </div>
+                } @else {
+                    <p class="text-[#4b5563]">No hay datos de envío disponibles</p>
+                }
+            </div>
+        </div>
+        }
+        
         <!-- Resumen Total -->
         <div class="bg-gradient-to-r from-[#0f766e] to-[#115e59] rounded-2xl p-8 text-white shadow-lg">
             @if(this.shippingMethodService.getShippingMethod() === 'delivery') {
@@ -110,6 +160,57 @@
             </div>
         </div>
         }
+
+        @if(this.shippingMethodService.getShippingMethod() === 'delivery') {
+            <div class="mb-8">
+            <h2 class="text-xl font-bold text-[#0f172a] mb-4">Enviar a esta dirección:</h2>
+            <div class="bg-white rounded-2xl border border-[#d8e0d8] p-6">
+                @if(this.getShippinginformation(); as shippingData) {
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-[#0f172a]">
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Calle:</p>
+                            <p class="text-base">{{ shippingData.calle }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Colonia:</p>
+                            <p class="text-base">{{ shippingData.colonia }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Manzana:</p>
+                            <p class="text-base">{{ shippingData.manzana }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Lote:</p>
+                            <p class="text-base">{{ shippingData.lote }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Número Exterior:</p>
+                            <p class="text-base">{{ shippingData.numero_exterior || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Número Interior:</p>
+                            <p class="text-base">{{ shippingData.numero_interior || 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Código Postal:</p>
+                            <p class="text-base">{{ shippingData.codigo_postal }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#4b5563] font-semibold">Región:</p>
+                            <p class="text-base">{{ shippingData.region }}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-sm text-[#4b5563] font-semibold">Referencia:</p>
+                            <p class="text-base">{{ shippingData.referencia }}</p>
+                        </div>
+                    </div>
+                } @else {
+                    <p class="text-[#4b5563]">No hay datos de envío disponibles</p>
+                }
+            </div>
+        </div>
+        }
+        
         <!-- Resumen Total -->
         <div class="bg-gradient-to-r from-[#0f766e] to-[#115e59] rounded-2xl p-8 text-white shadow-lg">
             @if(this.shippingMethodService.getShippingMethod() === 'delivery') {

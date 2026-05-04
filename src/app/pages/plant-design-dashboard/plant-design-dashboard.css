@@ -1,10 +1,46 @@
-button {
-  padding: 8px 16px;
-  border: none;
-  cursor: pointer;
+.filter-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-button.active {
-  background-color: #2e7d32;
-  color: white;
+.filter-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
+
+.filter-button:active {
+  transform: translateY(0px);
+}
+
+.filter-button.active {
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(46, 125, 50, 0.4);
+  border-color: #1b5e20;
+  font-weight: 700;
+}
+
+.filter-button.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: shimmer 0.6s ease-in-out;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+.filter-button span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+

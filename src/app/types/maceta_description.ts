@@ -1,5 +1,6 @@
+import { ProductSize } from "./product.type";
+
 export interface MacetaDescription {
-    volumen: string;
     altura: string;
     diametro_superior: string;
     diametro_inferior: string;
@@ -10,4 +11,5 @@ export interface Maceta {
     producto_id: number;
     tipo: string;
     es_jardinera: boolean;
+    volumen?: ProductSize;
 }

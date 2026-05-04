@@ -6,6 +6,7 @@ import { PaymentService } from '../../services/payment-service';
 import { Product } from '../../types/product.type';
 import { Router } from '@angular/router';
 import { ConfigPanelAdminService } from '../../services/config-panel-admin-service';
+import { UserShippingDataService } from '../../services/user-shipping-data-service';
 
 @Component({
   selector: 'app-purchase-summary',
@@ -21,6 +22,7 @@ export class PurchaseSummary implements OnInit {
   public configPanelAdminService = inject(ConfigPanelAdminService);
   public isNormalPurchase = signal(true); // Señal para determinar si la compra es para productos normales o para un arreglo personalizado
   public productsInCart = signal<Product[]>([]); // Señal para almacenar los productos en el carrito, esto es necesario para mostrar la información correcta en el resumen de compra dependiendo del tipo de compra
+  public userShippingDataService = inject(UserShippingDataService);
   constructor(private router: Router) { }
   
   ngOnInit(): void {
@@ -60,4 +62,9 @@ export class PurchaseSummary implements OnInit {
     this.router.navigate(['/payment']);
   }
 
+  getShippinginformation() {
+    // Aquí puedes acceder a la información de envío seleccionada por el usuario
+    const selectedShippingData = this.userShippingDataService.getSelectedShippingData();
+    return selectedShippingData;
+  }
 }

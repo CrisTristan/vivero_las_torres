@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, inject, Input, signal } from '@angular/core';
 import { PlantDesignService } from '../../services/plant-design-service';
 import { Router } from '@angular/router';
-import { Product } from '../../types/product.type';
+import { Product, ProductSize } from '../../types/product.type';
 import { FilterCategoryService } from '../../services/filter-category-service';
 import { fetchAllPlants } from '../../controllers/planta_controller';
 
@@ -17,7 +17,8 @@ export class PlantsDesigns implements AfterViewInit {
   filterCategoryService = inject(FilterCategoryService);
   currentPage = 0;
   @ViewChild('carrousel') carousel!: ElementRef<HTMLDivElement>;
-  
+
+  @Input() currentPotSize = signal<ProductSize | undefined>(undefined); //Nueva propiedad de entrada para recibir el tamaño de la maceta seleccionada en el dashboard
 
   constructor(
     private router: Router,
@@ -43,7 +44,7 @@ export class PlantsDesigns implements AfterViewInit {
     //Se deberia implementar un mecanismo para obtener las plantas favoritas del usuario de la base de datos.
     //AQUI -----------------------------------------
     //Antes de asignar los datos almacenados en el localStorage, a las señal "selectedPlants" del servicio "PlantDesignService",
-    
+
     // if (storedPlants) {
     //   // Si hay datos almacenados, parsearlos y asignarlos a la señal
     //   this.designService.selectedPlants.set(JSON.parse(storedPlants));
@@ -61,6 +62,7 @@ export class PlantsDesigns implements AfterViewInit {
   }
 
   selectPlant(plant: Product) {
+    console.log('Planta seleccionada en PlantsDesigns:', plant);
     this.designService.userSelectedPlant.set(plant);
   }
 
@@ -75,6 +77,26 @@ export class PlantsDesigns implements AfterViewInit {
     for (let i = 0; i < plants.length; i += 4) {
       groups.push(plants.slice(i, i + 4));
     }
+
+    if (this.currentPotSize()) {
+      console.log('Tamaño de maceta recibido en PlantsDesigns:', this.currentPotSize());
+
+      // Obtener todos los valores del enum
+      const sizes = Object.values(ProductSize);
+      const currentIndex = sizes.indexOf(this.currentPotSize()!);
+      const nextIndex = currentIndex + 1;
+
+      console.log(`Índice actual: ${currentIndex}, Siguiente índice: ${nextIndex}`);
+
+      //Obtener el siguiente tamaño:
+      const nextSize = nextIndex < sizes.length ? sizes[nextIndex] : null;
+
+      return groups.map(group => group.filter(plant => plant.volumen === this.currentPotSize()  || 
+          (nextSize && plant.volumen === nextSize) || plant.id === this.designService.userSelectedPlant()?.id // Permitir que la planta seleccionada por el usuario siempre aparezca, independientemente de su tamaño
+        )
+      );
+    }
+
     return groups;
   }
 

@@ -30,6 +30,7 @@ interface CreateBasePayload {
     id: number;
     categoria: ProductCategoryType;
   };
+  volumen?: 'mini' | 'pequeño' | 'mediano' | 'grande' | 'extra_grande'; // Esta propiedad es opcional y solo se incluirá para plantas y macetas
   descripcion: string;
 }
 
@@ -44,7 +45,7 @@ interface CreateProductForm {
   stock: number;
   // Propiedades específicas para macetas
   es_jardinera?: boolean;
-  volumen?: 'Grande' | 'Mediana' | 'Pequeña';
+  volumen?: 'mini' | 'pequeño' | 'mediano' | 'grande' | 'extra_grande';
   diametro_superior?: number;
   diametro_inferior?: number;
   altura?: number;
@@ -88,6 +89,8 @@ export class PanelAdminProductos implements OnInit {
   public readonly createFormState = signal<CreateProductForm>(this.getEmptyCreateForm());
   public editingProductId: number | null = null;
   public readonly lastEditedProductState = signal<Product | null>(null);
+  private readonly volumeOptions = ['mini', 'pequeño', 'mediano', 'grande', 'extra_grande'];
+
   @ViewChild('adminMenuHost', { read: ElementRef }) adminMenuHost?: ElementRef<HTMLElement>;
 
   public readonly products = signal<Product[]>([]);
@@ -143,6 +146,10 @@ export class PanelAdminProductos implements OnInit {
 
   get createTypeOptions(): string[] {
     return this.getTypeOptionsByCategory(this.selectedCategory());
+  }
+
+  get createVolumenOptions(): string[] {
+    return this.volumeOptions; // Opciones de volumen para macetas y plantas
   }
 
   get isPiedrasCategorySelected(): boolean {
@@ -379,13 +386,24 @@ export class PanelAdminProductos implements OnInit {
   async onCreateProduct(): Promise<void> {
     const state = this.createFormState();
 
-    if (!state.name.trim() || !state.description.trim()) {
+    if (!state.name.trim() || !state.description.trim() || state.price <= 0 || state.stock <= 0 || !state.type.trim()) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Campos requeridos',
-        detail: 'Nombre y descripcion son obligatorios',
+        detail: 'Nombre, descripcion, precio, stock, tipo y volumen son obligatorios',
       });
       return;
+    }
+
+    if(this.selectedCategory() === 'macetas' || this.selectedCategory() === 'plantas') {
+      if (!state.volumen?.trim()) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Volumen requerido',
+          detail: 'Selecciona un volumen para el producto',
+        });
+        return;
+      }
     }
 
     //necesitamos guardar la imagen en cloudinary antes de crear el producto para obtener la url y enviarla al backend
@@ -585,6 +603,7 @@ export class PanelAdminProductos implements OnInit {
         ...basePayload,
         tipo: state.type || this.getDefaultTypeByCategory(category),
         nivel_cuidado: state.careLevel?.toLowerCase(),
+        volumen: state.volumen || 'mediano', // Agregamos volumen al payload de plantas, aunque no es un campo obligatorio en el formulario de creación para plantas, si el usuario lo llena se enviará, de lo contrario se enviará 'mediano' por defecto.
       };
     }
 
@@ -593,7 +612,7 @@ export class PanelAdminProductos implements OnInit {
         ...basePayload,
         es_jardinera: state.es_jardinera || false,
         tipo: state.type || this.getDefaultTypeByCategory(category),
-        volumen: state.volumen || 'Mediana',
+        volumen: state.volumen || 'mediano',
         diametro_superior: state.diametro_superior || 0,
         diametro_inferior: state.diametro_inferior || 0,
         altura: state.altura || 0,
@@ -818,7 +837,7 @@ export class PanelAdminProductos implements OnInit {
         price: 0,
         stock: 0,
         description: '',
-        volumen: 'Mediana',
+        volumen: 'mediano',
         diametro_superior: 0,
         diametro_inferior: 0,
         altura: 0,
