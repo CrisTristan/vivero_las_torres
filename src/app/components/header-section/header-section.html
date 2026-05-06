@@ -1,5 +1,6 @@
-<div [class]="'bg-[#eef2ee] border-b border-[#d9e2d9] text-[#4b5563] px-5 md:px-8 flex items-center ' + customClass">
-    <div class="w-full flex items-center justify-between gap-4">
+<div [class]="customClass ? customClass + ' bg-[#eef2ee] border-b border-[#d9e2d9]' : 'bg-[#eef2ee] border-b border-[#d9e2d9]'">
+    <div class="px-5 md:px-8 flex items-center text-[#4b5563] w-full">
+        <div class="w-full flex items-center justify-between gap-4">
         @if (adminMenuService.toggleMenuVisible()) {
         <app-admin-menu
           #adminMenuHost
@@ -68,5 +69,6 @@
                 </div>
             }
         </div>
+    </div>
     </div>
 </div>

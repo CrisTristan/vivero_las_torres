@@ -1,10 +1,10 @@
 <app-header-section [title]="adminMenuService.currentSection()" [subtitle]="'Gestiona tus productos'"
-	[customClass]="'fixed w-full'" [showCreateButton]="true"
+	[customClass]="'fixed left-0 right-0 top-0 w-full mt-[13vh] z-70'" [showCreateButton]="true"
 	[createButtonLabel]="createButtonLabel" (createButtonClick)="openCreateModal()"></app-header-section>
 
 <p-toast position="top-right"></p-toast>
 
-<section class="pt-[0vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen z-10">
+<section class="mt-[20vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen z-10">
 	<div class="flex flex-col gap-4 mb-5">
 		<div class="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#d4dae4] p-1 w-fit border border-[#bcc6d3]">
 			@for (category of categoryOptions; track category) {

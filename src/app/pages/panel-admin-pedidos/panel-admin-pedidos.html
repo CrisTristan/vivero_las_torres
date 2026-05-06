@@ -1,5 +1,5 @@
 <app-header-section [title]="adminMenuService.currentSection()" [subtitle]="'Gestiona tus productos'"
-  [customClass]="'fixed w-full'" [showCreateButton]="true"
+  [customClass]="'fixed left-0 right-0 top-0 w-full mt-[13vh] z-70'" [showCreateButton]="true"
   [createButtonLabel]="createButtonLabel" (createButtonClick)="openCreateModal()"></app-header-section>
 
 @if(isModalCreateOpen() && false){
@@ -22,7 +22,7 @@
 </div>
 }
 
-<div class="px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
+<div class="mt-[20vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
   <!-- 🔝 CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
     <!-- Card: No Entregados -->

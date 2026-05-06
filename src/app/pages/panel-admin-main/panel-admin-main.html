@@ -1,10 +1,10 @@
 <app-header-section 
 	[title]="adminMenuService.currentSection()" 
 	[subtitle]="'Gestiona tus productos'" 
-	[customClass]="'fixed w-full mt-[10vh]'"
+	[customClass]="'fixed left-0 right-0 top-0 w-full mt-[13vh] z-70'"
 ></app-header-section>
 
-<section class="pt-[12vh] px-4 md:px-6 lg:px-8 pb-6 h-[80vh]">
+<section class="pt-[20vh] px-4 md:px-6 lg:px-8 pb-6 h-[80vh]">
 	<app-summary-card-grid [cards]="dashboardCards()" [customClass]="'mb-6'"
 		[activeProducts]="this.activeProductsCard()"
 		[inactiveProducts]="this.inactiveProductsCard()"></app-summary-card-grid>
