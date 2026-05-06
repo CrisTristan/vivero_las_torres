@@ -43,7 +43,7 @@ export default class OrderController {
     const selectedShippingMethod = this.shippingMethodService.getShippingMethod();
     if (selectedShippingMethod === 'delivery') {
       totalAmountToPay = this.configPanelAdminService.shippingCost() + this.shoppingCartService.total;
-      metodo_entrega = 'envio';
+      metodo_entrega = 'enviar';
     }else if (selectedShippingMethod === 'pickup') {
       totalAmountToPay = this.shoppingCartService.total;
       metodo_entrega = 'recoger';
@@ -99,7 +99,7 @@ export default class OrderController {
     const selectedShippingMethod = this.shippingMethodService.getShippingMethod();
     if (selectedShippingMethod === 'delivery') {
       totalAmountToPay = this.configPanelAdminService.shippingCost() + this.shoppingCartService.totalInCartItemsForPersonalizedArrangement;
-      metodo_entrega = 'envio';
+      metodo_entrega = 'enviar';
     }else if (selectedShippingMethod === 'pickup') {
       totalAmountToPay = this.shoppingCartService.totalInCartItemsForPersonalizedArrangement;
       metodo_entrega = 'recoger';

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Hero } from './components/hero/hero';
@@ -12,10 +12,11 @@ import { RouteTrackerService } from './services/route-tracker-service';
 import { getUserShippingDataByUserId } from './controllers/direcciones_usuario_controller';
 import { AuthService } from './services/auth-service';
 import { StockNotificationsService } from './services/stock-notifications-service';
+import { HeaderSection } from './components/header-section/header-section';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavBar, BottomNavBar, AdminMenu],
+  imports: [RouterOutlet, NavBar, BottomNavBar],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -48,6 +49,11 @@ export class App {
 
     // Verificar si el usuario tiene direcciones de envío registradas
     this.initializeRouteTrackerIfNeeded();
+
+    effect(() => {
+      const currentRoute = this.currentRoute();
+      console.log('Se ha cambiado la sección del menú admin a:', currentRoute);
+    });
   }
 
   private async initializeRouteTrackerIfNeeded(): Promise<void> {

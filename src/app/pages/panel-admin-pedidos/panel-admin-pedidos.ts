@@ -9,6 +9,7 @@ import {
   ViewChild,
   OnInit,
 } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { HeaderSection } from "../../components/header-section/header-section";
 import { AdminMenuService } from "../../services/admin-menu-service";
 import OrderProductsController from "../../controllers/orderUserProducts_controller";
@@ -16,11 +17,11 @@ import { OrdenesUsuarioProductos } from "../../types/ordenesUsuarioProductos.typ
 import { ToastModule } from "primeng/toast";
 import { MessageService } from "primeng/api";
 
-type Estado = "no entregado" | "entregado";
+type Estado = "no entregado" | "entregado" | "en reparto";
 
 @Component({
   selector: "app-panel-admin-pedidos",
-  imports: [CommonModule, HeaderSection, ToastModule],
+  imports: [CommonModule, HeaderSection, ToastModule, FormsModule],
   providers: [MessageService],
   templateUrl: "./panel-admin-pedidos.html",
   styleUrl: "./panel-admin-pedidos.css",
@@ -29,6 +30,7 @@ export class PanelAdminPedidos implements OnInit {
   // Controla la visibilidad del botón de cambio de estado
   public showChangeStatusButton = signal(false);
   public isModalCreateOpen = signal(false);
+  public selectedEstado = signal<Estado | "">("");
   public adminMenuService = inject(AdminMenuService);
   public createButtonLabel: string = "Crear Pedido";
   filtro = signal<string>("Todos");
@@ -101,17 +103,16 @@ export class PanelAdminPedidos implements OnInit {
   // Cambia el estado de la orden seleccionada
   changeOrderStatus() {
     const order = this.selectedOrder();
-    if (!order) return;
-    // Alternar estado
-    const nuevoEstado =
-      order.orden.estado === "no entregado" ? "entregado" : "no entregado";
-    //obtenemos la fecha actual para marcar el día de entrega preferible hora local de Cancun
-    // el objetivo es que se pueda guardar la fecha y hora en mi DB el campo es de tipo Date.
+    const nuevoEstado = this.selectedEstado();
+    
+    if (!order || !nuevoEstado) return;
+    
+    // Obtener la fecha actual solo si el nuevo estado es "entregado"
     let fechaActual: string | null;
     if(nuevoEstado === "entregado"){
       fechaActual = new Date().toISOString(); // Esto guarda la fecha en formato ISO, que es compatible con la mayoría de las bases de datos
     }else{
-      fechaActual = null; // Si el estado es "no entregado", no hay fecha de entrega
+      fechaActual = null; // Si el estado no es "entregado", no hay fecha de entrega
     }
     
     // Actualizar en la lista de pedidos
@@ -139,6 +140,7 @@ export class PanelAdminPedidos implements OnInit {
       },
     });
     this.showChangeStatusButton.set(false);
+    this.selectedEstado.set("");
     console.log("Orden actualizada:", this.selectedOrder());
     this.updateSelectedOrderStatusAndDeliveryDate(
       order.orden_id,
@@ -164,6 +166,7 @@ export class PanelAdminPedidos implements OnInit {
     return {
       "no entregado": "bg-orange-100 text-orange-600",
       "entregado": "bg-emerald-100 text-emerald-600",
+      "en reparto": "bg-amber-100 text-amber-600",
     }[estado];
   }
 

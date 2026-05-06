@@ -1,21 +1,28 @@
 <app-header-section [title]="adminMenuService.currentSection()" [subtitle]="'Gestiona tus productos'"
-  [customClass]="'fixed top-[13vh] left-[13vw] w-[90vw] h-[6.5vh] z-[40]'" [showCreateButton]="true"
+  [customClass]="'fixed w-full'" [showCreateButton]="true"
   [createButtonLabel]="createButtonLabel" (createButtonClick)="openCreateModal()"></app-header-section>
 
-@if(isModalCreateOpen()){
-<div
-  class="fixed flex-col items-center justify-center z-50 h-[80vh] bg-white w-[40vw] top-[10vh] left-[30vw] rounded-xl border border-[#d6e0d6] shadow-lg p-5">
-  <div>
-    <p>Modal de creación de pedido</p>
-    <button (click)="isModalCreateOpen.set(false)">Cerrar</button>
-  </div>
-  <div>
-    <p>Aquí iría el formulario para crear un nuevo pedido</p>
+@if(isModalCreateOpen() && false){
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="relative flex flex-col items-center justify-center h-[80vh] bg-white w-[90vw] md:w-[60vw] lg:w-[40vw] rounded-2xl border-2 border-[#d6e0d6] shadow-2xl p-8">
+    <!-- Botón de cerrar -->
+    <button 
+      (click)="isModalCreateOpen.set(false)"
+      class="absolute top-6 right-6 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg hover:shadow-xl transition-all duration-200">
+      ✕
+    </button>
+    
+    <div class="text-center mb-6">
+      <p class="text-2xl font-bold text-gray-800">Modal de creación de pedido</p>
+    </div>
+    <div class="text-center">
+      <p class="text-gray-600 text-lg mb-4">Aquí iría el formulario para crear un nuevo pedido</p>
+    </div>
   </div>
 </div>
 }
 
-<div class="pt-[21vh] px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
+<div class="px-4 md:px-6 lg:px-8 pb-6 bg-[#eff3ef] min-h-screen">
   <!-- 🔝 CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
     <!-- Card: No Entregados -->
@@ -62,9 +69,10 @@
   <div class="bg-green-50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <!-- Tabs -->
     <div class="flex flex-wrap gap-2">
-      @for(filtro of ['Todos', 'no entregado', 'entregado']; track filtro) {
+      @for(filtro of ['Todos', 'no entregado', 'entregado', 'en reparto']; track filtro) {
       <button (click)="cambiarFiltro(filtro)" class="px-3 py-1 rounded-lg text-sm"
-        [class.bg-white]="this.filtro() === filtro">
+        [class.bg-green-500]="this.filtro() === filtro"
+        [class.text-white]="this.filtro() === filtro">
         {{ filtro }}
       </button>
       }
@@ -125,14 +133,16 @@
                 [class.bg-green-200]="pedido.orden.estado === 'entregado'"
                 [class.text-green-700]="pedido.orden.estado === 'entregado'"
                 [class.bg-orange-200]="pedido.orden.estado === 'no entregado'"
-                [class.text-orange-700]="pedido.orden.estado === 'no entregado'">
-                {{pedido.orden.estado === 'entregado' ? '✅ Entregado' : '⏳ Pendiente'}}
+                [class.text-orange-700]="pedido.orden.estado === 'no entregado'"
+                [class.bg-amber-200]="pedido.orden.estado === 'en reparto'"
+                [class.text-amber-700]="pedido.orden.estado === 'en reparto'">
+                {{pedido.orden.estado === 'entregado' ? '✅ Entregado' : pedido.orden.estado === 'en reparto' ? '🚚 En Reparto' : '⏳ Pendiente'}}
               </span>
             </td>
 
             <td class="px-6 py-4 text-center">
               <button
-                class="px-4 py-2 rounded-lg bg-gradient-to-r from-green-200 to-green-500 text-white font-semibold hover:from-green-600 hover:to-green-700 transition-all shadow-md text-sm"
+                class="px-4 py-2 rounded-lg bg-gradient-to-r from-green-400 to-green-500 text-white font-semibold hover:from-green-600 hover:to-green-700 transition-all shadow-md text-sm"
                 (click)="this.openOrderDetailsModal(pedido.orden_id)">
                 Ver Detalles
               </button>
@@ -151,6 +161,10 @@
         [class.from-green-100]="pedido.orden.estado === 'entregado'"
         [class.to-emerald-50]="pedido.orden.estado === 'entregado'"
         [class.border-green-400]="pedido.orden.estado === 'entregado'"
+        [class.bg-gradient-to-br]="pedido.orden.estado === 'en reparto'"
+        [class.from-amber-100]="pedido.orden.estado === 'en reparto'"
+        [class.to-yellow-50]="pedido.orden.estado === 'en reparto'"
+        [class.border-amber-400]="pedido.orden.estado === 'en reparto'"
         [class.bg-gradient-to-br]="pedido.orden.estado === 'no entregado'"
         [class.from-orange-100]="pedido.orden.estado === 'no entregado'"
         [class.to-amber-50]="pedido.orden.estado === 'no entregado'"
@@ -165,8 +179,10 @@
             [class.bg-green-200]="pedido.orden.estado === 'entregado'"
             [class.text-green-700]="pedido.orden.estado === 'entregado'"
             [class.bg-orange-200]="pedido.orden.estado === 'no entregado'"
-            [class.text-orange-700]="pedido.orden.estado === 'no entregado'">
-            {{pedido.orden.estado === 'entregado' ? '✅ Entregado' : '⏳ Pendiente'}}
+            [class.text-orange-700]="pedido.orden.estado === 'no entregado'"
+            [class.bg-amber-200]="pedido.orden.estado === 'en reparto'"
+            [class.text-amber-700]="pedido.orden.estado === 'en reparto'">
+            {{pedido.orden.estado === 'entregado' ? '✅ Entregado' : pedido.orden.estado === 'en reparto' ? '🚚 En Reparto' : '⏳ Pendiente'}}
           </span>
         </div>
 
@@ -527,17 +543,30 @@
           @if(this.showChangeStatusButton()) {
           <div class="space-y-2">
             <p class="text-sm font-semibold text-gray-700 mb-3">
-              ¿Cambiar a {{this.selectedOrder()?.orden?.estado === 'no entregado' ? 'ENTREGADO' : 'NO ENTREGADO'}}?
+              ¿Cambiar estado?
             </p>
+            <select [(ngModel)]="selectedEstado" class="border rounded-lg px-3 py-2 w-full">
+              <option value="">Selecciona un estado</option>
+              <option value="en reparto">
+                En Reparto
+              </option>
+              <option value="entregado">
+                Entregado
+              </option>
+              <option value="no entregado">
+                  No Entregado
+              </option>
+            </select>
             <div class="flex gap-2">
               <button
                 class="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold hover:from-green-600 hover:to-green-700 transition-all shadow-md"
-                (click)="this.changeOrderStatus()">
+                (click)="this.changeOrderStatus()"
+                [disabled]="!this.selectedEstado()">
                 ✓ Confirmar
               </button>
               <button
                 class="flex-1 px-4 py-2 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400 transition-all"
-                (click)="this.showChangeStatusButton.set(false)">
+                (click)="this.showChangeStatusButton.set(false); this.selectedEstado.set('')">
                 ✕ Cancelar
               </button>
             </div>

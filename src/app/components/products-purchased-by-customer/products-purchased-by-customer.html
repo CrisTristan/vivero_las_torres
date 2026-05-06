@@ -33,7 +33,7 @@
 				@if (showFullHistory()) {
 				Mostrando historial completo ({{ purchasedProducts().length }} productos)
 				} @else {
-				Mostrando los ultimos {{ displayedProducts.length }} productos adquiridos recientemente
+				Mostrando los ultimos {{ displayedOrders.length }} productos adquiridos recientemente
 				}
 			</p>
 
@@ -70,8 +70,8 @@
 		</div>
 		} @else {
 		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-			@for (item of displayedProducts; track getItemTrackId(item)) {
-			@if (isPersonalizedArrangement(item)) {
+			@for ( order of displayedOrders; track order.id) {
+			@if (isPersonalizedArrangement(order)) {
 			<!-- ARREGLO PERSONALIZADO -->
 			<article
 				class="group overflow-hidden rounded-2xl border-2 border-purple-200 bg-gradient-to-b from-purple-50 to-white shadow-md transition hover:-translate-y-1 hover:shadow-lg">
@@ -80,14 +80,14 @@
 					class="relative flex items-center justify-between border-b-2 border-purple-200 bg-gradient-to-r from-purple-500 to-purple-600 px-4 py-3">
 					<span class="font-bold text-white">Arreglo Personalizado</span>
 					<span class="rounded-full px-2 py-1 text-xs font-semibold"
-						[class]="getStatusClasses(getItemStatus(item))">
-						{{ getStatusText(getItemStatus(item)) }}
+						[class]="getStatusClasses(getItemStatus(order))">
+						{{ getStatusText(getItemStatus(order)) }}
 					</span>
 				</div>
 
 				<!-- GALERÍA DE 3 IMÁGENES -->
 				<div class="grid grid-cols-3 gap-2 bg-purple-50 p-3">
-					@for (product of item.productos; track product.id) {
+					@for (product of order.productos; track product.id) {
 					<div
 						class="group/img relative aspect-square overflow-hidden rounded-lg border border-purple-200 bg-gray-100">
 						<img [src]="product.imagen_producto" [alt]="product.nombre_producto"
@@ -106,7 +106,7 @@
 				<!-- DETALLES DEL ARREGLO -->
 				<div class="space-y-2 p-4">
 					<div class="flex flex-wrap justify-between gap-2">
-						@for (product of item.productos; track product.id) {
+						@for (product of order.productos; track product.id) {
 						<span class="rounded-lg bg-purple-100 px-2 py-1 text-xs font-medium text-purple-700">
 							{{ product.nombre_producto }}
 						</span>
@@ -115,7 +115,7 @@
 
 					<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm">
 						<span class="font-medium text-slate-500">Orden</span>
-						<span class="font-semibold text-slate-900">#{{ item.orden_id }}</span>
+						<span class="font-semibold text-slate-900">#{{ order.id }}</span>
 					</p>
 
 
@@ -124,25 +124,24 @@
 							<div>
 								<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Método de Entrega
 								</p>
-								<p class="mt-1 font-semibold text-slate-900">{{ getDeliveryMethodText(item) ===
-									'enviar'? 'Envío a Domicilio' : 'Recoger en Tienda' }}</p>
+								<p class="mt-1 font-semibold text-slate-900">{{ getDeliveryMethodText(order) }}</p>
 							</div>
-							@if(item.orden.metodo_entrega === 'enviar') {
+							@if(order.metodo_entrega === 'enviar') {
 							<button
-								(click)="viewOrderShippingDetails.update((state) => ({ orderId: item.orden_id, show: !state.show }))"
+								(click)="viewOrderShippingDetails.update((state) => ({ orderId: order.id, show: !state.show }))"
 								class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition duration-300 hover:shadow-lg hover:from-emerald-600 hover:to-emerald-700 active:scale-95">
 								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 										d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 								</svg>
 								{{ viewOrderShippingDetails().show && viewOrderShippingDetails().orderId ===
-								item.orden_id ? 'Ocultar' : 'Ver' }} dirección
+								order.id ? 'Ocultar' : 'Ver' }} dirección
 							</button>
 							}
 						</div>
 
-						@if(viewOrderShippingDetails().show && viewOrderShippingDetails().orderId === item.orden_id &&
-						item.orden.metodo_entrega === 'enviar') {
+						@if(viewOrderShippingDetails().show && viewOrderShippingDetails().orderId === order.id &&
+						order.metodo_entrega === 'enviar') {
 						<div class="mt-4 space-y-3 border-t border-slate-200 pt-4 animate-in fade-in duration-300">
 							<h4 class="flex items-center gap-2 font-bold text-slate-900">
 								<svg class="h-5 w-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
@@ -157,34 +156,34 @@
 								<div class="rounded-lg bg-emerald-50 p-3 border border-emerald-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-emerald-700">Región
 									</p>
-									<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.region }}</p>
+									<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.region }}</p>
 								</div>
 								<div class="rounded-lg bg-emerald-50 p-3 border border-emerald-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-emerald-700">Manzana
 									</p>
-									<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.manzana }}
+									<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.manzana }}
 									</p>
 								</div>
 								<div class="rounded-lg bg-blue-50 p-3 border border-blue-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Colonia</p>
-									<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.colonia }}
+									<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.colonia }}
 									</p>
 								</div>
 								<div class="rounded-lg bg-blue-50 p-3 border border-blue-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Calle</p>
-									<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.calle }}</p>
+									<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.calle }}</p>
 								</div>
 								<div class="rounded-lg bg-amber-50 p-3 border border-amber-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-amber-700">Número
 										Exterior</p>
 									<p class="mt-1 font-bold text-slate-900">{{
-										item.orden.direccion_envio.numero_exterior || 'N/A' }}</p>
+										order.direccion_envio.numero_exterior || 'N/A' }}</p>
 								</div>
 								<div class="rounded-lg bg-amber-50 p-3 border border-amber-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-amber-700">Número
 										Interior</p>
 									<p class="mt-1 font-bold text-slate-900">{{
-										item.orden.direccion_envio.numero_interior || 'N/A' }}</p>
+										order.direccion_envio.numero_interior || 'N/A' }}</p>
 								</div>
 							</div>
 
@@ -192,14 +191,14 @@
 								<div class="rounded-lg bg-slate-100 p-3">
 									<p class="text-xs font-semibold uppercase tracking-wider text-slate-600">Código
 										Postal</p>
-									<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.codigo_postal
+									<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.codigo_postal
 										}}</p>
 								</div>
 								<div class="rounded-lg bg-purple-50 p-3 border border-purple-200">
 									<p class="text-xs font-semibold uppercase tracking-wider text-purple-700">Referencia
 									</p>
 									<p class="mt-1 font-semibold text-slate-900">{{
-										item.orden.direccion_envio.referencia || 'N/A' }}</p>
+										order.direccion_envio.referencia || 'N/A' }}</p>
 								</div>
 							</div>
 						</div>
@@ -208,42 +207,44 @@
 
 					<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm">
 						<span class="font-medium text-slate-500">Entregado el dia</span>
-						<span class="font-semibold text-slate-900">{{ getDeliveryDateText(item) || 'Pendiente' }}</span>
+						<span class="font-semibold text-slate-900">{{ getDeliveryDateText(order) || 'Pendiente' }}</span>
 					</p>
 
 					<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm">
 						<span class="font-medium text-slate-500">Comprado el</span>
-						<span class="font-semibold text-slate-900">{{ getPurchaseDateText(item) }}</span>
+						<span class="font-semibold text-slate-900">{{ getPurchaseDateText(order) }} </span>
 					</p>
 				</div>
 			</article>
 			} @else {
 			<!-- PRODUCTO NORMAL -->
-			<article
+			 <!-- iteramos cada producto del pedido para mostrar su información individualmente. -->
+			 @for(product of order.productos; track product.id) {
+				<article
 				class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
 				<div class="relative w-full h-44 overflow-hidden bg-slate-100 flex items-center justify-center">
-					<img [src]="item.imagen_producto" [alt]="item.nombre_producto"
+					<img [src]="product.imagen_producto" [alt]="product.nombre_producto"
 						class="max-h-full max-w-full object-cover transition duration-300 group-hover:scale-105">
 					<span class="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold"
-						[class]="getStatusClasses(getItemStatus(item))">
-						{{ getStatusText(getItemStatus(item)) }}
+						[class]="getStatusClasses(getItemStatus(order))">
+						{{ getStatusText(getItemStatus(order)) }}
 					</span>
 				</div>
 
 				<div class="space-y-3 p-4">
 					<h4 class="line-clamp-2 min-h-12 text-base font-bold text-slate-900">
-						{{ item.nombre_producto }}
+						{{ product.nombre_producto }}
 					</h4>
 
 					<div class="space-y-2 text-sm text-slate-600">
 						<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
 							<span class="font-medium text-slate-500">Cantidad</span>
-							<span class="font-bold text-slate-900">x{{ item.cantidad }}</span>
+							<span class="font-bold text-slate-900">x{{ product.cantidad }}</span>
 						</p>
 
 						<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
 							<span class="font-medium text-slate-500">Orden</span>
-							<span class="font-semibold text-slate-900">#{{ item.orden_id }}</span>
+							<span class="font-semibold text-slate-900">#{{ product.orden_id }}</span>
 						</p>
 
 						<div class="rounded-xl border border-slate-200 bg-white p-3">
@@ -251,25 +252,24 @@
 								<div>
 									<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Método de
 										Entrega</p>
-									<p class="mt-1 font-semibold text-slate-900">{{ getDeliveryMethodText(item) ===
-										'enviar'? 'Envío a Domicilio' : 'Recoger en Tienda' }}</p>
+									<p class="mt-1 font-semibold text-slate-900">{{ getDeliveryMethodText(order) }}</p>
 								</div>
-								@if(item.orden.metodo_entrega === 'enviar') {
+								@if(order.metodo_entrega === 'enviar') {
 								<button
-									(click)="viewOrderShippingDetails.update((state) => ({ orderId: item.orden_id, show: !state.show }))"
+									(click)="viewOrderShippingDetails.update((state) => ({ orderId: product.orden_id, show: !state.show }))"
 									class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition duration-300 hover:shadow-lg hover:from-emerald-600 hover:to-emerald-700 active:scale-95">
 									<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 											d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 									</svg>
 									{{ viewOrderShippingDetails().show && viewOrderShippingDetails().orderId ===
-									item.orden_id ? 'Ocultar' : 'Ver' }} dirección
+									order.id ? 'Ocultar' : 'Ver' }} dirección
 								</button>
 								}
 							</div>
 
-							@if(viewOrderShippingDetails().show && viewOrderShippingDetails().orderId === item.orden_id
-							&& item.orden.metodo_entrega === 'enviar') {
+							@if(viewOrderShippingDetails().show && viewOrderShippingDetails().orderId === order.id
+							&& order.metodo_entrega === 'enviar') {
 							<div class="mt-4 space-y-3 border-t border-slate-200 pt-4 animate-in fade-in duration-300">
 								<h4 class="flex items-center gap-2 font-bold text-slate-900">
 									<svg class="h-5 w-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
@@ -284,38 +284,38 @@
 									<div class="rounded-lg bg-emerald-50 p-3 border border-emerald-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-emerald-700">
 											Región</p>
-										<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.region }}
+										<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.region }}
 										</p>
 									</div>
 									<div class="rounded-lg bg-emerald-50 p-3 border border-emerald-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-emerald-700">
 											Manzana</p>
-										<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.manzana
+										<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.manzana
 											}}</p>
 									</div>
 									<div class="rounded-lg bg-blue-50 p-3 border border-blue-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Colonia
 										</p>
-										<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.colonia
+										<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.colonia
 											}}</p>
 									</div>
 									<div class="rounded-lg bg-blue-50 p-3 border border-blue-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Calle
 										</p>
-										<p class="mt-1 font-bold text-slate-900">{{ item.orden.direccion_envio.calle }}
+										<p class="mt-1 font-bold text-slate-900">{{ order.direccion_envio.calle }}
 										</p>
 									</div>
 									<div class="rounded-lg bg-amber-50 p-3 border border-amber-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-amber-700">Número
 											Exterior</p>
 										<p class="mt-1 font-bold text-slate-900">{{
-											item.orden.direccion_envio.numero_exterior || 'N/A' }}</p>
+											order.direccion_envio.numero_exterior || 'N/A' }}</p>
 									</div>
 									<div class="rounded-lg bg-amber-50 p-3 border border-amber-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-amber-700">Número
 											Interior</p>
 										<p class="mt-1 font-bold text-slate-900">{{
-											item.orden.direccion_envio.numero_interior || 'N/A' }}</p>
+											order.direccion_envio.numero_interior || 'N/A' }}</p>
 									</div>
 								</div>
 
@@ -324,13 +324,13 @@
 										<p class="text-xs font-semibold uppercase tracking-wider text-slate-600">Código
 											Postal</p>
 										<p class="mt-1 font-bold text-slate-900">{{
-											item.orden.direccion_envio.codigo_postal }}</p>
+											order.direccion_envio.codigo_postal }}</p>
 									</div>
 									<div class="rounded-lg bg-purple-50 p-3 border border-purple-200">
 										<p class="text-xs font-semibold uppercase tracking-wider text-purple-700">
 											Referencia</p>
 										<p class="mt-1 font-semibold text-slate-900">{{
-											item.orden.direccion_envio.referencia || 'N/A' }}</p>
+											order.direccion_envio.referencia || 'N/A' }}</p>
 									</div>
 								</div>
 							</div>
@@ -339,17 +339,18 @@
 
 						<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
 							<span class="font-medium text-slate-500">Entregado el dia</span>
-							<span class="font-semibold text-slate-900">{{ getDeliveryDateText(item) || 'Pendiente'
+							<span class="font-semibold text-slate-900">{{ getDeliveryDateText(order) || 'Pendiente'
 								}}</span>
 						</p>
 
 						<p class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
 							<span class="font-medium text-slate-500">Comprado el</span>
-							<span class="font-semibold text-slate-900">{{ getPurchaseDateText(item) }}</span>
+							<span class="font-semibold text-slate-900">{{ getPurchaseDateText(order) }}</span>
 						</p>
 					</div>
 				</div>
 			</article>
+			 }
 			}
 			}
 		</div>

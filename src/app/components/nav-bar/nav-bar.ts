@@ -1,7 +1,8 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShoppingCartService } from '../../services/shopping-cart-service';
 import { AuthService } from '../../services/auth-service';
+import { AdminMenuService } from '../../services/admin-menu-service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -12,6 +13,9 @@ import { AuthService } from '../../services/auth-service';
 export class NavBar {
   open = false;
   ShoppingCartService: ShoppingCartService;
+
+  public adminMenuService = inject(AdminMenuService);
+  
   @ViewChild('#aboutUs') aboutUs!: ElementRef;
 
   constructor(private router: Router, public shoppingCartService: ShoppingCartService, private authService: AuthService) {
@@ -61,6 +65,15 @@ export class NavBar {
   }
 
   navigateToAdminDashboard() {
+
+    //Navegamos a la sección del panel admin que el admin tenía abierta la última vez que estuvo en el panel.
+    if(this.adminMenuService.getCurrentSection()) {
+      const currentSection = this.adminMenuService.getCurrentSection();
+      this.router.navigate([`/panel-admin-${currentSection.toLowerCase()}`]);
+      this.togleMenu();
+      return;
+    }
+
     this.router.navigate(['/panel-admin-main']);
     this.togleMenu();
   }

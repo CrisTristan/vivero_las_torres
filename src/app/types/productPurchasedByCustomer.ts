@@ -6,39 +6,28 @@ export interface OrderedProductInfo {
   nombre: string;
 }
 
-export interface OrderInfo {
-  total?: number;
-  fecha?: string;
-  estado: 'entregado' | 'no entregado';
-  usuario?: User;
-  Entregado_El_Dia: string | null;
-  es_arreglo_personalizado?: boolean;
-  metodo_entrega: 'recoger' | 'enviar' | null;
-  direccion_envio: DireccionEnvio;
+export interface ProductoInfo {
+  id: number;
+  cantidad: number;
+  orden_id: number;
+  producto_id: number;
+  imagen_producto: string;
+  nombre_producto: string;
+  precio_unitario: number;
 }
 
 export interface ProductPurchasedByCustomer {
   id: number;
-  orden_id: number;
-  producto_id: number;
-  cantidad: number;
-  precio_unitario: number;
-  nombre_producto: string;
-  imagen_producto: string;
-  orden: OrderInfo;
-}
-
-export interface PersonalizedArrangement {
-  orden_id: number;
   fecha: string;
-  estado: 'entregado' | 'no entregado';
+  total?: number;
+  estado: 'entregado' | 'no entregado' | 'en reparto';
+  productos: ProductoInfo[];
+  usuario_id: number;
+  metodo_entrega: 'recoger' | 'enviar';
+  direccion_envio: DireccionEnvio;
   Entregado_El_Dia: string | null;
-  productos: ProductPurchasedByCustomer[]; // Contiene los 3 productos (planta, maceta, piedra)
-  isGrouped: true; // Identificador para distinguir de productos simples
-  orden: OrderInfo; // Información de la orden para el arreglo personalizado
+  es_arreglo_personalizado?: boolean;
 }
-
-export type PurchasedItem = ProductPurchasedByCustomer | PersonalizedArrangement;
 
 export interface OrdersProductsResponse {
   ordersProducts: ProductPurchasedByCustomer[];

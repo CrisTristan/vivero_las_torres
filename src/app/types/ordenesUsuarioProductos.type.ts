@@ -19,7 +19,7 @@ interface DireccionEnvio {
 interface Order {
   fecha: string;
   total: number;
-  estado: "no entregado" | "entregado";
+  estado: "no entregado" | "entregado" | "en reparto";
   usuario: User;
   Entregado_El_Dia: string | null;
   es_arreglo_personalizado: boolean;

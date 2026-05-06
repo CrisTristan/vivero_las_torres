@@ -1,22 +1,13 @@
 <main class="main">
   <div class="w-full h-screen flex flex-col">
-    <app-nav-bar class="h-[10%]"></app-nav-bar>
-    @if(this.adminMenuService.menuItems.map(item => item.route).includes(this.currentRoute())) {
-    @if (adminMenuService.toggleMenuVisible()) {
-    <app-admin-menu #adminMenuHost [customClass]="'fixed top-[13vh] left-0 w-[40vw] z-[70] h-[82vh]'"></app-admin-menu>
-    }@else{
-    <div class="fixed top-[13vh] left-0 z-70">
-      <button (click)="adminMenuService.toggleMenuVisible.set(true)"
-        class="bg-green-700 text-white p-2 rounded-lg hover:bg-green-800 transition-colors">
-        <span class="material-symbols-outlined">
-          menu_open
-        </span>
-      </button>
+
+    <app-nav-bar class="h-[10vh] shrink-0 fixed z-50"></app-nav-bar>
+    
+    <div class="h-[80vh]">
+      <router-outlet />
     </div>
-    }
-    }
-    <router-outlet class="h-[10%]" />
-    <!-- <div id="n8n-chat"></div> -->
-    <app-bottom-nav-bar class="h-[10%]"></app-bottom-nav-bar>
+
+    <app-bottom-nav-bar class="block h-[10vh] shrink-0"></app-bottom-nav-bar>
+
   </div>
 </main>

@@ -1,18 +1,27 @@
 <div [class]="'bg-[#eef2ee] border-b border-[#d9e2d9] text-[#4b5563] px-5 md:px-8 flex items-center ' + customClass">
     <div class="w-full flex items-center justify-between gap-4">
-        <!-- <div class="relative w-full max-w-[520px]">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#9aa39a] text-[20px] leading-none">
-                search
+        @if (adminMenuService.toggleMenuVisible()) {
+        <app-admin-menu
+          #adminMenuHost
+          [customClass]="'fixed top-[13vh] left-0 w-[40vw] z-[100] h-[82vh]'">
+        </app-admin-menu>
+      } @else {
+        <div class="">
+          <button
+            (click)="adminMenuService.toggleMenuVisible.set(true)"
+            class="bg-green-700 text-white p-2 rounded-lg hover:bg-green-800 transition-colors">
+            <span class="material-symbols-outlined">
+              menu_open
             </span>
-            <input
-                type="text"
-                placeholder="Buscar productos, pedidos..."
-                class="h-10 w-full rounded-lg bg-[#e8ede8] border border-[#dde5dd] pl-10 pr-3 text-[15px] text-[#4b5563] placeholder:text-[#8d978d] outline-none"
-            />
-        </div> -->
-        <app-search-bar></app-search-bar>
+          </button>
+        </div>
+      }
 
-        <div class="flex items-center gap-3">
+        @if(this.adminMenuService.getCurrentSection() === 'Productos') {
+            <app-search-bar></app-search-bar>
+        }
+
+        <div class="flex items-center gap-3 ml-auto md:mr-10">
             @if (showCreateButton) {
                 <button
                     type="button"

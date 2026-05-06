@@ -11,6 +11,7 @@ import { IngresosMensualesController } from '../../controllers/ingresos_mensuale
 import PedidosMesActualController from '../../controllers/pedidos_mes_actual_controller';
 import { ProductosActivosInactivosController } from '../../controllers/productos_activos_inactivos_controller';
 import { TotalClientesController } from '../../controllers/total_clientes_controller';
+import { AdminMenu } from "../../components/admin-menu/admin-menu";
 
 @Component({
   selector: 'app-panel-administrador',
@@ -155,7 +156,11 @@ export class PanelAdministrador implements OnInit, OnDestroy {
       //this.cdr.markForCheck();
     });
 
-
+    //Esta logica funciona pero se ve mal en la experiencia de usuario, se deja comentada por ahora. La idea es que al entrar al dashboard, si el admin ya estaba en una sección diferente a "Main", se redirija automáticamente a esa sección en lugar de mostrarle el dashboard principal.
+    // if(this.adminMenuService.getCurrentSection()) {
+    //     const currentSection = this.adminMenuService.getCurrentSection();
+    //     this.router.navigate([`/panel-admin-${currentSection.toLowerCase()}`]);
+    // }
   }
 
   ngOnDestroy(): void {

@@ -2,10 +2,11 @@ import { Component, EventEmitter, inject, Input, Output, signal } from '@angular
 import { AdminMenuService } from '../../services/admin-menu-service';
 import { SearchBar } from '../search-bar/search-bar';
 import { NotificationService } from '../../services/notification-service';
+import { AdminMenu } from '../admin-menu/admin-menu';
 
 @Component({
   selector: 'app-header-section',
-  imports: [SearchBar],
+  imports: [SearchBar, AdminMenu],
   templateUrl: './header-section.html',
   styleUrl: './header-section.css',
 })
