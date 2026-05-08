@@ -1,5 +1,6 @@
-import { Component, signal, Input } from '@angular/core';
+import { Component, signal, Input, inject, effect } from '@angular/core';
 import { SearchProductEvent } from '../../services/search-product-event';
+import { AdminMenuService } from '../../services/admin-menu-service';
 
 @Component({
   selector: 'app-search-bar',
@@ -10,12 +11,21 @@ import { SearchProductEvent } from '../../services/search-product-event';
 export class SearchBar {
     searchProduct = signal<string>('');
     
+    private adminMenuService = inject(AdminMenuService);
+    
   @Input() set value(val: string) {
-    console.log("Setting search value:", val);
     this.searchProduct.set(val ?? '');
   }
 
-    constructor(private searchService: SearchProductEvent) {}
+    constructor(private searchService: SearchProductEvent) {
+      //Reiniciar el valor de búsqueda al cargar el componente
+      this.searchProduct.set('');
+      //Reiniciar el valor de búsqueda al cargar el componente solo si estamos en la sección de productos
+      if(this.adminMenuService.currentSection() === 'Productos') {
+        console.log("Resetting search value for Productos section");
+        this.updateSearchProduct('');
+      }
+    }
     
     updateSearchProduct(value: string) {
         this.searchProduct.set(value);

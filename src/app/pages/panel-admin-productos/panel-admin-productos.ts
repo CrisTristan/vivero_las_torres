@@ -100,6 +100,10 @@ export class PanelAdminProductos implements OnInit {
       const onChangeCategory = this.selectedCategory();
       this.ensureCreateTypeDefaultByCategory(onChangeCategory);
       console.log('Categoría seleccionada:', onChangeCategory);
+      //Reiniciar el campo de busqueda al cambiar de categoria para evitar confusiones al usuario, ya que el termino 
+      // de busqueda se mantiene aunque cambies de categoria y puede llevar a pensar que no hay productos en la nueva categoria 
+      // cuando en realidad el filtro de busqueda sigue activo con el termino anterior.
+      this.searchService.emitSearch(''); // Emitimos un término de búsqueda vacío para reiniciar el filtro de búsqueda al cambiar de categoría
       if(this.selectedCategory() === 'plantas') {
         this.imageUploaderService.currectCategoryOnPanelAdminProductos.set('plantas'); //actualizamos la categoria actual en el servicio para que el image uploader sepa a que carpeta subir la imagen
         fetchAllPlants().then((plants) => {
