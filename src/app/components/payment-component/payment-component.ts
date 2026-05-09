@@ -153,6 +153,10 @@ export class PaymentComponent {
           // console.log('Orden normal creada y dirección de envío asociada:', resDireccionEnvio);
           // console.log('Orden normal creada:', res);
         }
+        
+        // Limpiar datos de pago después de completar exitosamente
+        this.paymentService.clearPaymentData();
+        this.shoppingCartService.clearCart();
         this.router.navigate(['/success-payment']);
       } catch (error) {
         console.error('Error en el flujo de pago:', error);

@@ -50,7 +50,11 @@ export class AuthService {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    this.shoppingCartService.clearCart();
+    localStorage.removeItem('selectedShippingData'); // Limpiar datos de envío seleccionados al cerrar sesión
+    localStorage.removeItem('paymentTotalAmount'); // Limpiar monto total de pago al cerrar sesión
+    localStorage.removeItem('isPaymentForPersonalizedArrangement'); // Limpiar flag de pago para arreglo personalizado al cerrar sesión
+    localStorage.removeItem('selectedShippingMethod'); // Limpiar método de envío seleccionado al cerrar sesión
+    //this.shoppingCartService.clearCart();
   }
 
   getAccessToken(): string | null {

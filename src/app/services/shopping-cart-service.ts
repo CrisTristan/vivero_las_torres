@@ -13,10 +13,32 @@ export class ShoppingCartService {
   private cartItemsForPersonalizedArrangement = signal<Product[]>([]); 
 
   private plantDesignService = inject(PlantDesignService);
+  private isCartArrangementInizialized = false; // Flag para evitar inicialización múltiple del carrito personalizado
 
   constructor() {
+    // ✅ Cargar cartItems desde localStorage
+    try {
+      const stored = localStorage.getItem('cartItems');
+      if (stored) {
+        this.cartItems.set(JSON.parse(stored));
+      }
+    } catch {
+      this.cartItems.set([]);
+    }
+
+    // ✅ Cargar cartItemsForPersonalizedArrangement desde localStorage
+    try {
+      const storedPersonalized = localStorage.getItem('cartItemsForPersonalizedArrangement');
+      console.log('Cargando arreglo personalizado desde localStorage:', storedPersonalized);
+      if (storedPersonalized) {
+        this.cartItemsForPersonalizedArrangement.set(JSON.parse(storedPersonalized));
+      }
+    } catch {
+      this.cartItemsForPersonalizedArrangement.set([]);
+    }
+
+    // Effect que observa cambios en el plantDesignService y actualiza el carrito personalizado
     effect(() => {
-      // Siempre crea un nuevo arreglo solo con los seleccionados actuales
       const selectedPlant = this.plantDesignService.userSelectedPlant();
       const selectedPot = this.plantDesignService.userSelectedPot();
       const selectedStone = this.plantDesignService.userSelectedStone();
@@ -26,34 +48,50 @@ export class ShoppingCartService {
       if (selectedPot) newItems.push(selectedPot);
       if (selectedStone) newItems.push(selectedStone);
 
-      this.cartItemsForPersonalizedArrangement.set(newItems);
+      // Solo actualizar si ya se ha inicializado (cambios del usuario)
+      // De lo contrario, el effect sobrescribiría los datos cargados desde localStorage
+      if(this.isCartArrangementInizialized && newItems.length > 0) {
+        console.log('Actualizando carrito de arreglo personalizado con:', newItems);
+        this.cartItemsForPersonalizedArrangement.set(newItems);
+        this.persistPersonalizedArrangementItems(newItems);
+      }
     });
 
+    // ✅ Marcar como inicializado DESPUÉS de crear el effect
+    // Así el effect no sobrescribe la carga inicial desde localStorage
+    this.isCartArrangementInizialized = true;
+  }
+
+  private persistPersonalizedArrangementItems(items: Product[]): void {
     try {
-      const stored = localStorage.getItem('cartItems');
-      if (stored) {
-        this.cartItems.set(JSON.parse(stored));
-      }
+      localStorage.setItem('cartItemsForPersonalizedArrangement', JSON.stringify(items));
     } catch {
-      this.cartItems.set([]);
+      console.error('Error al persistir arreglo personalizado en localStorage');
     }
   }
 
   //Los 3 metodos siguientes son para manejar los productos del arreglo personalizado.
   addItemToPersonalizedArrangements(item: Product) {
     this.cartItemsForPersonalizedArrangement.update(current => [...current, item]);
+    this.persistPersonalizedArrangementItems(this.cartItemsForPersonalizedArrangement());
   }
 
   removeItemFromPersonalizedArrangements(id: number) {
     this.cartItemsForPersonalizedArrangement.update(current => current.filter(item => item.id !== id));
+    this.persistPersonalizedArrangementItems(this.cartItemsForPersonalizedArrangement());
   }
 
   getPersonalizedArrangementItems() {
     return this.cartItemsForPersonalizedArrangement();
   }
 
+  getCartItemsForPersonalizedArrangement() {
+    return this.cartItemsForPersonalizedArrangement();
+  }
+
   clearPersonalizedArrangementItems() {
     this.cartItemsForPersonalizedArrangement.set([]);
+    localStorage.removeItem('cartItemsForPersonalizedArrangement');
   }
 
   private getPersonalizedItemType(item: Product): 'plantas' | 'macetas' | 'piedras' {
@@ -128,7 +166,9 @@ export class ShoppingCartService {
 
   clearCart() {
     this.cartItems.set([]);
+    this.cartItemsForPersonalizedArrangement.set([]);
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems()));
+    localStorage.removeItem('cartItemsForPersonalizedArrangement');
   }
 
   decrementItemQuantity(id: number) {
@@ -156,10 +196,6 @@ export class ShoppingCartService {
       return current;
     });
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems()));
-  }
-
-  getCartItemsForPersonalizedArrangement() {
-    return this.cartItemsForPersonalizedArrangement();
   }
       
 }

@@ -8,6 +8,7 @@
 .design-preview img {
     position: absolute;
     object-fit: contain;
+    z-index: 1;
 }
 
 .plantPot-img.selected {

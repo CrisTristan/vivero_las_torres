@@ -19,6 +19,16 @@ export class UserShippingDataService {
   private skipNextUserCheck = false; // Flag para evitar sobrescribir datos recién creados
 
   constructor() {
+    // Cargar selectedShippingData desde localStorage si existe
+    try {
+      const stored = localStorage.getItem('selectedShippingData');
+      if (stored) {
+        this.selectedShippingData.set(JSON.parse(stored));
+      }
+    } catch {
+      console.error('Error cargando selectedShippingData desde localStorage');
+    }
+
     // 🔍 Effect que observa cambios en el usuario autenticado
     effect(
       () => {
@@ -50,6 +60,7 @@ export class UserShippingDataService {
             this.userId = null;
             this.AllUserShippingData.set([]); // Limpiar datos
             this.selectedShippingData.set(null);
+            localStorage.removeItem('selectedShippingData');
           }
         }
       },
@@ -81,6 +92,11 @@ export class UserShippingDataService {
 
   setSelectedShippingData(data: DireccionEnvio | null) {
     this.selectedShippingData.set(data);
+    if (data) {
+      localStorage.setItem('selectedShippingData', JSON.stringify(data));
+    } else {
+      localStorage.removeItem('selectedShippingData');
+    }
   }
 
   getAllUserShippingData(): DireccionEnvio[] {
