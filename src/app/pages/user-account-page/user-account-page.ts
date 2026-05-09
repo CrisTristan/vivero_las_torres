@@ -28,7 +28,6 @@ export class UserAccountPage implements OnInit {
 
   async ngOnInit() {
     const profile = await this.authService.getUser();
-    console.log('Perfil del usuario:', profile);
     if (profile) {
       this.user.set(profile);
     } else {

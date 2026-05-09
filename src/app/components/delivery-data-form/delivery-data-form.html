@@ -70,17 +70,17 @@
         }
       </div>
       <div class="flex flex-col">
-        <label class="label">Número interior</label>
-        <input class="input" [class.border-red-500]="errors().numero_interior" [(ngModel)]="form().numero_interior"
-          name="numero_interior" (ngModelChange)="updateField('numero_interior', $event)" />
-        @if (errors().numero_interior) {
-        <span class="error">{{ errors().numero_interior }}</span>
+        <label class="label">Número exterior</label>
+        <input class="input" [class.border-red-500]="errors().numero_exterior" [(ngModel)]="form().numero_exterior"
+          name="numero_exterior" (ngModelChange)="updateField('numero_exterior', $event)" />
+        @if (errors().numero_exterior) {
+        <span class="error">{{ errors().numero_exterior }}</span>
         }
       </div>
       <div class="flex flex-col">
-        <label class="label">Número exterior (opcional)</label>
-        <input class="input" [(ngModel)]="form().numero_exterior" name="numero_exterior"
-          (ngModelChange)="updateField('numero_exterior', $event)" />
+        <label class="label">Número interior (opcional)</label>
+        <input class="input" [(ngModel)]="form().numero_interior" name="numero_interior"
+          (ngModelChange)="updateField('numero_interior', $event)" />
       </div>
       <div class="flex flex-col">
         <label class="label">Código postal</label>
@@ -154,18 +154,18 @@
         </div>
 
         <div class="flex flex-col">
-          <label class="label">Número interior</label>
-          <input class="input" [class.border-red-500]="errors().numero_interior" [(ngModel)]="form().numero_interior"
-            name="numero_interior" (ngModelChange)="updateField('numero_interior', $event)" />
-          @if (errors().numero_interior) {
-          <span class="error">{{ errors().numero_interior }}</span>
+          <label class="label">Número exterior</label>
+          <input class="input" [class.border-red-500]="errors().numero_exterior" [(ngModel)]="form().numero_exterior" name="numero_exterior"
+            (ngModelChange)="updateField('numero_exterior', $event)" />
+          @if (errors().numero_exterior) {
+          <span class="error">{{ errors().numero_exterior }}</span>
           }
         </div>
 
         <div class="flex flex-col">
-          <label class="label">Número exterior (opcional)</label>
-          <input class="input" [(ngModel)]="form().numero_exterior" name="numero_exterior"
-            (ngModelChange)="updateField('numero_exterior', $event)" />
+          <label class="label">Número interior (opcional)</label>
+          <input class="input" [(ngModel)]="form().numero_interior" name="numero_interior"
+            (ngModelChange)="updateField('numero_interior', $event)" />
         </div>
 
         <div class="flex flex-col">

@@ -3,7 +3,25 @@
   <div class="w-full h-full flex flex-col items-center justify-center">
       @if(showEmailVerificationMessage()) {
         <div class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700" role="alert">
-          <p>Por favor, verifica tu correo electrónico antes de iniciar sesión.</p>
+          <div class="flex items-start gap-2">
+            <p class="flex-1">Por favor, verifica tu correo electrónico antes de iniciar sesión.</p>
+            <button
+              type="button"
+              (click)="showEmailInstructions.set(!showEmailInstructions())"
+              class="w-8 h-8 rounded-full bg-yellow-400 hover:bg-yellow-500 text-yellow-800 font-bold text-sm flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-1"
+              title="Ver instrucciones de verificación"
+            >
+              ?
+            </button>
+          </div>
+          @if(showEmailInstructions()) {
+            <div class="mt-3 pt-3 border-t border-yellow-400 text-sm space-y-1">
+              <p class="font-semibold">📧 Instrucciones para verificar tu correo:</p>
+              <p class="ml-3">1. Revisa tu correo electrónico (incluida la carpeta de spam)</p>
+              <p class="ml-3">2. Haz clic en el enlace de activación en el correo</p>
+              <p class="ml-3">3. Vuelve a esta página e intenta iniciar sesión nuevamente</p>
+            </div>
+          }
         </div>
       }
     <h1 class="text-3xl font-bold mb-6">Iniciar Sesión</h1>

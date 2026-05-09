@@ -43,11 +43,11 @@ export class RouteTrackerService {
     console.log(`🔎 Verificando patrón: "${first}" → "${second}"`);
 
     // 👇 aquí defines tu lógica
-    if (first === '/shoppingCart' && second === '/customer-shipping-data-page') {
-      console.log('✅ Patrón coincidió: /shoppingCart → /customer-shipping-data-page');
+    if (first === '/metodo-de-envio' && second === '/customer-shipping-data-page') {
+      console.log('✅ Patrón coincidió: /metodo-de-envio → /customer-shipping-data-page');
       this.triggerEffect();
     } else {
-      console.log(`❌ Patrón no coincide. Esperado: "/shoppingCart" → "/customer-shipping-data-page"`);
+      console.log(`❌ Patrón no coincide. Esperado: "/metodo-de-envio" → "/customer-shipping-data-page"`);
     }
   }
 

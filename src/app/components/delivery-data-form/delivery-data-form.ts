@@ -75,7 +75,7 @@ export class DeliveryDataForm implements OnInit {
 
   ngOnInit(): void {
     if (this.form()) {
-      console.log("Datos de envío cargados en el formulario:", this.form());
+      // console.log("Datos de envío cargados en el formulario:", this.form());
     }
   }
 
@@ -83,7 +83,7 @@ export class DeliveryDataForm implements OnInit {
    * Cancela la edición y limpia el formulario.
    */
   cancelEditShippingDataForm() {
-    console.log("Edición cancelada, limpiando formulario");
+    // console.log("Edición cancelada, limpiando formulario");
     this.indexEditingShippingDataForm.set(null);
     this.form.set({
       region: "",
@@ -155,14 +155,14 @@ export class DeliveryDataForm implements OnInit {
         else if (value.length < 3) error = "Mínimo 3 caracteres";
         break;
 
-      case "numero_interior":
+      case "numero_exterior":
         if (!value) error = "Campo requerido";
         else if (!/^[a-zA-Z0-9\-]+$/.test(value)) {
           error = "Formato inválido (solo letras, números y guiones)";
         }
         break;
 
-      case "numero_exterior":
+      case "numero_interior":
       case "referencia":
         // opcionales → no validar si están vacíos
         break;
@@ -188,7 +188,7 @@ export class DeliveryDataForm implements OnInit {
       "lote",
       "colonia",
       "calle",
-      "numero_interior",
+      "numero_exterior",
       "codigo_postal",
     ];
 
@@ -221,7 +221,7 @@ export class DeliveryDataForm implements OnInit {
       referencia: form.referencia ?? "",
     };
 
-    console.log("✅ Datos válidos:", payload);
+    // console.log("✅ Datos válidos:", payload);
 
     // Crear una nueva dirección de envío
     try {
@@ -242,6 +242,7 @@ export class DeliveryDataForm implements OnInit {
           severity: "warn",
           summary: "Advertencia",
           detail: response.data.message,
+          life: 7000,
         });
       } else {
         this.messageService.add({
@@ -287,7 +288,7 @@ export class DeliveryDataForm implements OnInit {
       referencia: form.referencia ?? "",
     };
 
-    console.log("✅ Datos válidos:", payload);
+    // console.log("✅ Datos válidos:", payload);
 
     // Actualizar la dirección de envío existente
     const id = this.indexEditingShippingDataForm();
@@ -306,6 +307,7 @@ export class DeliveryDataForm implements OnInit {
               severity: "warn",
               summary: "Advertencia",
               detail: response.data.message,
+              life: 7000,
             });
           } else {
             this.messageService.add({
@@ -320,6 +322,7 @@ export class DeliveryDataForm implements OnInit {
             severity: "error",
             summary: "Error",
             detail: "Error al actualizar dirección de envío",
+            life: 7000,
           });
           console.error("❌ Error al actualizar dirección de envío:", error);
         });

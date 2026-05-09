@@ -84,7 +84,7 @@ export class UserShippingDataService {
   }
 
   getAllUserShippingData(): DireccionEnvio[] {
-    console.log("debug", this.AllUserShippingData());
+    // console.log("debug", this.AllUserShippingData());
     return this.AllUserShippingData();
   }
 

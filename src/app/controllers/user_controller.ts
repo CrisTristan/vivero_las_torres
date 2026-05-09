@@ -55,7 +55,8 @@ export class UserController {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al iniciar sesión');
+                return {status: response.status, authResponse: undefined};
+                // throw new Error(errorData.message || 'Error al iniciar sesión');
             }
 
             const result = await response.json();
@@ -64,7 +65,7 @@ export class UserController {
             return {status: response.status, authResponse: result as AuthResponse};
         } catch (error) {
             console.error('Error en loginUser:', error);
-            throw error;
+            return {status: 500, authResponse: undefined};
         }
     }
 
