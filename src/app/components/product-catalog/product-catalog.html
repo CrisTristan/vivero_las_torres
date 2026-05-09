@@ -1,36 +1,154 @@
-<div class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[9vh]">
-  <div class="my-3">
-    <app-search-bar [value]="searchTerm()"></app-search-bar>
-    <div class="flex flex-row justify-between my-3 font-bold">
-      <button class="bg-green-400 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'plantas'" (click)="filterByCategory('plantas')">
-        Plantas
-      </button>
-      <button class="bg-gray-400 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'macetas'" (click)="filterByCategory('macetas')">
-        Macetas
-      </button>
-      <button class="bg-white px-4 py-2 rounded-lg border-2 border-black filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'piedras'" (click)="filterByCategory('piedras')">
-        Piedras
-      </button>
-      <button class="bg-amber-600 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'tierra'" (click)="filterByCategory('tierra')">
-        Tierra
-      </button>
-      <button class="bg-green-600 px-4 py-2 rounded-lg filter-button"
-        [class.filter-selected]="this.getSelectedCategory() === 'pasto'" (click)="filterByCategory('pasto')">
-        Pasto
-      </button>
+<div class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[9vh] bg-green-300" #scrollContainer
+  (scroll)="onContainerScroll($event)">
+  <!-- Search Bar & Filters Container -->
+  <div class="fixed w-full px-3 md:px-6 py-4 bg-green-300/90 backdrop-blur-sm border-b border-green-500/50 z-50">
+    <!-- Search Bar -->
+    <div class="mb-6 fixed left-1/2 transform -translate-x-1/2 w-[100%] z-70 bg-green-300">
+      <div class="w-[80%] mx-auto mb-5">
+        <app-search-bar [value]="searchTerm()" class="drop-shadow-sm"></app-search-bar>
+      </div>
+      <!-- Main Filters - Mobile First -->
+      @if(this.containerScrollDirection() === 'up'){
+      <div class="space-y-4">
+        <!-- Mobile Grid (1-2 columns) & Desktop Grid (3-4 columns) -->
+        <div class="grid grid-cols-5 gap-2 lg:grid-cols-6 mb-4 mx-4">
+
+          <!-- Plantas Button -->
+          <button
+            class="group relative px-1.5 py-1 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            [class]="this.getSelectedCategory() === 'plantas' 
+            ? 'bg-gradient-to-br from-green-400 to-green-500 text-white shadow-lg scale-105' 
+            : 'bg-green-100 text-green-700 hover:bg-green-200'" (click)="filterByCategory('plantas')">
+            <span class="flex items-center justify-center gap-0.5">
+              <span class="material-symbols-outlined text-base text-size">eco</span>
+              <span class="hidden sm:inline">Plantas</span>
+              <span class="sm:hidden">Plantas</span>
+            </span>
+          </button>
+
+          <!-- Macetas Button -->
+          <button
+            class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            [class]="this.getSelectedCategory() === 'macetas' 
+            ? 'bg-gradient-to-br from-gray-400 to-gray-500 text-white shadow-lg scale-105' 
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'" (click)="filterByCategory('macetas')">
+            <span class="flex items-center justify-center gap-0.5">
+              <span class="material-symbols-outlined text-base text-size">breakfast_dining</span>
+              <span class="hidden sm:inline">Macetas</span>
+              <span class="sm:hidden">Macetas</span>
+            </span>
+          </button>
+
+          <!-- Piedras Button -->
+          <button
+            class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg border-2"
+            [class]="this.getSelectedCategory() === 'piedras' 
+            ? 'bg-gray-600 text-white border-gray-700 shadow-lg scale-105' 
+            : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'"
+            (click)="filterByCategory('piedras')">
+            <span class="flex items-center justify-center gap-0.5">
+              <span class="material-symbols-outlined text-base text-size">landslide</span>
+              <span class="hidden sm:inline">Piedras</span>
+              <span class="sm:hidden">Piedras</span>
+            </span>
+          </button>
+
+          <!-- Tierra Button -->
+          <button
+            class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            [class]="this.getSelectedCategory() === 'tierra'
+            ? 'bg-gradient-to-br from-amber-600 to-yellow-600 text-white shadow-lg scale-105' 
+            : 'bg-amber-100 text-amber-700 hover:bg-amber-200'" (click)="filterByCategory('tierra')">
+            <span class="flex items-center justify-center gap-0.5">
+              <span class="material-symbols-outlined text-base text-size">landscape_2</span>
+              <span class="hidden sm:inline">Tierra</span>
+              <span class="sm:hidden">Tierra</span>
+            </span>
+          </button>
+
+          <button
+            class="group bg-blue-400 relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 
+            transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            (click)="onPressDisplayAllCategoriesFilter()"
+            >
+            <span class="flex items-center justify-center gap-0.5">
+              <span class="material-symbols-outlined text-base text-size">more_horiz</span>
+              <span class="hidden sm:inline">Más</span>
+              <span class="sm:hidden">{{this.viewAllCategoriesFilter() ? 'Menos' : 'Más'}}</span>
+            </span>
+          </button>
+
+          <!-- Additional Filters Section -->
+        @if(this.viewAllCategoriesFilter()) {
+
+          <!-- Pasto Button -->
+          <button
+            class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            [class]="this.getSelectedCategory() === 'pasto' 
+            ? 'bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-lg scale-105' 
+            : 'bg-green-200 text-green-700 hover:bg-green-300'" (click)="filterByCategory('pasto')">
+            <span class="flex items-center justify-center gap-0.5">
+              <span class="material-symbols-outlined text-base text-size">grass</span>
+              <span class="hidden sm:inline">Pasto</span>
+              <span class="sm:hidden">Pasto</span>
+            </span>
+          </button>
+
+          <!-- <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider px-2 mb-3">Químicos & Tratamientos</h3> -->
+
+            <!-- Plaguicidas Button -->
+            <button
+              class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+              [class]="this.getSelectedCategory() === 'plaguicidas' 
+              ? 'bg-gradient-to-br from-red-500 to-rose-600 text-white shadow-lg scale-105' 
+              : 'bg-red-100 text-red-700 hover:bg-red-200'" (click)="filterByCategory('plaguicidas')">
+              <span class="flex items-center justify-center gap-0.5">
+                <span class="material-symbols-outlined text-base text-size">bug_report</span>
+                <span class="hidden sm:inline">Plaguicidas</span>
+                <span class="sm:hidden">Plaguicidas</span>
+              </span>
+            </button>
+
+            <!-- Herbicidas Button -->
+            <button
+              class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+              [class]="this.getSelectedCategory() === 'herbicidas' 
+              ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg scale-105' 
+              : 'bg-orange-100 text-orange-700 hover:bg-orange-200'" (click)="filterByCategory('herbicidas')">
+              <span class="material-symbols-outlined text-base text-size">household_supplies</span>
+              <span class="hidden sm:inline">Hericidas</span>
+              <span class="sm:hidden">Hericidas</span>
+            </button>
+
+            <!-- Fertilizantes Button -->
+            <button
+              class="group relative px-2 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg col-span-2 md:col-span-1"
+              [class]="this.getSelectedCategory() === 'fertilizantes' 
+              ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg scale-105' 
+              : 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200'" (click)="filterByCategory('fertilizantes')">
+              <span class="flex items-center justify-center gap-0.5">
+                <span class="material-symbols-outlined text-base text-size">psychiatry</span>
+                <span class="hidden sm:inline">Fertilizantes</span>
+                <span class="sm:hidden">Fertilizantes</span>
+              </span>
+            </button>
+        }
+        </div>
+
+      </div>
+      }
+
     </div>
+
   </div>
 
-  <div class="grid grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:gap-4">
+  <div class="pt-[32%] lg:pt-[10%] grid grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:gap-4">
     @for (product of filteredProducts(); track product.id) {
     @if(product.esPiedraSuelta !== true && product.productos.activo){
-    <div class="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden mb-2.5 transition-all duration-300 transform hover:scale-105 cursor-pointer border border-gray-100 md:h-[70] md:max-w-lg"
+    <div
+      class="group bg-white rounded-2xl shadow-md hover:shadow-2xl overflow-hidden mb-2.5 transition-all duration-300 transform hover:scale-105 cursor-pointer border border-gray-100 md:h-[70] md:max-w-lg"
       (click)="navigateToProductDetails(product.id, this.getSelectedCategory())">
-      
+
       <!-- Badge de tipo -->
       <!-- <div class="absolute top-3 right-3 z-10">
         <h2 class="p-2 rounded-full text-xs font-bold px-3 uppercase tracking-widest" [class.bg-red-100]="product.tipo === 'interior' && this.getSelectedCategory() === 'plantas'"
@@ -46,22 +164,23 @@
       </div> -->
 
       <!-- Sección de imagen -->
-      <div class="relative w-full h-60 overflow-hidden bg-gray-100 md:flex md:items-center md:justify-center lg:flex lg:justify-center lg:items-center">
-        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}" class="w-full h-full md:max-w-full md:max-h-full object-cover lg:object-contain lg:max-w-full lg:max-h-full group-hover:scale-110 transition-transform duration-500" />
+      <div
+        class="relative w-full h-60 overflow-hidden bg-gray-100 md:flex md:items-center md:justify-center lg:flex lg:justify-center lg:items-center">
+        <img src="{{ product.productos.imagen }}" alt="{{ product.productos.nombre }}"
+          class="w-full h-full md:max-w-full md:max-h-full object-cover lg:object-contain lg:max-w-full lg:max-h-full group-hover:scale-110 transition-transform duration-500" />
       </div>
 
       <!-- Sección de contenido -->
       <div class="p-4 space-y-3">
         <!-- Nombre del producto -->
-        <h2 class="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors">{{ product.productos.nombre }}</h2>
+        <h2 class="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors">{{
+          product.productos.nombre }}</h2>
 
         <!-- Tipo del producto -->
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-base text-gray-500">category</span>
-          <p class="text-xs text-gray-700 font-semibold p-3"
-             [class]="{ 'bg-aqua-200': product.tipo === 'interior' }"
-             [class]="{ 'bg-yellow-200': product.tipo === 'exterior' }"
-            >{{ product.tipo }}</p>
+          <p class="text-xs text-gray-700 font-semibold p-3" [class]="{ 'bg-aqua-200': product.tipo === 'interior' }"
+            [class]="{ 'bg-yellow-200': product.tipo === 'exterior' }">{{ product.tipo }}</p>
         </div>
 
         <!-- Nivel de Cuidado (Solo Plantas) -->

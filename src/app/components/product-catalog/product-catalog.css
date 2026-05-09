@@ -30,3 +30,7 @@ h2.barro {
     'opsz' 24;
   color: red;
 }
+
+.text-size {
+    font-size: 1.25rem;
+}

@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, inject, effect } from '@angular/core';
+import { Component, signal, computed, OnInit, inject, effect, ViewChild, ElementRef } from '@angular/core';
 import { SearchBar } from '../search-bar/search-bar';
 import { SearchProductEvent } from '../../services/search-product-event';
 import { Subscription } from 'rxjs';
@@ -12,6 +12,8 @@ import { fetchAllPiedras } from '../../controllers/piedras_controller';
 import { fetchAllTierra } from '../../controllers/tierra_controller';
 import { fetchAllPasto } from '../../controllers/pasto_controller';
 import { FilterCategoryService } from '../../services/filter-category-service';
+import {fromEvent} from 'rxjs';
+import {map,pairwise,throttleTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-catalog',
@@ -29,6 +31,15 @@ export class ProductCatalog implements OnInit {
   private products = signal<Product[]>([]);
   public isLoadingAllProducts = signal(true);
 
+  public viewAllCategoriesFilter = signal(false);
+
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
+  private lastContainerScroll = 0;
+  public containerScrollDirection = signal<'up' | 'down'>('up'); //Señal para indicar la direccion del scroll del usuario.
+  private scrollThrottleTime = 200; // ms
+  private lastScrollEmitTime = 0;
+  private minScrollDistance = 5; // píxeles mínimos para considerar un scroll "largo"
+
   constructor(
     private searchService: SearchProductEvent,
     private router: Router,
@@ -41,20 +52,19 @@ export class ProductCatalog implements OnInit {
       const category = this.filterCategoryService.getCurrentCategory();
       // this.selectedCategory.set(category);
     });
-  }
 
-  // products = [
-  // {id: 1, name: 'Colgante / Telefono', price: 10.99, imageUrl: 'https://www.ikea.com/ae/en/images/products/epipremnum-potted-plant-golden-pothos__0672682_pe716783_s5.jpg', description: 'Descripción de la Planta 1', type: 'Interior', levelOfCare: 'Bajo', category: 'Plantas' },
-  // {id: 2, name: 'Suculenta', price: 5.99, imageUrl: 'https://veryplants.com/cdn/shop/articles/Exotic-succulent-plants..jpg?v=1706711966', description: 'Descripción de la Planta 2', type: 'Interior', levelOfCare: 'Medio', category: 'Plantas' },
-  // {id: 3, name: 'Cactus', price: 7.99, imageUrl: 'https://www.jacksonandperkins.com/images/xxl/29377.webp?v=1', description: 'Descripción de la Planta 3', type: 'Interior', levelOfCare: 'Bajo', category: 'Plantas' },
-  // {id: 4, name: 'Helecho', price: 12.99, imageUrl: 'https://cdn.shopify.com/s/files/1/0086/2519/3040/products/helechoboston_480x480.jpg?v=1619052136', description: 'Descripción de la Planta 4', type: 'Exterior', levelOfCare: 'Alto', category: 'Plantas' },
-  // {id: 5, name: 'Tierra de Hoja', price: 3.99, imageUrl: 'https://www.agrorganicos.mx/cdn/shop/files/Agrorganicos_Productos_300x300.jpg?v=1769464954', description: 'Descripción de la Tierra de hoja', type: 'Sustratos', levelOfCare: 'N/A', category: 'Tierra' },
-  // {id: 6, name: 'Tierra Negra', price: 4.99, imageUrl: 'https://dcdn-us.mitiendanube.com/stores/001/973/634/products/tierra-negra-3c5476e116ac15869017679807737002-480-0.webp', description: 'Descripción de la Tierra Negra', type: 'Sustratos', levelOfCare: 'N/A', category: 'Tierra' },
-  // {id: 7, name: 'Maceta de Barro', price: 8.99, imageUrl: 'https://www.ikea.com/ae/en/images/products/krukor-terracotta-potted-plant__0672683_pe716784_s5.jpg', description: 'Descripción de la Maceta de Barro', type: 'Macetas', levelOfCare: 'N/A', category: 'Macetas' },
-  // {id: 8, name: 'Maceta de Cerámica', price: 14.99, imageUrl: 'https://www.ikea.com/ae/en/images/products/krukor-ceramic-potted-plant__0672684_pe716785_s5.jpg', description: 'Descripción de la Maceta de Cerámica', type: 'Macetas', levelOfCare: 'N/A', category: 'Macetas' },
-  // {id: 9, name: 'Piedra Decorativa', price: 6.99, imageUrl: 'https://cdn.shopify.com/s/files/1/0086/2519/3040/products/agrorganicos_piedra_decorativa_300x300.jpg?v=1619052136', description: 'Descripción de la Piedra Decorativa', type: 'Decoración', levelOfCare: 'N/A', category: 'Piedras' },
-  // {id: 10, name: "Rosa del Desierto", price: 9.99, imageUrl: 'https://www.ikea.com/ae/en/images/products/adenium-potted-plant-desert-rose__0672685_pe716786_s5.jpg', description: 'Descripción de la Rosa del Desierto', type: 'Interior', levelOfCare: 'Medio', category: 'Plantas' },
-  // ];
+    // Effect para hacer scroll al top cuando filteredProducts cambia
+    effect(() => {
+      this.filteredProducts(); // Observar cambios en filteredProducts
+      // Hacer scroll al top
+      if (this.scrollContainer) {
+        setTimeout(() => {
+          this.scrollContainer.nativeElement.scrollTop = 0;
+        }, 0);
+      }
+    });
+
+  }
 
   ngOnInit(): void {
     //Categoria "plantas" por defecto
@@ -82,6 +92,56 @@ export class ProductCatalog implements OnInit {
       .catch((error) => {
         console.error('Error fetching productos in ProductCatalog:', error);
       });
+
+  }
+
+
+  onContainerScroll(event: Event): void {
+    const target = event.target as HTMLDivElement;
+    const currentScroll = target.scrollTop;
+
+    // Si está al inicio del scroll (scrollTop = 0), establecer dirección a 'up'
+    if (currentScroll === 0) {
+      if (this.containerScrollDirection() !== 'up') {
+        this.containerScrollDirection.set('up');
+        console.log('En el inicio del scroll - Scroll hacia arriba');
+      }
+      this.lastContainerScroll = 0;
+      return;
+    }
+
+    const now = Date.now();
+    
+    // Throttling: solo procesar si pasaron suficientes ms
+    if (now - this.lastScrollEmitTime < this.scrollThrottleTime) {
+      return;
+    }
+
+    const scrollDifference = Math.abs(currentScroll - this.lastContainerScroll);
+
+    // Solo detectar si el desplazamiento fue mayor a la distancia mínima
+    if (scrollDifference >= this.minScrollDistance) {
+      if (currentScroll > this.lastContainerScroll) {
+        //Actualizar la señal solo si antes estaba diferente para evitar emisiones innecesarias
+        if (this.containerScrollDirection() !== 'down') {
+          this.containerScrollDirection.set('down');
+          console.log('Container scroll hacia abajo - Distancia:', scrollDifference);
+        }
+      } else if (currentScroll < this.lastContainerScroll) {
+        //Actualizar la señal solo si antes estaba diferente para evitar emisiones innecesarias
+        if (this.containerScrollDirection() !== 'up') {
+          this.containerScrollDirection.set('up');
+          console.log('Container scroll hacia arriba - Distancia:', scrollDifference);
+        }
+      }
+
+      this.lastContainerScroll = currentScroll;
+      this.lastScrollEmitTime = now;
+    }
+  }
+
+  onPressDisplayAllCategoriesFilter() {
+    this.viewAllCategoriesFilter.update((current) => !current);
   }
 
   public getSelectedCategory() {
@@ -113,6 +173,7 @@ export class ProductCatalog implements OnInit {
   });
 
   filterByCategory(category: string) {
+    this.viewAllCategoriesFilter.set(false); // Cerrar el filtro de "todas las categorías" al seleccionar una categoría al azar
     this.filterCategoryService.setCurrentCategory(category);
     this.searchTerm.set('');
   }

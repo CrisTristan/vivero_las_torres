@@ -1,9 +1,12 @@
-<div class="">
+<div class="relative">
     <input
         type="text"
         placeholder="Buscar productos..."
-        class="w-full p-2 border rounded mb-4"
+        class="w-full p-2 pl-12 text-sm border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none transition-all duration-300 shadow-sm hover:shadow-md"
         [value]="searchProduct()"
         (input)="updateSearchProduct($event.target.value)"
     />
+    <span class="material-symbols-outlined absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none text-sm">
+        search
+    </span>
 </div>

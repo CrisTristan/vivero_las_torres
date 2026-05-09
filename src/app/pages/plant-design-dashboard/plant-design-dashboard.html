@@ -1,5 +1,5 @@
-<div class="h-[82vh] overflow-hidden overflow-y-scroll">
-  <div class="bg-gradient-to-br from-green-50 to-emerald-50 py-10 px-6 rounded-2xl shadow-md border-2 border-green-200 mb-4">
+<div class="h-screen overflow-hidden overflow-y-scroll pt-8 pb-8">
+  <div class="bg-gradient-to-br from-green-50 to-emerald-50 py-10 px-6 rounded-2xl shadow-md border-2 border-green-200 mb-3">
     <div class="flex flex-col justify-center items-center gap-2 text-center max-w-3xl mx-auto">
       <div class="flex items-center justify-center gap-3">
         <span class="material-symbols-outlined text-5xl text-green-600">palette</span>
@@ -44,7 +44,7 @@
     </div>
   </div>
   <div class="flex flex-col items-center">
-    <div class="flex flex-row justify-center items-center gap-1.5 my-8 font-bold md:gap-4">
+    <div class="flex flex-row justify-center items-center gap-1.5 my-4 font-bold md:gap-4">
       <button
         [class.active]="selectedFilter() === 'plantas'"
         class="bg-green-400 px-6 py-3 rounded-full filter-button shadow-lg hover:shadow-xl hover:scale-105 transition-all 
@@ -53,11 +53,11 @@
         title="Selecciona una planta"
       >
         <span class="flex items-center gap-2 sm:flex flex-col">
-          <span class="material-symbols-outlined text-2xl">eco</span>
-          <span>Planta</span>
+          <span class="material-symbols-outlined text-2xl text-size">eco</span>
+          <span class="text-sm">Planta</span>
         </span>
       </button>
-      <span class="material-symbols-outlined text-green-600 text-3xl animate-pulse"> arrow_forward_ios </span>
+      <span class="material-symbols-outlined text-green-600 text-3xl animate-pulse text-size"> arrow_forward_ios </span>
       <button
         [class.active]="selectedFilter() === 'macetas'"
         class="bg-green-400 px-6 py-3 rounded-full filter-button shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 border-green-500 text-white font-bold text-lg"
@@ -65,25 +65,25 @@
         title="Selecciona una maceta"
       >
         <span class="flex items-center gap-2 flex-col">
-          <span class="material-symbols-outlined text-2xl">potted_plant</span>
-          <span>Maceta</span>
+          <span class="material-symbols-outlined text-2xl text-size">potted_plant</span>
+          <span class="text-sm">Maceta</span>
         </span>
       </button>
-      <span class="material-symbols-outlined text-green-600 text-3xl animate-pulse"> arrow_forward_ios </span>
+      <span class="material-symbols-outlined text-green-600 text-3xl animate-pulse text-size"> arrow_forward_ios </span>
       <button
         [class.active]="selectedFilter() === 'piedras'"
         class="bg-green-400 px-6 py-3 rounded-full filter-button shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-2 border-green-500 text-white font-bold text-lg"
         (click)="setFilter('piedras')"
         title="Selecciona piedras decorativas"
       >
-        <span class="flex items-center gap-2 flex-col">
-          <span class="material-symbols-outlined text-2xl">diamond</span>
-          <span>Piedras</span>
+        <span class="flex items-center gap-2 flex-col text-size">
+          <span class="material-symbols-outlined text-size">landslide</span>
+          <span class="text-sm">Piedras</span>
         </span>
       </button>
     </div>
     <!-- Renderizar compoennete Plantas|Macetas|Piedras Decorativas Dependiendo de el filtro seleccionado de arriba -->
-    <div class="content text-xl my-10">
+    <div class="content text-xl my-5">
       @switch (selectedFilter()) {
         @case ('plantas') {
           <app-plants-designs [currentPotSize]="currentPotSize"/>
