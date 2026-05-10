@@ -1,4 +1,4 @@
-import { Component, signal, inject, DestroyRef } from '@angular/core';
+import { Component, signal, inject, DestroyRef, ElementRef, ViewChild } from '@angular/core';
 import { getPlantById } from '../../models/planta_model';
 import { getMacetaById } from '../../models/macetas_mode';
 import { getTierraById } from '../../models/tierra_model';
@@ -23,18 +23,28 @@ import { RealtimeBroadcast } from '../../models/stock_notifications_model';
 })
 export class ProductDetailsPage {
   // Inyectar DestroyRef para manejar la destrucción del componente
-   private readonly destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
 
-   //Este ID es el id de la tabla de plantas, macetas, etc. No es el id de la tabla de 
-   // productos, por eso se hace la consulta a cada tabla según la categoría para obtener 
-   // el producto completo con su información y stock actualizado
-  private productId: number | null = null; 
+  //Este ID es el id de la tabla de plantas, macetas, etc. No es el id de la tabla de 
+  // productos, por eso se hace la consulta a cada tabla según la categoría para obtener 
+  // el producto completo con su información y stock actualizado
+  private productId: number | null = null;
   public productCategory: string | null = null;
   public productDetails = signal<Product | null>(null);
   public designService = inject(PlantDesignService);
   public shoppingCartService = inject(ShoppingCartService);
   public filterCategoryService = inject(FilterCategoryService);
-  
+  @ViewChild('cartIcon') cartIcon!: ElementRef<HTMLElement>;
+  @ViewChild('destAnimation', { read: ElementRef }) destAnimation!: ElementRef<HTMLElement>;
+
+  showBubble = signal(false);
+
+  startX = signal(0);
+  startY = signal(0);
+  moveX = signal(0);
+  moveY = signal(0);
+
+
   constructor(private router: Router) {
     const urlParams = new URLSearchParams(window.location.search);
     this.productId = urlParams.has('id') ? Number(urlParams.get('id')) : null;
@@ -152,212 +162,271 @@ export class ProductDetailsPage {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (notification: RealtimeBroadcast) => {
-      console.log('📢 Notificación recibida:', notification);
-      // console.log('🔍 IDs comparando:', {
-      //   notificationId: notification.payload.record.id,
-      //   productId: this.productDetails()?.productos?.id,
-      //   tiposIguales: typeof notification.payload.record.id === typeof this.productDetails()?.productos?.id
-      // });
-      
-      // Asegurar que ambos sean números
-      const notificationProductId = Number(notification.payload.record.id);
-      
-      if (notificationProductId === this.productDetails()?.productos?.id) {
-        console.log('✅ ID coincide! Actualizando stock...');
-        const updatedStock = notification.payload.record.stock;
-        
-        this.productDetails.update(current => {
-          if (current) {
-            // console.log('📊 Stock anterior:', current.productos?.stock);
-            // console.log('📊 Stock nuevo:', updatedStock);
-            
-            return {
-              ...current,
-              productos: {
-                ...current.productos,
-                stock: updatedStock
+          console.log('📢 Notificación recibida:', notification);
+          // console.log('🔍 IDs comparando:', {
+          //   notificationId: notification.payload.record.id,
+          //   productId: this.productDetails()?.productos?.id,
+          //   tiposIguales: typeof notification.payload.record.id === typeof this.productDetails()?.productos?.id
+          // });
+
+          // Asegurar que ambos sean números
+          const notificationProductId = Number(notification.payload.record.id);
+
+          if (notificationProductId === this.productDetails()?.productos?.id) {
+            console.log('✅ ID coincide! Actualizando stock...');
+            const updatedStock = notification.payload.record.stock;
+
+            this.productDetails.update(current => {
+              if (current) {
+                // console.log('📊 Stock anterior:', current.productos?.stock);
+                // console.log('📊 Stock nuevo:', updatedStock);
+
+                return {
+                  ...current,
+                  productos: {
+                    ...current.productos,
+                    stock: updatedStock
+                  }
+                };
               }
-            };
+              return current;
+            });
+          } else {
+            console.log('❌ ID no coincide. Notificación es para otro producto');
           }
-          return current;
-        });
-      } else {
-        console.log('❌ ID no coincide. Notificación es para otro producto');
-      }
-    },
-    error: (error) => {
-      console.error('❌ Error en notificaciones de stock:', error);
-    }
+        },
+        error: (error) => {
+          console.error('❌ Error en notificaciones de stock:', error);
+        }
       });
   }
 
-    navigateToCatalog() {
-      this.router.navigate(['/productCatalog']);
+  private getVisibleCartTarget(): HTMLElement | null {
+  const targets = Array.from(
+    document.querySelectorAll<HTMLElement>('[destinationAnimation]')
+  );
+
+  return targets.find((target) => {
+    const rect = target.getBoundingClientRect();
+    const style = window.getComputedStyle(target);
+
+    return (
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      style.opacity !== '0' &&
+      rect.width > 0 &&
+      rect.height > 0
+    );
+  }) ?? null;
+}
+
+  animateToCart() {
+    const startRect = this.cartIcon.nativeElement.getBoundingClientRect();
+    // const endRect = this.destAnimation.nativeElement.getBoundingClientRect();
+    const destinationElement = this.getVisibleCartTarget();
+
+    if (!destinationElement) {
+      console.error('Elemento de destino para animación no encontrado');
+      return;
     }
+
+    const endRect = destinationElement.getBoundingClientRect();
+
+    const bubbleSize = 70;
+
+    const startX = startRect.left + startRect.width / 2 - bubbleSize / 2;
+    const startY = startRect.top + startRect.height / 2 - bubbleSize / 2;
+
+    const endX = endRect.left + endRect.width / 2 - bubbleSize / 2;
+    const endY = endRect.top + endRect.height / 2 - bubbleSize / 2;
+
+    this.startX.set(startX);
+    this.startY.set(startY);
+    this.moveX.set(endX - startX);
+    this.moveY.set(endY - startY);
+
+    this.showBubble.set(false);
+
+    setTimeout(() => {
+      this.showBubble.set(true);
+    }, 10);
+  }
+
+  onBubbleAnimationEnd() {
+    this.showBubble.set(false);
+  }
+
+  navigateToCatalog() {
+    this.router.navigate(['/productCatalog']);
+  }
 
   addToMyFavoritePlants(product: any) {
-      // console.log("Adding product to My Plants Designs:", product);
-      // console.log("Service instance:", this.designService);
-      this.designService.selectedPlants.update(current => {
-        const updatedPlants = current ? [...current, product] : [product];
-        localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));  //<----- Si se desea persistir en localStorage, descomentar esta línea
-        return updatedPlants;
-      });
+    // console.log("Adding product to My Plants Designs:", product);
+    // console.log("Service instance:", this.designService);
+    this.designService.selectedPlants.update(current => {
+      const updatedPlants = current ? [...current, product] : [product];
+      localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));  //<----- Si se desea persistir en localStorage, descomentar esta línea
+      return updatedPlants;
+    });
+  }
+
+  removeFromMyFavoritePlants(productId: number) {
+    this.designService.selectedPlants.update(current => {
+      const updatedPlants = current ? current.filter((plant: any) => plant.id !== productId) : [];
+      localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));
+      return updatedPlants;
+    });
+  }
+
+  addToMyFavoritePots(product: any) {
+    this.designService.selectedPots.update(current => {
+      const updatedPots = current ? [...current, product] : [product];
+      localStorage.setItem('selectedPots', JSON.stringify(updatedPots));
+      return updatedPots;
+    });
+  }
+
+  removeFromMyFavoritePots(productId: number) {
+    this.designService.selectedPots.update(current => {
+      const updatedPots = current ? current.filter((pot: any) => pot.id !== productId) : [];
+      localStorage.setItem('selectedPots', JSON.stringify(updatedPots));
+      return updatedPots;
+    });
+  }
+
+  addToMyFavoriteRocks(product: any) {
+    this.designService.selectedStones.update(current => {
+      const updatedStones = current ? [...current, product] : [product];
+      localStorage.setItem('selectedStones', JSON.stringify(updatedStones));
+      return updatedStones;
+    });
+  }
+
+  removeFromMyFavoriteRocks(productId: number) {
+    this.designService.selectedStones.update(current => {
+      const updatedStones = current ? current.filter((stone: any) => stone.id !== productId) : [];
+      localStorage.setItem('selectedStones', JSON.stringify(updatedStones));
+      return updatedStones;
+    });
+  }
+
+  isProductInMyFavoritePlants(productId: number): boolean {
+    const selectedPlants = this.designService.selectedPlants();
+    return !!selectedPlants?.some((plant: any) => plant.id === productId);
+  }
+
+  isProductInMyFavoritePots(productId: number): boolean {
+    const selectedPots = this.designService.selectedPots();
+    return !!selectedPots?.some((pot: any) => pot.id === productId);
+  }
+
+  isProductInMyFavoriteRocks(productId: number): boolean {
+    const selectedStones = this.designService.selectedStones();
+    return !!selectedStones?.some((stone: any) => stone.id === productId);
+  }
+
+  // Tierra
+  addToMyFavoriteTierra(product: any) {
+    this.designService.selectedTierra.update(current => {
+      const updated = current ? [...current, product] : [product];
+      localStorage.setItem('selectedTierra', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  removeFromMyFavoriteTierra(productId: number) {
+    this.designService.selectedTierra.update(current => {
+      const updated = current ? current.filter((item: any) => item.id !== productId) : [];
+      localStorage.setItem('selectedTierra', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  isProductInMyFavoriteTierra(productId: number): boolean {
+    const selectedTierra = this.designService.selectedTierra();
+    return !!selectedTierra?.some((item: any) => item.id === productId);
+  }
+
+  // Pasto
+  addToMyFavoritePasto(product: any) {
+    this.designService.selectedPasto.update(current => {
+      const updated = current ? [...current, product] : [product];
+      localStorage.setItem('selectedPasto', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  removeFromMyFavoritePasto(productId: number) {
+    this.designService.selectedPasto.update(current => {
+      const updated = current ? current.filter((item: any) => item.id !== productId) : [];
+      localStorage.setItem('selectedPasto', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  isProductInMyFavoritePasto(productId: number): boolean {
+    const selectedPasto = this.designService.selectedPasto();
+    return !!selectedPasto?.some((item: any) => item.id === productId);
+  }
+
+  // Plaguicidas
+  addToMyFavoritePlaguicidas(product: any) {
+    this.designService.selectedPlaguicidas.update(current => {
+      const updated = current ? [...current, product] : [product];
+      localStorage.setItem('selectedPlaguicidas', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  removeFromMyFavoritePlaguicidas(productId: number) {
+    this.designService.selectedPlaguicidas.update(current => {
+      const updated = current ? current.filter((item: any) => item.id !== productId) : [];
+      localStorage.setItem('selectedPlaguicidas', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  isProductInMyFavoritePlaguicidas(productId: number): boolean {
+    const selectedPlaguicidas = this.designService.selectedPlaguicidas();
+    return !!selectedPlaguicidas?.some((item: any) => item.id === productId);
+  }
+
+  // Herbicidas
+  addToMyFavoriteHerbicidas(product: any) {
+    this.designService.selectedHerbicidas.update(current => {
+      const updated = current ? [...current, product] : [product];
+      localStorage.setItem('selectedHerbicidas', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  removeFromMyFavoriteHerbicidas(productId: number) {
+    this.designService.selectedHerbicidas.update(current => {
+      const updated = current ? current.filter((item: any) => item.id !== productId) : [];
+      localStorage.setItem('selectedHerbicidas', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
+  isProductInMyFavoriteHerbicidas(productId: number): boolean {
+    const selectedHerbicidas = this.designService.selectedHerbicidas();
+    return !!selectedHerbicidas?.some((item: any) => item.id === productId);
+  }
+
+  addToCart(product: Product) {
+    
+    //validar que el producto no se pueda agregar mayor a la cantidad disponible en stock
+    const stockReal = product.productos.stock;
+    const cantidadEnCarrito = this.shoppingCartService.getCartItems().filter(item => item.producto_id === product.producto_id).length;
+    if (cantidadEnCarrito >= stockReal) {
+      alert('No hay suficiente stock para agregar más unidades de este producto');
+      return;
     }
 
-    removeFromMyFavoritePlants(productId: number) {
-      this.designService.selectedPlants.update(current => {
-        const updatedPlants = current ? current.filter((plant: any) => plant.id !== productId) : [];
-        localStorage.setItem('selectedPlants', JSON.stringify(updatedPlants));
-        return updatedPlants;
-      });
-    }
+    this.animateToCart();
+    
+    this.shoppingCartService.addToCart(product);
+    // alert(`${product.productos.nombre} ha sido añadido al carrito de compras.`);
+  }
 
-    addToMyFavoritePots(product: any) {
-      this.designService.selectedPots.update(current => {
-        const updatedPots = current ? [...current, product] : [product];
-        localStorage.setItem('selectedPots', JSON.stringify(updatedPots));
-        return updatedPots;
-      });
-    }
-
-    removeFromMyFavoritePots(productId: number) {
-      this.designService.selectedPots.update(current => {
-        const updatedPots = current ? current.filter((pot: any) => pot.id !== productId) : [];
-        localStorage.setItem('selectedPots', JSON.stringify(updatedPots));
-        return updatedPots;
-      });
-    }
-
-    addToMyFavoriteRocks(product: any) {
-      this.designService.selectedStones.update(current => {
-        const updatedStones = current ? [...current, product] : [product];
-        localStorage.setItem('selectedStones', JSON.stringify(updatedStones));
-        return updatedStones;
-      });
-    }
-
-    removeFromMyFavoriteRocks(productId: number) {
-      this.designService.selectedStones.update(current => {
-        const updatedStones = current ? current.filter((stone: any) => stone.id !== productId) : [];
-        localStorage.setItem('selectedStones', JSON.stringify(updatedStones));
-        return updatedStones;
-      });
-    }
-
-    isProductInMyFavoritePlants(productId: number): boolean {
-      const selectedPlants = this.designService.selectedPlants();
-      return !!selectedPlants?.some((plant: any) => plant.id === productId);
-    }
-
-    isProductInMyFavoritePots(productId: number): boolean {
-      const selectedPots = this.designService.selectedPots();
-      return !!selectedPots?.some((pot: any) => pot.id === productId);
-    }
-
-    isProductInMyFavoriteRocks(productId: number): boolean {
-      const selectedStones = this.designService.selectedStones();
-      return !!selectedStones?.some((stone: any) => stone.id === productId);
-    }
-
-    // Tierra
-    addToMyFavoriteTierra(product: any) {
-      this.designService.selectedTierra.update(current => {
-        const updated = current ? [...current, product] : [product];
-        localStorage.setItem('selectedTierra', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    removeFromMyFavoriteTierra(productId: number) {
-      this.designService.selectedTierra.update(current => {
-        const updated = current ? current.filter((item: any) => item.id !== productId) : [];
-        localStorage.setItem('selectedTierra', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    isProductInMyFavoriteTierra(productId: number): boolean {
-      const selectedTierra = this.designService.selectedTierra();
-      return !!selectedTierra?.some((item: any) => item.id === productId);
-    }
-
-    // Pasto
-    addToMyFavoritePasto(product: any) {
-      this.designService.selectedPasto.update(current => {
-        const updated = current ? [...current, product] : [product];
-        localStorage.setItem('selectedPasto', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    removeFromMyFavoritePasto(productId: number) {
-      this.designService.selectedPasto.update(current => {
-        const updated = current ? current.filter((item: any) => item.id !== productId) : [];
-        localStorage.setItem('selectedPasto', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    isProductInMyFavoritePasto(productId: number): boolean {
-      const selectedPasto = this.designService.selectedPasto();
-      return !!selectedPasto?.some((item: any) => item.id === productId);
-    }
-
-    // Plaguicidas
-    addToMyFavoritePlaguicidas(product: any) {
-      this.designService.selectedPlaguicidas.update(current => {
-        const updated = current ? [...current, product] : [product];
-        localStorage.setItem('selectedPlaguicidas', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    removeFromMyFavoritePlaguicidas(productId: number) {
-      this.designService.selectedPlaguicidas.update(current => {
-        const updated = current ? current.filter((item: any) => item.id !== productId) : [];
-        localStorage.setItem('selectedPlaguicidas', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    isProductInMyFavoritePlaguicidas(productId: number): boolean {
-      const selectedPlaguicidas = this.designService.selectedPlaguicidas();
-      return !!selectedPlaguicidas?.some((item: any) => item.id === productId);
-    }
-
-    // Herbicidas
-    addToMyFavoriteHerbicidas(product: any) {
-      this.designService.selectedHerbicidas.update(current => {
-        const updated = current ? [...current, product] : [product];
-        localStorage.setItem('selectedHerbicidas', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    removeFromMyFavoriteHerbicidas(productId: number) {
-      this.designService.selectedHerbicidas.update(current => {
-        const updated = current ? current.filter((item: any) => item.id !== productId) : [];
-        localStorage.setItem('selectedHerbicidas', JSON.stringify(updated));
-        return updated;
-      });
-    }
-
-    isProductInMyFavoriteHerbicidas(productId: number): boolean {
-      const selectedHerbicidas = this.designService.selectedHerbicidas();
-      return !!selectedHerbicidas?.some((item: any) => item.id === productId);
-    }
-
-    addToCart(product: Product) {
-       //validar que el producto no se pueda agregar mayor a la cantidad disponible en stock
-       const stockReal = product.productos.stock;
-       const cantidadEnCarrito = this.shoppingCartService.getCartItems().filter(item => item.producto_id === product.producto_id).length;
-       if (cantidadEnCarrito >= stockReal) {
-         alert('No hay suficiente stock para agregar más unidades de este producto');
-         return;
-       }
-
-      this.shoppingCartService.addToCart(product);
-      alert(`${product.productos.nombre} ha sido añadido al carrito de compras.`);
-    }
 }

@@ -1,6 +1,6 @@
 //Aqui se obtiene los ingresos mensuales del backend de los ultimos 6 meses, se muestra en el line chart de la pagina de panel admin.
 import { inject } from "@angular/core";
-import { environment } from "../../environments/environment.development";
+import { environment } from "../../environments/environment";
 import { AuthService } from "../services/auth-service";
 
 interface IngresoMensual {

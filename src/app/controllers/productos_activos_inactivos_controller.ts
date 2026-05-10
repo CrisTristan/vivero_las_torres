@@ -1,4 +1,4 @@
-import { environment } from "../../environments/environment.development";
+import { environment } from "../../environments/environment";
 import { AuthService } from "../services/auth-service";
 
 interface estadoProductos {

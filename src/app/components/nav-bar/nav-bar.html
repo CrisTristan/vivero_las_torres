@@ -3,7 +3,7 @@
       <img src="images/ViveroLasTorresLogo.jpeg" alt="Vivero Las Torres" class="h-full w-25 inline-block"
         loading="eager" />
 
-    <button (click)="open = !open" class="md:hidden ml-auto m-3">
+    <button destinationAnimation (click)="open = !open" class="md:hidden ml-auto m-3">
       @if (!open) {
       <span class="material-symbols-outlined"> menu </span>
       } @else {
@@ -52,7 +52,7 @@
       </li>
       <li class="px-4 py-2 rounded cursor-pointer transition-all hover:text-black hover:shadow-lg menu-text elemento-navbar">
         <a class="flex items-center justify-center gap-2" (click)="navigateToShoppingCartPage()">
-            <span class="material-symbols-outlined"> shopping_cart </span>
+            <span destinationAnimation class="material-symbols-outlined"> shopping_cart </span>
             <span>Carrito</span>
             <div class="bg-green-200 text-green-700 rounded-full px-2 ml-1 text-xl font-bold">
               {{ shoppingCartService.getCartItems().length }} <!-- Mostrar el número de items en el carrito -->

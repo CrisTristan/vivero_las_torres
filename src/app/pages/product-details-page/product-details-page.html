@@ -2,7 +2,7 @@
   class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[8vh] bg-linear-to-b from-green-100 to-green-300 py-8 px-4 sm:px-6 lg:px-8">
   <div class="max-w-5xl mx-auto">
     <!-- Breadcrumb -->
-    <div class="mb-8">
+    <div #destAnimation class="mb-8">
       <button (click)="navigateToCatalog()" class="text-xs text-gray-500 hover:text-gray-700 transition">← Volver al
         catálogo</button>
     </div>
@@ -112,7 +112,8 @@
 
         <!-- Unidades restantes en stock: -->
         <div>
-          <h3 class="text-lg font-semibold text-gray-800">Quedan {{ this.productDetails()?.productos?.stock }} unidades en stock</h3>
+          <h3 class="text-lg font-semibold text-gray-800">Quedan {{ this.productDetails()?.productos?.stock }} unidades
+            en stock</h3>
         </div>
 
         <!-- Descripción -->
@@ -176,21 +177,21 @@
             </div>
 
             @if(productDetails()?.es_jardinera) {
-              <!-- Ancho -->
-              <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-amber-500">
-                <p class="text-xs font-semibold text-gray-500 mb-1">Ancho</p>
-                <p class="text-lg font-bold text-amber-600">{{ productDetails()?.descripcion?.ancho }}</p>
-                <p class="text-xs text-gray-400">cm</p>
-              </div>
+            <!-- Ancho -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-amber-500">
+              <p class="text-xs font-semibold text-gray-500 mb-1">Ancho</p>
+              <p class="text-lg font-bold text-amber-600">{{ productDetails()?.descripcion?.ancho }}</p>
+              <p class="text-xs text-gray-400">cm</p>
+            </div>
 
-              <!-- Largo -->
-              <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-blue-500">
-                <p class="text-xs font-semibold text-gray-500 mb-1">Largo</p>
-                <p class="text-lg font-bold text-blue-600">{{ productDetails()?.descripcion?.largo }}</p>
-                <p class="text-xs text-gray-400">cm</p>
-              </div>
+            <!-- Largo -->
+            <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-blue-500">
+              <p class="text-xs font-semibold text-gray-500 mb-1">Largo</p>
+              <p class="text-lg font-bold text-blue-600">{{ productDetails()?.descripcion?.largo }}</p>
+              <p class="text-xs text-gray-400">cm</p>
+            </div>
             }@else if (!productDetails()?.es_jardinera) {
-              <!-- Diámetro Superior -->
+            <!-- Diámetro Superior -->
             <div class="bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition border-l-4 border-amber-500">
               <p class="text-xs font-semibold text-gray-500 mb-1">Diám. Superior</p>
               <p class="text-lg font-bold text-amber-600">{{ productDetails()?.descripcion?.diametro_superior }}</p>
@@ -204,7 +205,7 @@
               <p class="text-xs text-gray-400">cm</p>
             </div>
             }
-            
+
           </div>
         </div>
         }
@@ -229,12 +230,25 @@
           </div>
         </div>
 
-        <!-- Botón Agregar al carrito -->
-        <button (click)="addToCart(productDetails()!)"
-          class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 flex justify-center items-center gap-2 mt-1 transform hover:scale-105">
-          <span class="material-symbols-outlined text-lg">shopping_cart</span>
-          <span>Agregar al carrito</span>
-        </button>
+          @if (showBubble()) {
+            <img
+              [src]="productDetails()?.productos?.imagen"
+              class="bubble-img"
+              [style.--move-x]="moveX() + 'px'"
+              [style.--move-y]="moveY() + 'px'"
+              [style.left.px]="startX()"
+              [style.top.px]="startY()"
+              (animationend)="onBubbleAnimationEnd()"
+            />
+          }
+
+          <!-- Botón Agregar al carrito -->
+          <button (click)="addToCart(productDetails()!)"
+            class="relative w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 flex justify-center items-center gap-2 mt-1 transform hover:scale-105">
+            <span #cartIcon class="material-symbols-outlined text-lg">shopping_cart</span>
+            <span>Agregar al carrito</span>
+          </button>
+        
 
         <!-- Características -->
         <div

@@ -6,3 +6,32 @@
         'opsz' 24;
     color: red;
 }
+
+.bubble-img {
+  position: fixed;
+  width: 70px;
+  height: 70px;
+  border-radius: 9999px;
+  object-fit: cover;
+  z-index: 9999;
+  pointer-events: none;
+  animation: moveToTarget 1.3s ease-in-out forwards;
+}
+
+@keyframes moveToTarget {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  75% {
+    transform: translate(var(--move-x), var(--move-y)) scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--move-x), var(--move-y)) scale(2);
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
