@@ -452,6 +452,14 @@
             </p>
             <p class="text-2xl font-bold text-green-700 mt-1">
               ${{this.selectedOrder()?.orden?.total}}
+              @if(this.selectedOrder()?.orden?.metodo_entrega === 'enviar') {
+                <button
+                (click)="this.openShippingCostModal()"
+                class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-sm font-bold hover:bg-blue-600 active:bg-blue-700 transition-all shadow-md"
+                title="Información de costo de envío">
+                ?
+              </button>
+              }
             </p>
           </div>
         </div>
@@ -476,9 +484,11 @@
           </div>
           <div class="bg-white/70 rounded-lg px-4 py-3 border border-purple-100">
             <p class="text-xs font-semibold text-purple-700 uppercase">Total</p>
-            <p class="text-lg font-bold text-green-600 mt-1">
-              ${{this.selectedOrder()?.orden?.total}}
-            </p>
+            <div class="flex items-center gap-2 mt-1">
+              <p class="text-2xl font-bold text-green-700">
+                ${{this.selectedOrder()?.orden?.total}}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -547,9 +557,11 @@
             </p>
             <select [(ngModel)]="selectedEstado" class="border rounded-lg px-3 py-2 w-full">
               <option value="">Selecciona un estado</option>
-              <option value="en reparto">
+              @if(this.selectedOrder()?.orden?.metodo_entrega === 'enviar') {
+                <option value="en reparto">
                 En Reparto
               </option>
+              }
               <option value="entregado">
                 Entregado
               </option>
@@ -610,6 +622,80 @@
     <p class="absolute bottom-4 text-white text-sm font-semibold text-center">
       Click en la imagen o presiona ✕ para cerrar
     </p>
+  </div>
+</div>
+}
+
+<!-- MODAL DE INFORMACIÓN DE COSTO DE ENVÍO -->
+@if(this.isShippingCostModalOpen() && this.selectedOrder()){
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-[150]">
+  <!-- Modal -->
+  <div class="bg-white rounded-2xl shadow-xl w-[90vw] max-w-md flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+      <h2 class="text-lg font-bold flex items-center gap-2">
+        <span class="text-2xl">📦</span> Información de Envío
+      </h2>
+      <button (click)="this.closeShippingCostModal()" class="text-white hover:text-gray-200 text-2xl font-bold">
+        ✕
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 space-y-4">
+      <!-- Explicación -->
+      <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+        <p class="text-sm text-gray-700 font-semibold">
+          ℹ️ <span class="text-blue-900 font-bold">El total de la orden incluye el costo de envío.</span>
+        </p>
+        <p class="text-xs text-gray-600 mt-2">
+          El monto que ves aquí es la suma del costo de productos más los gastos de envío.
+        </p>
+      </div>
+
+      <!-- Desglose de costos -->
+      <div class="space-y-3">
+        <!-- Subtotal (productos) -->
+        <div class="flex justify-between items-center bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <p class="text-sm font-semibold text-gray-700">Subtotal de Productos:</p>
+          <p class="text-lg font-bold text-gray-800">
+            ${{(this.selectedOrder()?.productos?.reduce((sum, p) => sum + (p.cantidad * p.producto.precio_unitario), 0) | number:'1.2-2')}}
+          </p>
+        </div>
+
+        <!-- Costo de envío -->
+        <div class="flex justify-between items-center bg-green-50 rounded-lg p-4 border-2 border-green-300">
+          <p class="text-sm font-semibold text-green-900">💚 Costo de Envío:</p>
+          <p class="text-lg font-bold text-green-700">
+            ${{(this.calculateShippingCost() | number:'1.2-2')}}
+          </p>
+        </div>
+
+        <!-- Total -->
+        <div class="flex justify-between items-center bg-gradient-to-r from-blue-100 to-blue-50 rounded-lg p-4 border-2 border-blue-400">
+          <p class="text-base font-bold text-blue-900">Total de la Orden:</p>
+          <p class="text-2xl font-bold text-blue-700">
+            ${{this.selectedOrder()?.orden?.total}}
+          </p>
+        </div>
+      </div>
+
+      <!-- Fórmula explicativa -->
+      <div class="bg-yellow-50 rounded-lg p-3 border border-yellow-200 text-center">
+        <p class="text-xs text-gray-600 font-semibold">
+          <span class="text-yellow-700">Subtotal</span> + <span class="text-yellow-700">Costo de Envío</span> = <span class="text-yellow-900 font-bold">Total</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-4 border-t bg-gray-50 flex justify-end">
+      <button
+        (click)="this.closeShippingCostModal()"
+        class="px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-all">
+        Entendido
+      </button>
+    </div>
   </div>
 </div>
 }

@@ -59,9 +59,11 @@
                                 <p class="text-[12px] text-[#9ca3af]">Hace 20 minutos</p>
                             </li> -->
                             @for (notification of this.notificationService.messageHistory(); track $index) {
-                                <li class="py-2 border-b border-[#e5e7eb]">
-                                    <p class="text-[14px] text-[#4b5563]">Nuevo Pedido</p>
-                                    <p class="text-[12px] text-[#9ca3af]">{{formatearFecha(notification.fecha ?? '')}}</p>
+                                <li class="py-2 border-b border-[#e5e7eb] flex flex-col gap-1 justify-center items-center">
+                                    <p class="text-md text-[#4b5563]">Nueva Orden</p>
+                                    <p class="text-md text-[#4b5563]">Id de la orden: {{notification.id}}</p>
+                                    <p class="text-md text-bold text-[#9ca3af]">{{formatearFecha(notification.fecha ?? '')}}</p>
+                                    <p class="text-md text-bold text-gray-500">Tipo de entrega: <span class="text-green-500">{{notification.metodo_entrega === 'enviar' ? 'Envío a domicilio' : 'Retiro en tienda'}}</span></p>
                                 </li>
                             }
                         </ul>

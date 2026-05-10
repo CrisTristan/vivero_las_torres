@@ -29,7 +29,6 @@ export class ShoppingCartService {
     // ✅ Cargar cartItemsForPersonalizedArrangement desde localStorage
     try {
       const storedPersonalized = localStorage.getItem('cartItemsForPersonalizedArrangement');
-      console.log('Cargando arreglo personalizado desde localStorage:', storedPersonalized);
       if (storedPersonalized) {
         this.cartItemsForPersonalizedArrangement.set(JSON.parse(storedPersonalized));
       }
@@ -51,7 +50,6 @@ export class ShoppingCartService {
       // Solo actualizar si ya se ha inicializado (cambios del usuario)
       // De lo contrario, el effect sobrescribiría los datos cargados desde localStorage
       if(this.isCartArrangementInizialized && newItems.length > 0) {
-        console.log('Actualizando carrito de arreglo personalizado con:', newItems);
         this.cartItemsForPersonalizedArrangement.set(newItems);
         this.persistPersonalizedArrangementItems(newItems);
       }

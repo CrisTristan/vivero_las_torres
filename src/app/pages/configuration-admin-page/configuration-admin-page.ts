@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ConfigPanelAdminService } from '../../services/config-panel-admin-service';
 import { HeaderSection } from '../../components/header-section/header-section';
 import { AdminMenuService } from '../../services/admin-menu-service';
+import { AuthService } from '../../services/auth-service';
 
 export enum ConfigurationOption {
     ShippingCost,
@@ -31,6 +32,7 @@ export class ConfigurationAdminPage {
 
     private configPanelAdminService = inject(ConfigPanelAdminService);
     public adminMenuService = inject(AdminMenuService);
+    private authService = inject(AuthService);
 
     constructor() {
         this.configPanelAdminService.loadCurrentConfiguration().then(() => {
@@ -72,7 +74,7 @@ export class ConfigurationAdminPage {
     public updateEmailNotifications(): void {
         this.isSaving.set(true);
         this.errorMessage.set(null);
-        this.configPanelAdminService.updateEmailNotifications(this.allowEmailNotifications()).then(() => {
+        this.configPanelAdminService.updateEmailNotifications(this.authService.user()?.id ?? 0, this.allowEmailNotifications()).then(() => {
             this.selectedConfigOption.set(null);
             this.successMessage.set('Configuración de notificaciones por correo actualizada exitosamente');
             this.isSaving.set(false);

@@ -4,6 +4,8 @@ export interface MacetaDescription {
     altura: string;
     diametro_superior: string;
     diametro_inferior: string;
+    ancho?: string;
+    largo?: string;
 }
 
 export interface Maceta {

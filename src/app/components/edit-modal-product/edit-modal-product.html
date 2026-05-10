@@ -147,7 +147,25 @@
           <option value="Pequeña">Pequeña</option>
         </select>
       </div> -->
+      @if(this.product?.es_jardinera){
+      <div>
+        <label>Ancho</label>
+        <input type="text" name="ancho" [ngModel]="formState().ancho"
+          (ngModelChange)="updateField('ancho', $event)" class="w-full" />
+      </div>
 
+      <div>
+        <label>Largo</label>
+        <input type="text" name="largo" [ngModel]="formState().largo"
+          (ngModelChange)="updateField('largo', $event)" class="w-full" />
+      </div>
+
+      <div>
+        <label>Altura</label>
+        <input type="text" name="altura" [ngModel]="formState().altura" (ngModelChange)="updateField('altura', $event)"
+          class="w-full" />
+      </div>
+      }@else{
       <div>
         <label>Diámetro Superior</label>
         <input type="text" name="diametro_superior" [ngModel]="formState().diametro_superior"
@@ -165,6 +183,7 @@
         <input type="text" name="altura" [ngModel]="formState().altura" (ngModelChange)="updateField('altura', $event)"
           class="w-full" />
       </div>
+      }
       }
 
       <div class="sm:col-span-2 flex items-center justify-end gap-3 pt-2">

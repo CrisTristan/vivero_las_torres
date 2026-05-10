@@ -4,7 +4,9 @@ export interface ConfigurationResponse {
     id: number;
     update_at: string;
     costo_envio: number;
-    permitir_notificaciones_email: boolean;
+    user_configuration: {
+        permitir_notificaciones_email: boolean;
+    };
 }
 
 export interface UpdateShippingCostResponse {
@@ -19,9 +21,9 @@ export interface UpdateEmailNotificationsResponse {
     error?: string;
 }
 
-export async function fetchCurrentConfiguration(): Promise<ConfigurationResponse> {
+export async function fetchCurrentConfiguration(userId: number): Promise<ConfigurationResponse> {
     try {
-        const response = await fetch(`${environment.apiUrl}/configuracion`, {
+        const response = await fetch(`${environment.apiUrl}/configuracion?userId=${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,7 +37,7 @@ export async function fetchCurrentConfiguration(): Promise<ConfigurationResponse
     } catch (error) {
         console.error('Error al obtener la configuración actual:', error);
         // Retornar valores por defecto en caso de error
-        return { id: 0, update_at: new Date().toISOString(), costo_envio: 200, permitir_notificaciones_email: false };
+        return { id: 0, update_at: new Date().toISOString(), costo_envio: 200, user_configuration: { permitir_notificaciones_email: false } };
     }
 }
 
@@ -58,10 +60,10 @@ export async function updateShippingCost(newCost: number): Promise<UpdateShippin
     }
 }
 
-export async function updateEmailNotifications(allow: boolean): Promise<UpdateEmailNotificationsResponse> {
+export async function updateEmailNotifications(userId: number, allow: boolean): Promise<UpdateEmailNotificationsResponse> {
     try {
         console.log('Enviando solicitud para actualizar notificaciones por correo:', allow);
-        const response = await fetch(`${environment.apiUrl}/configuracion/notificaciones-email?allowEmailNotifications=${allow}`, {
+        const response = await fetch(`${environment.apiUrl}/configuracion/notificaciones-email?userId=${userId}&allowEmailNotifications=${allow}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

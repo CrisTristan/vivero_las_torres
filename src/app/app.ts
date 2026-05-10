@@ -49,11 +49,6 @@ export class App {
 
     // Verificar si el usuario tiene direcciones de envío registradas
     this.initializeRouteTrackerIfNeeded();
-
-    effect(() => {
-      const currentRoute = this.currentRoute();
-      console.log('Se ha cambiado la sección del menú admin a:', currentRoute);
-    });
   }
 
   private async initializeRouteTrackerIfNeeded(): Promise<void> {

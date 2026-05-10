@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CareLevel } from '../../types/admin-plant-product.type';
 import { Product } from '../../types/product.type';
 import { ImageUploaderService } from '../../services/image-uploader-service';
+import { parse } from 'node:path';
 
 interface EditPlantForm {
   imageUrl: string;
@@ -17,6 +18,8 @@ interface EditPlantForm {
   diametro_superior?: string;
   diametro_inferior?: string;
   altura?: string;
+  ancho?: string;
+  largo?: string;
   price: number;
   stock: number;
 }
@@ -91,6 +94,8 @@ export class EditModalProduct implements OnChanges {
         diametro_superior: this.isMacetasCategory ? this.product.descripcion.diametro_superior : undefined,
         diametro_inferior: this.isMacetasCategory ? this.product.descripcion.diametro_inferior : undefined,
         altura: this.isMacetasCategory ? this.product.descripcion.altura : undefined,
+        ancho: this.isMacetasCategory && this.product.es_jardinera ? this.product.descripcion.ancho : undefined,
+        largo: this.isMacetasCategory && this.product.es_jardinera ? this.product.descripcion.largo : undefined,
         es_jardinera: this.isMacetasCategory ? this.product.es_jardinera : undefined,
         price: Number(this.product.productos.precio) || 0,
         stock: this.extractStockValue(String(this.product.productos.stock)),
@@ -160,12 +165,22 @@ export class EditModalProduct implements OnChanges {
         parsedDescription = this.parsePlantaDescription(state.description);
         break;
       case 'macetas':
-        parsedDescription = this.parseMacetaDescription(
-          state.description,
-          state.diametro_superior ?? '',
-          state.diametro_inferior ?? '',
-          state.altura ?? '',
-        );
+        if (this.product.es_jardinera) {
+          parsedDescription = this.parseMacetaJardineraDescription(
+            state.description,
+            state.ancho ?? '',
+            state.largo ?? '',
+            state.altura ?? '',
+          );
+        } else {
+          parsedDescription = this.parseMacetaRedondaDescription(
+            state.description,
+            state.diametro_superior ?? '',
+            state.diametro_inferior ?? '',
+            state.altura ?? '',
+          );
+        }
+
         break;
     }
 
@@ -290,8 +305,8 @@ export class EditModalProduct implements OnChanges {
     } as Product['descripcion'];
   }
 
-  private parseMacetaDescription(desc: string, diametro_superior: string, diametro_inferior: string, altura: string): Product['descripcion'] {
-    console.log("[DEBUG] EditModalProduct - parseMacetaDescription called with value:", desc);
+  private parseMacetaRedondaDescription(desc: string, diametro_superior: string, diametro_inferior: string, altura: string): Product['descripcion'] {
+    console.log("[DEBUG] EditModalProduct - parseMacetaRedondaDescription called with value:", desc);
     const trimmed = desc.trim();
     try {
       const parsed = JSON.parse(trimmed);
@@ -310,6 +325,24 @@ export class EditModalProduct implements OnChanges {
     } as Product['descripcion'];
   }
 
+  private parseMacetaJardineraDescription(desc: string, ancho: string, largo: string, altura: string): Product['descripcion'] {
+    console.log("[DEBUG] EditModalProduct - parseMacetaJardineraDescription called with value:", desc);
+    const trimmed = desc.trim();
+    try {      const parsed = JSON.parse(trimmed);
+
+      if (parsed && typeof parsed === 'object') {
+        return parsed as Product['descripcion'];
+      }
+    } catch {
+      // Si el admin escribe texto plano, se conserva en la propiedad descripcion.
+    }
+    return {
+      descripcion: trimmed,
+      ancho: ancho,
+      largo: largo,
+      altura: altura
+    } as Product['descripcion'];
+  }
 
   private getEmptyForm(): EditPlantForm {
     return {

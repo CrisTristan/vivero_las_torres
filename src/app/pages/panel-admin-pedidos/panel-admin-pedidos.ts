@@ -39,6 +39,7 @@ export class PanelAdminPedidos implements OnInit {
   public selectedOrder = signal<OrdenesUsuarioProductos | null>(null);
   public isImageModalOpen = signal(false);
   public selectedImageUrl = signal<string>("");
+  public isShippingCostModalOpen = signal(false);
 
   @ViewChild("adminMenuHost", { read: ElementRef })
   adminMenuHost?: ElementRef<HTMLElement>; // Referencia al contenedor del menú para detectar clicks fuera de él
@@ -208,6 +209,29 @@ export class PanelAdminPedidos implements OnInit {
   closeImageModal() {
     this.isImageModalOpen.set(false);
     this.selectedImageUrl.set("");
+  }
+
+  // Abre el modal de información de costo de envío
+  openShippingCostModal() {
+    this.isShippingCostModalOpen.set(true);
+  }
+
+  // Cierra el modal de información de costo de envío
+  closeShippingCostModal() {
+    this.isShippingCostModalOpen.set(false);
+  }
+
+  // Calcula el costo de envío (total - subtotal)
+  calculateShippingCost(): number {
+    const selectedOrder = this.selectedOrder();
+    if (!selectedOrder) return 0;
+
+    const subtotal = selectedOrder.productos.reduce(
+      (sum, p) => sum + p.cantidad * p.producto.precio_unitario,
+      0
+    );
+    const total = selectedOrder.orden.total;
+    return total - subtotal;
   }
 
   updateSelectedOrderStatusAndDeliveryDate(

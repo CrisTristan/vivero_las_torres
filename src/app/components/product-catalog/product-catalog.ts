@@ -104,7 +104,7 @@ export class ProductCatalog implements OnInit {
     if (currentScroll === 0) {
       if (this.containerScrollDirection() !== 'up') {
         this.containerScrollDirection.set('up');
-        console.log('En el inicio del scroll - Scroll hacia arriba');
+        // console.log('En el inicio del scroll - Scroll hacia arriba');
       }
       this.lastContainerScroll = 0;
       return;
@@ -125,13 +125,13 @@ export class ProductCatalog implements OnInit {
         //Actualizar la señal solo si antes estaba diferente para evitar emisiones innecesarias
         if (this.containerScrollDirection() !== 'down') {
           this.containerScrollDirection.set('down');
-          console.log('Container scroll hacia abajo - Distancia:', scrollDifference);
+          // console.log('Container scroll hacia abajo - Distancia:', scrollDifference);
         }
       } else if (currentScroll < this.lastContainerScroll) {
         //Actualizar la señal solo si antes estaba diferente para evitar emisiones innecesarias
         if (this.containerScrollDirection() !== 'up') {
           this.containerScrollDirection.set('up');
-          console.log('Container scroll hacia arriba - Distancia:', scrollDifference);
+          // console.log('Container scroll hacia arriba - Distancia:', scrollDifference);
         }
       }
 

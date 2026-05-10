@@ -18,7 +18,7 @@ export async function getAllPlants(): Promise<Product[]> {
       .from('plantas')
       .select('*, productos(id, nombre, precio, imagen, stock, activo, vendido, categorias(id, categoria))');
 
-    console.log("Data received from Supabase:", plantas);
+    // console.log("Data received from Supabase:", plantas);
     if (error) {
       console.error("Error fetching data from Supabase:", error);
     }

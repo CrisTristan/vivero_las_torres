@@ -42,7 +42,7 @@ export function listenToStockNotifications(): Observable<RealtimeBroadcast> {
       })
       .subscribe();
     
-    console.log('Suscrito a notificaciones de stock');
+    // console.log('Suscrito a notificaciones de stock');
   }
 
   return stockNotificationsSubject.asObservable();

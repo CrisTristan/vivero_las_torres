@@ -48,7 +48,7 @@ export class ProductDetailsPage {
           getPlantById(this.productId)
             .then((plant) => {
               if (plant) {
-                console.log('Plant details:', plant);
+                // console.log('Plant details:', plant);
                 this.productDetails.set(plant);
               } else {
                 console.error('Plant not found with ID:', this.productId);
@@ -62,7 +62,7 @@ export class ProductDetailsPage {
           getMacetaById(this.productId)
             .then((maceta) => {
               if (maceta) {
-                console.log('Maceta details:', maceta);
+                // console.log('Maceta details:', maceta);
                 this.productDetails.set(maceta);
               } else {
                 console.error('Maceta not found with ID:', this.productId);
@@ -76,7 +76,7 @@ export class ProductDetailsPage {
           getTierraById(this.productId)
             .then((tierra) => {
               if (tierra) {
-                console.log('Tierra details:', tierra);
+                // console.log('Tierra details:', tierra);
                 this.productDetails.set(tierra);
               } else {
                 console.error('Tierra not found with ID:', this.productId);
@@ -90,7 +90,7 @@ export class ProductDetailsPage {
           getPiedraById(this.productId)
             .then((piedra) => {
               if (piedra) {
-                console.log('Piedra details:', piedra);
+                // console.log('Piedra details:', piedra);
                 this.productDetails.set(piedra);
               } else {
                 console.error('Piedra not found with ID:', this.productId);
@@ -104,7 +104,7 @@ export class ProductDetailsPage {
           getPastoById(this.productId)
             .then((pasto) => {
               if (pasto) {
-                console.log('Pasto details:', pasto);
+                // console.log('Pasto details:', pasto);
                 this.productDetails.set(pasto);
               } else {
                 console.error('Pasto not found with ID:', this.productId);
@@ -118,7 +118,7 @@ export class ProductDetailsPage {
           getPlaguicidaById(this.productId)
             .then((plaguicida) => {
               if (plaguicida) {
-                console.log('Plaguicida details:', plaguicida);
+                // console.log('Plaguicida details:', plaguicida);
                 this.productDetails.set(plaguicida);
               } else {
                 console.error('Plaguicida not found with ID:', this.productId);
@@ -132,7 +132,7 @@ export class ProductDetailsPage {
           getHerbicidaById(this.productId)
             .then((herbicida) => {
               if (herbicida) {
-                console.log('Herbicida details:', herbicida);
+                // console.log('Herbicida details:', herbicida);
                 this.productDetails.set(herbicida);
               } else {
                 console.error('Herbicida not found with ID:', this.productId);
