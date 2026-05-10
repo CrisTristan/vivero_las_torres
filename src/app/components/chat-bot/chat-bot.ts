@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import '@n8n/chat/style.css';
 import { createChat } from '@n8n/chat';
 import { saveUserChatHistory, getUserChatHistory, deleteUserChatHistory } from '../../DataBase/userChatHistory';
+import { environment } from '../../../environments/environment';
 
 interface UserChatHistoryDB {
   userId: string; // ID del usuario (puede ser un UUID o cualquier identificador único)
@@ -62,7 +63,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     console.log('Session ID:', this.sessionId);
 
     this.chatInstance = createChat({
-      webhookUrl: 'http://localhost:5678/webhook/1c2039e9-b841-43af-a7c6-b6e0b66920de/chat',
+      webhookUrl: environment.n8nWebhookUrl,
       webhookConfig: {
         method: 'POST',
         headers: {},
@@ -300,7 +301,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   handleImagePostFetch(sessionId: string | null, urlImage?: string) {
     console.log("FormData to send:", this.formDataImage);
     try {
-      const res = fetch('http://localhost:5678/webhook/1c2039e9-b841-43af-a7c6-b6e0b66920de/chat', {
+      const res = fetch(environment.n8nWebhookUrl, {
         method: 'POST',
         // NO incluir Content-Type header cuando envías FormData
         // El navegador lo establece automáticamente con el boundary correcto

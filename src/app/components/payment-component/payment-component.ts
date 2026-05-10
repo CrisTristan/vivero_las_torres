@@ -8,6 +8,7 @@ import { ShoppingCartService } from '../../services/shopping-cart-service';
 import { AuthService } from '../../services/auth-service';
 import { createDireccionEnvioByOrderId } from '../../controllers/direcciones_envio_controller';
 import { UserShippingDataService } from '../../services/user-shipping-data-service';
+import { environment } from '../../../environments/environment';
 import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ConfigPanelAdminService } from '../../services/config-panel-admin-service';
@@ -63,7 +64,7 @@ export class PaymentComponent {
 
     //importante sumar el costo de envío al monto total a pagar, el costo de envío se obtiene del servicio de configuración
     this.http
-      .post<any>('http://localhost:3000/create-payment-intent', {
+      .post<any>(`${environment.apiUrl}/create-payment-intent`, {
         amount: totalAmountToPay * 100, // Monto en centavos (ejemplo: $50.00),
       })
       .subscribe(async (res) => {

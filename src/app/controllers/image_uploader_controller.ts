@@ -1,4 +1,5 @@
 import { ImageUploaderService } from "../services/image-uploader-service";
+import { environment } from "../../environments/environment";
 
 export class ImageUploaderController {
 
@@ -30,7 +31,7 @@ export class ImageUploaderController {
             formData.append("imageFile", file);
             formData.append("folder", sanitizedFolder);
 
-            const response = await fetch("http://localhost:3000/images/uploadImageCloud", {
+            const response = await fetch(`${environment.apiUrl}/images/uploadImageCloud`, {
                 method: "POST",
                 body: formData,
             });
