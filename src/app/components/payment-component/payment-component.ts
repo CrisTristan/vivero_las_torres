@@ -59,7 +59,7 @@ export class PaymentComponent {
     console.log('Monto total a pagar en la página de pago:', totalAmountToPay);
     
     this.stripe = await loadStripe(
-      'pk_test_51Rijp4FZsAB8H75089YhCtEnYvjLc7PpwCEmFKkI7xRUdolcyEBgYgtMYKOpSbdCJgTD9l2FNSxJEP0LWz1paIRG00xIzrzSf8',
+      environment.stripePublicKey,
     );
 
     //importante sumar el costo de envío al monto total a pagar, el costo de envío se obtiene del servicio de configuración
