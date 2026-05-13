@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+@import "../node_modules/@n8n/chat/dist/style.css";
 
 /* Ensure the app spans the full viewport width on large screens */
 html, body {

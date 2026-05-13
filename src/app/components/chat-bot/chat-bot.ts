@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // @ts-ignore: side-effect import of CSS module without type declarations
-import '@n8n/chat/style.css';
+// import '@n8n/chat/style.css'; //esta linea se movio a styles.css
 import { createChat } from '@n8n/chat';
 import { saveUserChatHistory, getUserChatHistory, deleteUserChatHistory } from '../../DataBase/userChatHistory';
 import { environment } from '../../../environments/environment';
