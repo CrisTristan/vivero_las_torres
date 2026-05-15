@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { createChat } from '@n8n/chat';
 import { saveUserChatHistory, getUserChatHistory, deleteUserChatHistory } from '../../DataBase/userChatHistory';
 import { environment } from '../../../environments/environment';
-import { send } from 'process';
 
 interface UserChatHistoryDB {
   userId: string; // ID del usuario (puede ser un UUID o cualquier identificador único)
@@ -41,6 +40,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   private sessionId: string | null;
   private chatMessagesObserver?: MutationObserver;
   private sendButtonObserver?: MutationObserver; // Observer para vigilar cambios en el botón de envío
+  private limitWarningElement?: HTMLElement; // Elemento para mostrar la advertencia de límite
+  private textareaKeydownHandler?: (e: KeyboardEvent) => void; // Handler para interceptar Enter en textarea
   private historyImageUrls: string[] = [];
   private historyAttached = false;
   private historyItemId = 0;
@@ -53,7 +54,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   readonly historyItems = signal<ChatHistoryViewItem[]>([]);
   private botMessagesCounter = signal(0);
   private predictionsCounter = signal(0);
-  public lockSendMessageButton = signal(false); // Nueva señal para controlar el estado del botón de enviar mensaje
+  public lockSendPictureButton = signal(false); // Nueva señal para controlar el estado del botón de enviar imagen
 
   constructor() {
     this.ImageUpload = new File([], ''); // Inicializar con un archivo vacío
@@ -65,8 +66,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
       // Log para monitorear cambios en el contador de mensajes del bot
       console.log('Bot Messages Counter:', this.botMessagesCounter());
       if(this.botMessagesCounter() > 2){
-        this.lockSendMessageButton.set(true);
         this.disableSendButton();
+        this.renderLimitWarning();
       }
     });
 
@@ -75,8 +76,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
       // Log para monitorear cambios en el contador de predicciones
       console.log('Predictions Counter:', this.predictionsCounter());
       if(this.predictionsCounter() > 2){
-        this.lockSendMessageButton.set(true);
-        this.disableSendButton();
+        this.lockSendPictureButton.set(true);
       }
     });
 
@@ -130,7 +130,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
         uploadBtn.className = 'custom-upload-btn bg-green-50 p-1 mx-2rounded';
         uploadBtn.onclick = () => this.handleFileUpload();
         chatContainer.appendChild(uploadBtn);
-        this.renderButtonDeleteChatHistory();
+        this.renderButtonDeleteChatHistory(); //Comentado para evitar renderizar el boton de borrar historial.
         const chatContainerMessages = document.querySelector('.chat-body');
         if (chatContainerMessages) {
         chatContainerMessages.scrollTop = chatContainerMessages.scrollHeight;
@@ -296,8 +296,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
   handleFileUpload() {
     //Validar que el boton este activo
-    if(this.lockSendMessageButton()){
-      alert('Has alcanzado el límite de mensajes del bot. Por favor, espera o borra el historial de chat para continuar.');
+    if(this.lockSendPictureButton()){
+      alert('Has alcanzado el límite de imágenes del bot. Por favor, espera o borra el historial de chat para continuar.');
       return;
     }
 
@@ -379,8 +379,10 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
           });
         } else if (response.status === 500) {  //el servidor de la request devuelve 404 pero el servidor de n8n devuelve 500
           console.error('Recurso no encontrado (404) de la url');
-          alert('❌ La imagen Proporcionada no es de una planta o no se ha podido procesar.');
-          throw new Error('Endpoint no encontrado (404)');
+          return response.json().then(data => {
+            console.log('Respuesta del servidor:', data);
+            alert('❌ La imagen Proporcionada no es una planta o flor.');
+          });
         } else {
           console.warn(`Estado HTTP inesperado: ${response.status}`);
           return response.json().then(data => {
@@ -555,12 +557,132 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
           this.botMessages.set([]);
           this.historyItems.set([]);
           this.revokeHistoryImageUrls();
+          
+          // Limpiar los mensajes del DOM del chat
+          this.clearChatMessages();
+          
+          // Reiniciar contadores y ocultar advertencia
+          this.botMessagesCounter.set(0);
+          this.predictionsCounter.set(0);
+          this.lockSendPictureButton.set(false);
+          this.unlockSendMessageButton();
+          this.hideLimitWarning();
         }).catch(error => {
           console.error('Error al borrar el historial de chat:', error);
         });
       };
       chatContainer.appendChild(deleteHistoryBtn);
     }
+  }
+
+  private clearChatMessages() {
+    const chatMessagesList = document.querySelector('.chat-history-container');
+    if (!chatMessagesList) {
+      console.warn('Chat messages list no encontrado');
+      return;
+    }
+
+    // Obtener todos los mensajes del chat (excepto los mensajes iniciales del bot)
+    const allMessages = chatMessagesList.querySelectorAll('.chat-message');
+    
+    // Eliminar cada mensaje del DOM
+    allMessages.forEach((message) => {
+      message.remove();
+    });
+
+    console.log(`Se eliminaron ${allMessages.length} mensajes del chat`);
+  }
+
+  renderLimitWarning() {
+    const chatContainer = document.querySelector('.chat-header');
+    if (!chatContainer) {
+      return;
+    }
+
+    // Si la advertencia ya existe, no crearla nuevamente
+    if (this.limitWarningElement) {
+      this.limitWarningElement.style.display = 'block';
+      return;
+    }
+
+    // Crear el contenedor de la advertencia
+    this.limitWarningElement = document.createElement('div');
+    this.limitWarningElement.className = 'limit-warning-container';
+    this.limitWarningElement.style.cssText = `
+      background-color: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 0.375rem;
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #92400e;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    `;
+
+    // Crear el icono
+    const iconSpan = document.createElement('span');
+    iconSpan.textContent = '⚠️';
+    iconSpan.style.fontSize = '1.25rem';
+
+    // Crear el texto
+    const textSpan = document.createElement('span');
+    textSpan.textContent = 'Has alcanzado el límite de mensajes. Espera 1 dia para enviar más mensajes.';
+
+    this.limitWarningElement.appendChild(iconSpan);
+    this.limitWarningElement.appendChild(textSpan);
+
+    // Agregar la advertencia al final del contenedor .chat-heading
+    chatContainer.appendChild(this.limitWarningElement);
+  }
+
+  hideLimitWarning() {
+    if (this.limitWarningElement) {
+      this.limitWarningElement.style.display = 'none';
+    }
+    // Restaurar el textarea
+    this.unlockTextarea();
+  }
+
+  private unlockTextarea() {
+    const textarea = document.querySelector('textarea[data-test-id="chat-input"]') as HTMLTextAreaElement;
+    
+    if (textarea) {
+      textarea.removeAttribute('readonly');
+      textarea.style.opacity = '1';
+      textarea.style.cursor = 'text';
+    }
+  }
+
+  private unlockSendMessageButton() {
+    const sendButton = document.querySelector('.chat-input-send-button') as HTMLButtonElement;
+    
+    if (!sendButton) {
+      console.warn('Botón de envío no encontrado para desbloquear');
+      return;
+    }
+
+    // Habilitar el botón
+    sendButton.disabled = false;
+    sendButton.removeAttribute('disabled');
+    
+    // Restaurar estilos visuales
+    sendButton.style.opacity = '1';
+    sendButton.style.cursor = 'pointer';
+    sendButton.classList.remove('button-blocked');
+    
+    // Desconectar el observer que mantenía el botón deshabilitado
+    if (this.sendButtonObserver) {
+      this.sendButtonObserver.disconnect();
+      this.sendButtonObserver = undefined;
+    }
+    
+    // Desbloquear el textarea
+    this.unlockTextarea();
+    
+    console.log('Botón de envío desbloqueado correctamente');
   }
 
   private initChatMessagesObserver() {
@@ -591,13 +713,14 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
               // console.log('Nuevo mensaje de imagen detectado, no se guardará el mensaje de texto en el historial de chat');
               this.predictionsCounter.update(count => count + 1);
               if(this.predictionsCounter() > 2){
-                this.disableSendButton();
+                this.lockSendPictureButton.set(true);
+                this.renderLimitWarning();
               }
               return;
             }
             const paragraphs = Array.from(markdownContainer.querySelectorAll('p'));
             const messageText = paragraphs.map((p) => p.textContent?.trim() ?? '').filter(Boolean).join('\n');
-            console.log('Nuevo mensaje agregado por el usuario:', messageText);
+            // console.log('Nuevo mensaje agregado por el usuario:', messageText);
             this.userMessages.update(current => [...current, {userId: this.sessionId || '', image: new File([], ''), bestMatchesPlants: [], message: messageText, typeUser: 'user', createdAt: new Date()}]);
             saveUserChatHistory(this.sessionId || '', new File([], ''), [], messageText, 'user');
             
@@ -614,7 +737,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
             const paragraphs = Array.from(markdownContainer.querySelectorAll('p'));
             const messageText = paragraphs.map((p) => p.textContent?.trim() ?? '').filter(Boolean).join('\n');
-            console.log('Nuevo mensaje agregado por el bot:', messageText);
+            // console.log('Nuevo mensaje agregado por el bot:', messageText);
             this.botMessages.update(current => [...current, {userId: this.sessionId || '', image: new File([], ''), bestMatchesPlants: [], message: messageText, typeUser: 'bot', createdAt: new Date()}]);
             saveUserChatHistory(this.sessionId || '', new File([], ''), [], messageText, 'bot');
             
@@ -624,6 +747,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
             // Verificar si se debe deshabilitar el botón
             if(this.botMessagesCounter() > 2){
               this.disableSendButton();
+              this.renderLimitWarning();
             }
           }
         });
@@ -634,13 +758,6 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
       childList: true,
       subtree: true,
     });
-  }
-
-  private renderUserChatMessages(){
-    for (const message of this.userMessages()) {
-      // Lógica para renderizar los mensajes de usuario en el chat
-      this.renderUserMessageOnDom(message.message || '');
-    }
   }
 
   private disableSendButton() {
@@ -671,6 +788,27 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
         }
       }, 500);
     }
+
+    // Bloquear también el envío por Enter en el textarea
+    this.blockTextarea();
+  }
+
+  private blockTextarea() {
+    const textarea = document.querySelector('textarea[data-test-id="chat-input"]') as HTMLTextAreaElement;
+    
+    if (!textarea) {
+      console.warn('Textarea de chat no encontrado');
+      // Reintentar después de 500ms
+      setTimeout(() => {
+        this.blockTextarea();
+      }, 500);
+      return;
+    }
+
+    // Hacer el textarea readonly para prevenir cualquier entrada
+    textarea.setAttribute('readonly', 'readonly');
+    textarea.style.opacity = '0.6';
+    textarea.style.cursor = 'not-allowed';
   }
 
   private addBlockClickListener(sendButton: HTMLButtonElement) {
@@ -686,8 +824,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
     // Agregar listeners múltiples para asegurar que se capture el evento
     sendButton.addEventListener('click', blockClickHandler, true);
-    sendButton.addEventListener('mousedown', blockClickHandler, true);
-    sendButton.addEventListener('pointerdown', blockClickHandler, true);
+    // sendButton.addEventListener('mousedown', blockClickHandler, true);
+    // sendButton.addEventListener('pointerdownoi', blockClickHandler, true);
     
     console.log('Block click listener agregado al botón');
   }
@@ -725,6 +863,15 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     }
     this.chatMessagesObserver?.disconnect();
     this.sendButtonObserver?.disconnect();
+    
+    // Limpiar handler del textarea
+    if (this.textareaKeydownHandler) {
+      const textarea = document.querySelector('textarea[data-test-id="chat-input"]') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.removeEventListener('keydown', this.textareaKeydownHandler);
+      }
+    }
+    
     this.revokeHistoryImageUrls();
   }
 }

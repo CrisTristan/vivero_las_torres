@@ -1,4 +1,4 @@
-<div id="n8n-chat" class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[8vh] bg-linear-to-b from-green-100 to-green-300">
+<div id="n8n-chat" class="h-[80vh] bg-linear-to-b from-green-100 to-green-300">
     <div #historyContainer class="chat-history-container">
         @for (item of historyItems(); track item.id) {
             <div
@@ -29,6 +29,6 @@
         }
     </div>
     <div class="chat-footer">
-        <button class="bg-green-50" [disabled]="lockSendMessageButton()">Send</button>
+        <button class="bg-green-50" [disabled]="lockSendPictureButton()">Send</button>
     </div>
 </div>
