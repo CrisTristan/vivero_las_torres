@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { createChat } from '@n8n/chat';
 import { saveUserChatHistory, getUserChatHistory, deleteUserChatHistory } from '../../DataBase/userChatHistory';
 import { environment } from '../../../environments/environment';
+import { ChatBotUsage, readChatBotUsage, unlockChatBotUsage } from '../../controllers/chat_bot_controller';
 
 interface UserChatHistoryDB {
   userId: string; // ID del usuario (puede ser un UUID o cualquier identificador único)
@@ -36,7 +37,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   private historyContainerRef?: ElementRef<HTMLDivElement>;
 
   private chatInstance: any;
-  private ImageUpload : File;  //Esta es la imagen que el usuario sube
+  private ImageUpload: File;  //Esta es la imagen que el usuario sube
   private sessionId: string | null;
   private chatMessagesObserver?: MutationObserver;
   private sendButtonObserver?: MutationObserver; // Observer para vigilar cambios en el botón de envío
@@ -52,42 +53,80 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   private userMessages = signal<UserChatHistoryDB[]>([]);
   private botMessages = signal<UserChatHistoryDB[]>([]);
   readonly historyItems = signal<ChatHistoryViewItem[]>([]);
-  private botMessagesCounter = signal(0);
+  // private botMessagesCounter = signal(0);
   private predictionsCounter = signal(0);
   public lockSendPictureButton = signal(false); // Nueva señal para controlar el estado del botón de enviar imagen
 
   constructor() {
     this.ImageUpload = new File([], ''); // Inicializar con un archivo vacío
-    this.sessionId= '';
+    this.sessionId = '';
     this.formDataImage = new FormData();
 
-    effect(() => {
-      const botMessages = this.botMessagesCounter();
-      // Log para monitorear cambios en el contador de mensajes del bot
-      console.log('Bot Messages Counter:', this.botMessagesCounter());
-      if(this.botMessagesCounter() > 2){
-        this.disableSendButton();
-        this.renderLimitWarning();
-      }
-    });
+    // effect(() => {
+    //   const botMessages = this.botMessagesCounter();
+    //   // Log para monitorear cambios en el contador de mensajes del bot
+    //   console.log('Bot Messages Counter:', this.botMessagesCounter());
+    //   if (this.botMessagesCounter() > 2) {
+    //     this.disableSendButton();
+    //     this.renderLimitWarning();
+    //   }
+    // });
 
-    effect(() => {
-      const predictions = this.predictionsCounter();
-      // Log para monitorear cambios en el contador de predicciones
-      console.log('Predictions Counter:', this.predictionsCounter());
-      if(this.predictionsCounter() > 2){
-        this.lockSendPictureButton.set(true);
-      }
-    });
+    // effect(() => {
+    //   const predictions = this.predictionsCounter();
+    //   // Log para monitorear cambios en el contador de predicciones
+    //   console.log('Predictions Counter:', this.predictionsCounter());
+    //   if (this.predictionsCounter() > 2) {
+    //     this.lockSendPictureButton.set(true);
+    //     this.renderLimitWarning();
+    //   }
+    // });
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
     //Obtener la sessionId del localStorage
     this.sessionId = localStorage.getItem('n8n-chat/sessionId');
     console.log('Session ID:', this.sessionId);
-    this.renderHistoryAfterSecondBotMessage();
+    
+    //llamar a la función de supabase para verificar el uso del chatbot cada vez que se carga el componente
+    if (this.sessionId) {
+      const currentChatBotSession = await readChatBotUsage(this.sessionId);
+
+      //verificar si la fecha de hoy es mayor a la fecha de bloqueo del chatbot, si es así desbloquear el chatbot
+      if (currentChatBotSession && currentChatBotSession.bloqueado_hasta) {
+        const bloqueadoHasta = new Date(currentChatBotSession.bloqueado_hasta);
+        const hoy = new Date();
+        if (hoy >= bloqueadoHasta) {
+          await unlockChatBotUsage(this.sessionId);
+          //Eliminar todos los mensajes del chat para evitar que el usuario vea mensajes antiguos después de desbloquear el chatbot
+          deleteUserChatHistory(this.sessionId || '').then(() => {
+            console.log('Historial de chat borrado de IndexedDB');
+            this.userMessages.set([]);
+            this.botMessages.set([]);
+            this.historyItems.set([]);
+            this.revokeHistoryImageUrls();
+            // Limpiar los mensajes del DOM del chat
+            this.clearChatMessages();
+            // Reiniciar contadores y ocultar advertencia
+            // this.botMessagesCounter.set(0);
+            this.predictionsCounter.set(0);
+            this.lockSendPictureButton.set(false);
+            this.unlockSendMessageButton();
+            this.hideLimitWarning();
+          }).catch(error => {
+            console.error('Error al borrar el historial de chat:', error);
+          });
+          
+        } else {
+          this.disableSendButton();
+          this.renderLimitWarning();
+        }
+      }
+      // Cargar el historial de chat del usuario desde IndexedDB y renderizarlo en el chat
+      this.renderHistoryAfterSecondBotMessage();
+    }
   }
 
   ngAfterViewInit() {
@@ -107,7 +146,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
       },
       showWelcomeScreen: false,
       defaultLanguage: 'en',
-      initialMessages: ['Hola! 👋', 'Mi nombre es Ana, ¿Como puedo ayudarte hoy?'],
+      initialMessages: ['Hola! 👋', '¡Hola! Soy Ana, tu asistente botánica. Me encanta todo lo relacionado con las plantas. Si tienes alguna pregunta sobre plantas, flores o botánica, ¡estaré encantada de ayudarte!'],
       i18n: {
         en: {
           title: 'Hola! 👋',
@@ -122,20 +161,21 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Esperar a que el chat se renderice
+    //Este codigo hacer que el boton de subir imagen se renderice despues del segundo mensaje del bot.
     setTimeout(() => {
-      const chatContainer = document.querySelector('.chat-inputs');
-      if (chatContainer) {
-        const uploadBtn = document.createElement('button');
-        uploadBtn.textContent = '📎 Imagen';
-        uploadBtn.className = 'custom-upload-btn bg-green-50 p-1 mx-2rounded';
-        uploadBtn.onclick = () => this.handleFileUpload();
-        chatContainer.appendChild(uploadBtn);
-        this.renderButtonDeleteChatHistory(); //Comentado para evitar renderizar el boton de borrar historial.
-        const chatContainerMessages = document.querySelector('.chat-body');
-        if (chatContainerMessages) {
-        chatContainerMessages.scrollTop = chatContainerMessages.scrollHeight;
-        }
-      }
+      // const chatContainer = document.querySelector('.chat-inputs');
+      // if (chatContainer) {
+      //   const uploadBtn = document.createElement('button');
+      //   uploadBtn.textContent = '📎 Imagen';
+      //   uploadBtn.className = 'custom-upload-btn bg-green-50 p-1 mx-2rounded';
+      //   uploadBtn.onclick = () => this.handleFileUpload();
+      //   chatContainer.appendChild(uploadBtn);
+      //   this.renderButtonDeleteChatHistory(); //Comentado para evitar renderizar el boton de borrar historial.
+      //   const chatContainerMessages = document.querySelector('.chat-body');
+      //   if (chatContainerMessages) {
+      //     chatContainerMessages.scrollTop = chatContainerMessages.scrollHeight;
+      //   }
+      // }
       this.initChatMessagesObserver();
     }, 1000);
 
@@ -170,7 +210,6 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
           });
         }
         if (entry.bestMatchesPlants.length > 0) {
-          //Incrementar el contador de predicciones
           this.predictionsCounter.update(count => count + 1);
           items.push({
             id: this.createHistoryItemId(index, 'prediction'),
@@ -191,7 +230,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
           });
         }
       } else if (entry.typeUser === 'bot' && entry.message) {
-        this.botMessagesCounter.update(count => count + 1);
+        // this.botMessagesCounter.update(count => count + 1);
         items.push({
           id: this.createHistoryItemId(index, 'message'),
           typeUser: 'bot',
@@ -296,7 +335,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
   handleFileUpload() {
     //Validar que el boton este activo
-    if(this.lockSendPictureButton()){
+    if (this.lockSendPictureButton()) {
       alert('Has alcanzado el límite de imágenes del bot. Por favor, espera o borra el historial de chat para continuar.');
       return;
     }
@@ -351,14 +390,14 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
             for (let index = 0; index < top10Matches.length; index++) {
               const element = top10Matches[index];
               const topPlantsMatches = element.species.commonNames;
-              if(topPlantsMatches.length === 0){
+              if (topPlantsMatches.length === 0) {
                 continue; //saltar si no hay nombres comunes
               }
               console.log(`Match ${index + 1}:`, topPlantsMatches);
               //actualizar commonNamesPlants solo si el arreglo de topPlantMatches es mayor del que ya se encuentra en commonNamesPlants
               // if(topPlantsMatches.length >= (this.commonNamesPlants()?.length || 0)){
-                // this.commonNamesPlants.set(topPlantsMatches);
-                this.commonNamesPlants.update(current => [...current, ...topPlantsMatches]);
+              // this.commonNamesPlants.set(topPlantsMatches);
+              this.commonNamesPlants.update(current => [...current, ...topPlantsMatches]);
               // };
               // console.log(this.commonNamesPlants());
             }
@@ -391,16 +430,16 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
           });
         }
       })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('❌ Error al enviar la imagen: ' + error.message);
-      });
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('❌ Error al enviar la imagen: ' + error.message);
+        });
     } catch (error) {
       console.error('Error al enviar la imagen:', error);
       alert('❌ Error de conexión: ' + error);
     }
   }
-  
+
   handleRenderImage(file: File, options?: { insertAfter?: HTMLElement | null; scroll?: boolean }) {
     //lógica para renderizar imagen en el chat
     const chatContainerMessages = document.querySelector('.chat-messages-list');
@@ -430,7 +469,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     return null;
   }
 
-  renderNamePlantBestMatching(namePlantsBestMatching: string[], options?: { insertAfter?: HTMLElement | null; scroll?: boolean }){
+  renderNamePlantBestMatching(namePlantsBestMatching: string[], options?: { insertAfter?: HTMLElement | null; scroll?: boolean }) {
     const chatContainerMessages = document.querySelector('.chat-messages-list');
     if (chatContainerMessages) {
       //Creamos el contenedor de mensaje de usuario
@@ -454,8 +493,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     return null;
   }
 
-  renderUserMessageOnDom(message: string, options?: { insertAfter?: HTMLElement | null; scroll?: boolean }){
-     const chatContainerMessages = document.querySelector('.chat-messages-list');
+  renderUserMessageOnDom(message: string, options?: { insertAfter?: HTMLElement | null; scroll?: boolean }) {
+    const chatContainerMessages = document.querySelector('.chat-messages-list');
     if (chatContainerMessages) {
       //Creamos el contenedor de mensaje de usuario
       const userMessageContainer = document.createElement('div');
@@ -479,8 +518,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     return null;
   }
 
-  renderBotMessageOnDom(message: string, options?: { insertAfter?: HTMLElement | null; scroll?: boolean }){
-     const chatContainerMessages = document.querySelector('.chat-messages-list');
+  renderBotMessageOnDom(message: string, options?: { insertAfter?: HTMLElement | null; scroll?: boolean }) {
+    const chatContainerMessages = document.querySelector('.chat-messages-list');
     if (chatContainerMessages) {
       //Creamos el contenedor de mensaje de bot
       const userMessageContainer = document.createElement('div');
@@ -518,7 +557,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     return messageElement;
   }
 
-  filterCommonPlantNames(commonPlantNames : string[]): string[]{
+  filterCommonPlantNames(commonPlantNames: string[]): string[] {
     const seen = new Set<string>();
     const uniqueNames: string[] = [];
     for (const name of commonPlantNames) {
@@ -557,12 +596,10 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
           this.botMessages.set([]);
           this.historyItems.set([]);
           this.revokeHistoryImageUrls();
-          
           // Limpiar los mensajes del DOM del chat
           this.clearChatMessages();
-          
           // Reiniciar contadores y ocultar advertencia
-          this.botMessagesCounter.set(0);
+          // this.botMessagesCounter.set(0);
           this.predictionsCounter.set(0);
           this.lockSendPictureButton.set(false);
           this.unlockSendMessageButton();
@@ -576,7 +613,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private clearChatMessages() {
-    const chatMessagesList = document.querySelector('.chat-history-container');
+    const chatMessagesList = document.querySelector('.chat-messages-list');
     if (!chatMessagesList) {
       console.warn('Chat messages list no encontrado');
       return;
@@ -584,10 +621,15 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
     // Obtener todos los mensajes del chat (excepto los mensajes iniciales del bot)
     const allMessages = chatMessagesList.querySelectorAll('.chat-message');
-    
+    let counter: number = 0;
     // Eliminar cada mensaje del DOM
     allMessages.forEach((message) => {
-      message.remove();
+      if (counter > 1) {
+        // Saltar los primeros 2 mensajes del bot
+        message.remove();
+      }
+
+      counter++;
     });
 
     console.log(`Se eliminaron ${allMessages.length} mensajes del chat`);
@@ -648,7 +690,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
   private unlockTextarea() {
     const textarea = document.querySelector('textarea[data-test-id="chat-input"]') as HTMLTextAreaElement;
-    
+
     if (textarea) {
       textarea.removeAttribute('readonly');
       textarea.style.opacity = '1';
@@ -658,7 +700,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
   private unlockSendMessageButton() {
     const sendButton = document.querySelector('.chat-input-send-button') as HTMLButtonElement;
-    
+
     if (!sendButton) {
       console.warn('Botón de envío no encontrado para desbloquear');
       return;
@@ -667,21 +709,21 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     // Habilitar el botón
     sendButton.disabled = false;
     sendButton.removeAttribute('disabled');
-    
+
     // Restaurar estilos visuales
     sendButton.style.opacity = '1';
     sendButton.style.cursor = 'pointer';
     sendButton.classList.remove('button-blocked');
-    
+
     // Desconectar el observer que mantenía el botón deshabilitado
     if (this.sendButtonObserver) {
       this.sendButtonObserver.disconnect();
       this.sendButtonObserver = undefined;
     }
-    
+
     // Desbloquear el textarea
     this.unlockTextarea();
-    
+
     console.log('Botón de envío desbloqueado correctamente');
   }
 
@@ -691,6 +733,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    const processedNodes = new WeakSet<HTMLElement>(); // Para evitar procesar el mismo nodo dos veces
+
     this.chatMessagesObserver = new MutationObserver((mutations) => {
       if (mutations.length === 0) {
         return;
@@ -699,55 +743,64 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
       // console.log('Nuevo mensaje detectado');
       //obtener los nuevos elementos que se han agregado a la lista de mensajes del chat
       mutations.forEach(mutation => {
-        mutation.addedNodes.forEach(node => {
-          if (node instanceof HTMLElement && node.classList.contains('chat-message-from-user')) {
-            // Aquí puedes agregar lógica para manejar el nuevo mensaje, por ejemplo:
-            // - Verificar si el mensaje contiene una imagen y renderizarla
-            // - Verificar si el mensaje contiene texto con el nombre de la planta y renderizarlo
-            const markdownContainer = node.querySelector('.chat-message-markdown');
-            if (!markdownContainer) {
-              return;
-            }
-            if(node.classList.contains('chat-message-image') || node.classList.contains('chat-message-prediction')){
-              // Si el mensaje contiene una imagen, no guardar el mensaje de texto en el historial de chat, solo guardar la imagen y los bestMatchesPlants
-              // console.log('Nuevo mensaje de imagen detectado, no se guardará el mensaje de texto en el historial de chat');
-              this.predictionsCounter.update(count => count + 1);
-              if(this.predictionsCounter() > 2){
-                this.lockSendPictureButton.set(true);
+        mutation.addedNodes.forEach(async node => {
+          if (node instanceof HTMLElement && !processedNodes.has(node)) {
+            processedNodes.add(node);
+
+            if (node.classList.contains('chat-message-from-user') && node.parentElement === chatMessagesList) {
+              // Aquí puedes agregar lógica para manejar el nuevo mensaje, por ejemplo:
+              // - Verificar si el mensaje contiene una imagen y renderizarla
+              // - Verificar si el mensaje contiene texto con el nombre de la planta y renderizarlo
+              const markdownContainer = node.querySelector('.chat-message-markdown');
+              if (!markdownContainer) {
+                return;
+              }
+              if (node.classList.contains('chat-message-prediction') && node.classList.length === 3) {
+                // Si el mensaje contiene una predicción de planta (exactamente 3 clases), incrementar el contador
+                console.log('incrementando contador de predicciones', {
+                  classes: node.className,
+                  textContent: node.textContent?.substring(0, 50),
+                  hasMarkdownContainer: !!markdownContainer
+                });
+                this.predictionsCounter.update(count => count + 1);
+
+                return;
+              }
+              const paragraphs = Array.from(markdownContainer.querySelectorAll('p'));
+              const messageText = paragraphs.map((p) => p.textContent?.trim() ?? '').filter(Boolean).join('\n');
+              // console.log('Nuevo mensaje agregado por el usuario:', messageText);
+              this.userMessages.update(current => [...current, { userId: this.sessionId || '', image: new File([], ''), bestMatchesPlants: [], message: messageText, typeUser: 'user', createdAt: new Date() }]);
+              saveUserChatHistory(this.sessionId || '', new File([], ''), [], messageText, 'user');
+
+            } else if (
+              node.classList.contains('chat-message') &&
+              node.classList.contains('chat-message-from-bot') &&
+              node.classList.length === 2 &&
+              node.parentElement === chatMessagesList
+            ) { //solo escuchar si tiene exactamente esas dos clases y es hijo directo
+              const markdownContainer = node.querySelector('.chat-message-markdown');
+              if (!markdownContainer) {
+                return;
+              }
+
+              const paragraphs = Array.from(markdownContainer.querySelectorAll('p'));
+              const messageText = paragraphs.map((p) => p.textContent?.trim() ?? '').filter(Boolean).join('\n');
+              // console.log('Nuevo mensaje agregado por el bot:', messageText);
+              this.botMessages.update(current => [...current, { userId: this.sessionId || '', image: new File([], ''), bestMatchesPlants: [], message: messageText, typeUser: 'bot', createdAt: new Date() }]);
+              saveUserChatHistory(this.sessionId || '', new File([], ''), [], messageText, 'bot');
+
+              // Incrementar el contador de mensajes del bot
+              // this.botMessagesCounter.update(count => count + 1);
+
+              console.log("Session ID al guardar mensaje del bot:", this.sessionId);
+              //Llamar a la función de supabase para registrar el uso del bot cada vez que se agrega un nuevo mensaje del bot
+              const response = await ChatBotUsage(this.sessionId || '');
+
+              // Verificar si el usuario ha alcanzado el límite de mensajes permitidos
+              if (!response?.permitido) {
+                this.disableSendButton();
                 this.renderLimitWarning();
               }
-              return;
-            }
-            const paragraphs = Array.from(markdownContainer.querySelectorAll('p'));
-            const messageText = paragraphs.map((p) => p.textContent?.trim() ?? '').filter(Boolean).join('\n');
-            // console.log('Nuevo mensaje agregado por el usuario:', messageText);
-            this.userMessages.update(current => [...current, {userId: this.sessionId || '', image: new File([], ''), bestMatchesPlants: [], message: messageText, typeUser: 'user', createdAt: new Date()}]);
-            saveUserChatHistory(this.sessionId || '', new File([], ''), [], messageText, 'user');
-            
-          } else if (
-            node instanceof HTMLElement &&
-            node.classList.contains('chat-message') &&
-            node.classList.contains('chat-message-from-bot') &&
-            node.classList.length === 2
-          ) { //solo escuchar si tiene exactamente esas dos clases
-            const markdownContainer = node.querySelector('.chat-message-markdown');
-            if (!markdownContainer) {
-              return;
-            }
-
-            const paragraphs = Array.from(markdownContainer.querySelectorAll('p'));
-            const messageText = paragraphs.map((p) => p.textContent?.trim() ?? '').filter(Boolean).join('\n');
-            // console.log('Nuevo mensaje agregado por el bot:', messageText);
-            this.botMessages.update(current => [...current, {userId: this.sessionId || '', image: new File([], ''), bestMatchesPlants: [], message: messageText, typeUser: 'bot', createdAt: new Date()}]);
-            saveUserChatHistory(this.sessionId || '', new File([], ''), [], messageText, 'bot');
-            
-            // Incrementar el contador de mensajes del bot
-            this.botMessagesCounter.update(count => count + 1);
-            
-            // Verificar si se debe deshabilitar el botón
-            if(this.botMessagesCounter() > 2){
-              this.disableSendButton();
-              this.renderLimitWarning();
             }
           }
         });
@@ -763,15 +816,15 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   private disableSendButton() {
     // Buscar el botón de envío en el chat de n8n y deshabilitarlo
     const sendButton = document.querySelector('.chat-input-send-button') as HTMLButtonElement;
-    
+
     if (sendButton) {
       sendButton.disabled = true;
       sendButton.setAttribute('disabled', 'disabled');
       console.log('Botón de envío deshabilitado:', sendButton);
-      
+
       // Agregar event listener para detectar intentos de click
       this.addBlockClickListener(sendButton);
-      
+
       // Crear un observer para mantener el botón deshabilitado incluso si el chat intenta habilitarlo
       this.keepSendButtonDisabled(sendButton);
     } else {
@@ -795,7 +848,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
   private blockTextarea() {
     const textarea = document.querySelector('textarea[data-test-id="chat-input"]') as HTMLTextAreaElement;
-    
+
     if (!textarea) {
       console.warn('Textarea de chat no encontrado');
       // Reintentar después de 500ms
@@ -826,7 +879,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     sendButton.addEventListener('click', blockClickHandler, true);
     // sendButton.addEventListener('mousedown', blockClickHandler, true);
     // sendButton.addEventListener('pointerdownoi', blockClickHandler, true);
-    
+
     console.log('Block click listener agregado al botón');
   }
 
@@ -863,7 +916,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     }
     this.chatMessagesObserver?.disconnect();
     this.sendButtonObserver?.disconnect();
-    
+
     // Limpiar handler del textarea
     if (this.textareaKeydownHandler) {
       const textarea = document.querySelector('textarea[data-test-id="chat-input"]') as HTMLTextAreaElement;
@@ -871,7 +924,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
         textarea.removeEventListener('keydown', this.textareaKeydownHandler);
       }
     }
-    
+
     this.revokeHistoryImageUrls();
   }
 }
