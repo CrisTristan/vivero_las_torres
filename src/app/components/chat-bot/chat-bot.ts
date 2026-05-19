@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, effect, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // @ts-ignore: side-effect import of CSS module without type declarations
 // import '@n8n/chat/style.css'; //esta linea se movio a styles.css
@@ -6,6 +6,7 @@ import { createChat } from '@n8n/chat';
 import { saveUserChatHistory, getUserChatHistory, deleteUserChatHistory } from '../../DataBase/userChatHistory';
 import { environment } from '../../../environments/environment';
 import { ChatBotUsage, readChatBotUsage, unlockChatBotUsage } from '../../controllers/chat_bot_controller';
+import { AuthService } from '../../services/auth-service';
 
 interface UserChatHistoryDB {
   userId: string; // ID del usuario (puede ser un UUID o cualquier identificador único)
@@ -57,6 +58,8 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
   private predictionsCounter = signal(0);
   public lockSendPictureButton = signal(false); // Nueva señal para controlar el estado del botón de enviar imagen
 
+  private authService = inject(AuthService);
+  
   constructor() {
     this.ImageUpload = new File([], ''); // Inicializar con un archivo vacío
     this.sessionId = '';
@@ -89,6 +92,10 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
     //Obtener la sessionId del localStorage
     this.sessionId = localStorage.getItem('n8n-chat/sessionId');
     console.log('Session ID:', this.sessionId);
+    
+    const userId = this.authService.getUser()?.id;
+  
+    console.log('User ID:', userId);
     
     //llamar a la función de supabase para verificar el uso del chatbot cada vez que se carga el componente
     if (this.sessionId) {
@@ -794,7 +801,7 @@ export class ChatBot implements OnInit, AfterViewInit, OnDestroy {
 
               console.log("Session ID al guardar mensaje del bot:", this.sessionId);
               //Llamar a la función de supabase para registrar el uso del bot cada vez que se agrega un nuevo mensaje del bot
-              const response = await ChatBotUsage(this.sessionId || '');
+              const response = await ChatBotUsage(this.sessionId || '', this.authService.getUser()?.id || 0);
 
               // Verificar si el usuario ha alcanzado el límite de mensajes permitidos
               if (!response?.permitido) {

@@ -5,10 +5,11 @@ import { Router } from "@angular/router";
 import { AuthService } from "../../services/auth-service";
 import { Toast} from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-log-in-page',
-  imports: [FormsModule, Toast],
+  imports: [FormsModule, Toast, CommonModule],
   providers: [MessageService],
   templateUrl: './log-in-page.html',
   styleUrl: './log-in-page.css',
@@ -20,6 +21,7 @@ export class LogInPage {
   private messageService = inject(MessageService);
   public showEmailVerificationMessage = signal(false); //importante para mostrar el mensaje de verificación de correo
   public showEmailInstructions = signal(false); //para mostrar/ocultar instrucciones de verificación
+  public showPassword = signal(false); //para mostrar/ocultar la contraseña
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -51,5 +53,9 @@ export class LogInPage {
 
   onForgotPassword() {
     this.router.navigate(['/forgot-password']);
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword.set(!this.showPassword());
   }
 }

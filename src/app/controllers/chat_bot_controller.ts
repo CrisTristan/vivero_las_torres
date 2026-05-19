@@ -16,9 +16,11 @@ export interface ChatBotUsageRecord {
     updated_at?: string;
 }
 
-export async function ChatBotUsage(sessionId: string) : Promise<ChatBotUsageResponse | null> {
+export async function ChatBotUsage(sessionId: string, userId: number) : Promise<ChatBotUsageResponse | null> {
+    
     const { data, error } = await supabase.rpc('controlar_uso_chatbot', {
-        p_session_id: sessionId
+        p_session_id: sessionId,
+        p_usuario_id: userId === 0 ? null : userId
     });
 
     if (error) {
