@@ -1,10 +1,13 @@
 interface User {
+  id: number;
+  correo: string;
   nombre: string;
   apellidos: string;
   telefono: string;
 }
 
 interface DireccionEnvio {
+  id: number;
   region: string;
   manzana: string;
   lote: string;
@@ -16,31 +19,24 @@ interface DireccionEnvio {
   referencia?: string | undefined;
 }
 
-interface Order {
-  fecha: string;
-  total: number;
-  estado: "no entregado" | "entregado" | "en reparto";
-  usuario: User;
-  Entregado_El_Dia: string | null;
-  es_arreglo_personalizado: boolean;
-  direccion_envio: DireccionEnvio;
-  metodo_entrega: 'enviar' | 'recoger';
-}
-
 interface Product {
     id: number;
-    producto_id: number;
     cantidad: number;
-    producto: ProductDetails;
-}
-             
-interface ProductDetails {
-    nombre: string;
-    imagen: string;
+    producto_id: number;
+    imagen_producto: string;
+    nombre_producto: string;
     precio_unitario: number;
 }
+             
 export interface OrdenesUsuarioProductos {
-  orden_id: number;
-  orden: Order;
+  id: number;
+  total: number;
+  fecha: string;
+  estado: "no entregado" | "entregado" | "en reparto";
+  Entregado_El_Dia: string | null;
+  es_arreglo_personalizado: boolean;
+  metodo_entrega: 'enviar' | 'recoger';
+  usuario: User;
+  direccion_envio: DireccionEnvio;
   productos: Product[];
 }

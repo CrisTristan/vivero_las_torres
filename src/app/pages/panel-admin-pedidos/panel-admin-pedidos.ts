@@ -33,8 +33,9 @@ export class PanelAdminPedidos implements OnInit {
   public selectedEstado = signal<Estado | "">("");
   public adminMenuService = inject(AdminMenuService);
   public createButtonLabel: string = "Crear Pedido";
-  filtro = signal<string>("Todos");
+  filtro = signal<string>("no entregado");
   busqueda = signal<string>("");
+  ordenarPor = signal<"reciente" | "antiguo" | "defecto">("defecto");
   public orderDetailsModalOpen = signal(false);
   public selectedOrder = signal<OrdenesUsuarioProductos | null>(null);
   public isImageModalOpen = signal(false);
@@ -66,19 +67,29 @@ export class PanelAdminPedidos implements OnInit {
   }
 
   pedidosFiltrados = computed(() => {
-    return this.pedidos().filter(
+    let resultado = this.pedidos().filter(
       (p) =>
-        (this.filtro() === "Todos" || p.orden.estado === this.filtro()) &&
-        (p.orden?.usuario?.nombre
+        (this.filtro() === "Todos" || p.estado === this.filtro()) &&
+        (p.usuario?.nombre
           .toLowerCase()
           .includes(this.busqueda().toLowerCase()) ||
-          String(p.orden_id).includes(this.busqueda().toLowerCase())),
+          String(p.id).includes(this.busqueda().toLowerCase())),
     );
+
+    // Aplicar ordenamiento por fecha
+    const ordenamiento = this.ordenarPor();
+    if (ordenamiento === "reciente") {
+      resultado.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    } else if (ordenamiento === "antiguo") {
+      resultado.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    }
+
+    return resultado;
   });
 
   // Contar pedidos no entregados
   totalNoEntregados = computed(() => {
-    return this.pedidos().filter(p => p.orden.estado === "no entregado").length;
+    return this.pedidos().filter(p => p.estado === "no entregado").length;
   });
 
   // Contar entregas realizadas hoy
@@ -87,10 +98,10 @@ export class PanelAdminPedidos implements OnInit {
     hoy.setHours(0, 0, 0, 0);
     
     return this.pedidos().filter(p => {
-      if (p.orden.estado !== "entregado" || !p.orden.Entregado_El_Dia) {
+      if (p.estado !== "entregado" || !p.Entregado_El_Dia) {
         return false;
       }
-      const fechaEntrega = new Date(p.orden.Entregado_El_Dia);
+      const fechaEntrega = new Date(p.Entregado_El_Dia);
       fechaEntrega.setHours(0, 0, 0, 0);
       return fechaEntrega.getTime() === hoy.getTime();
     }).length;
@@ -98,7 +109,7 @@ export class PanelAdminPedidos implements OnInit {
 
   // Contar pedidos entregados (total)
   totalEntregados = computed(() => {
-    return this.pedidos().filter(p => p.orden.estado === "entregado").length;
+    return this.pedidos().filter(p => p.estado === "entregado").length;
   });
 
   // Cambia el estado de la orden seleccionada
@@ -119,14 +130,11 @@ export class PanelAdminPedidos implements OnInit {
     // Actualizar en la lista de pedidos
     this.pedidos.set(
       this.pedidos().map((p) =>
-        p.orden_id === order.orden_id
+        p.id === order.id
           ? {
               ...p,
-              orden: {
-                ...p.orden,
-                estado: nuevoEstado,
-                Entregado_El_Dia: fechaActual,
-              },
+              estado: nuevoEstado,
+              Entregado_El_Dia: fechaActual,
             }
           : p,
       ),
@@ -134,17 +142,14 @@ export class PanelAdminPedidos implements OnInit {
     // Actualizar la orden seleccionada
     this.selectedOrder.set({
       ...order,
-      orden: {
-        ...order.orden,
-        estado: nuevoEstado,
-        Entregado_El_Dia: fechaActual,
-      },
+      estado: nuevoEstado,
+      Entregado_El_Dia: fechaActual,
     });
     this.showChangeStatusButton.set(false);
     this.selectedEstado.set("");
     console.log("Orden actualizada:", this.selectedOrder());
     this.updateSelectedOrderStatusAndDeliveryDate(
-      order.orden_id,
+      order.id,
       nuevoEstado,
       fechaActual,
     );
@@ -155,11 +160,26 @@ export class PanelAdminPedidos implements OnInit {
   }
 
   cambiarFiltro(f: string) {
+    //Reiniciar la búsqueda al cambiar el filtro
+    this.setBusqueda("");
+    
+    if(f === 'entregado') {
+      this.ordenarPor.set("reciente");
+    }
+
+    if(f === 'no entregado') {
+      this.ordenarPor.set("antiguo");
+    }
+
     this.filtro.set(f);
   }
 
   setBusqueda(val: string) {
     this.busqueda.set(val);
+  }
+
+  cambiarOrden(orden: "reciente" | "antiguo" | "defecto") {
+    this.ordenarPor.set(orden);
   }
 
   // 🎨 clases dinámicas
@@ -186,7 +206,7 @@ export class PanelAdminPedidos implements OnInit {
 
   // Abre el modal y carga la orden seleccionada
   openOrderDetailsModal(orden_id: number) {
-    const pedido = this.pedidos().find((p) => p.orden_id === orden_id) || null;
+    const pedido = this.pedidos().find((p) => p.id === orden_id) || null;
     this.selectedOrder.set(pedido);
     this.orderDetailsModalOpen.set(true);
     this.showChangeStatusButton.set(false);
@@ -227,10 +247,10 @@ export class PanelAdminPedidos implements OnInit {
     if (!selectedOrder) return 0;
 
     const subtotal = selectedOrder.productos.reduce(
-      (sum, p) => sum + p.cantidad * p.producto.precio_unitario,
+      (sum, p) => sum + p.cantidad * p.precio_unitario,
       0
     );
-    const total = selectedOrder.orden.total;
+    const total = selectedOrder.total;
     return total - subtotal;
   }
 

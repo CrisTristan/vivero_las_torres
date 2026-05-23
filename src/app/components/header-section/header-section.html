@@ -4,7 +4,7 @@
         @if (adminMenuService.toggleMenuVisible()) {
         <app-admin-menu
           #adminMenuHost
-          [customClass]="'fixed top-[13vh] left-0 w-[40vw] z-[100] h-[82vh]'">
+          [customClass]="'fixed top-[8vh] left-0 w-[40vw] z-[100] h-[86vh]'">
         </app-admin-menu>
       } @else {
         <div class="">
@@ -37,7 +37,7 @@
                 (click)="onPressButtonNotification()"
             >
                 <span class="material-symbols-outlined text-[22px] leading-none">notifications</span>
-                <span class="absolute -right-1 -top-1 h-5 min-w-5 px-1 rounded-full bg-[#178a2d] text-white text-[11px] font-semibold leading-5 text-center">3</span>
+                <span class="absolute -right-1 -top-1 h-5 min-w-5 px-1 rounded-full bg-[#178a2d] text-white text-[11px] font-semibold leading-5 text-center">{{notificationService.messageHistory().length }}</span>
             </button>
 
             @if(isNotificationsOpen()) {

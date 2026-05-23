@@ -27,7 +27,7 @@
     }
 
     <!-- Configuration Options Grid -->
-    @if(!selectedConfigOption()) {
+    @if(selectedConfigOption() === null) {
         <div class="options-grid">
             <!-- Shipping Cost Card -->
             <div 
@@ -66,9 +66,6 @@
                     [(ngModel)]="shippingCost"
                     [disabled]="isSaving()"
                 />
-                <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 0.5rem;">
-                    💡 Este valor se enviará al backend en: <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px;">POST /api/configuration/shipping-cost</code>
-                </p>
             </div>
 
             <div class="button-group">
@@ -103,9 +100,6 @@
                 />
                 <label>Permitir notificaciones por correo electrónico</label>
             </div>
-            <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 1rem;">
-                💡 Este valor se enviará al backend en: <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px;">POST /api/configuration/email-notifications</code>
-            </p>
 
             <div class="button-group">
                 <button 
@@ -113,7 +107,7 @@
                     (click)="updateEmailNotifications()"
                     [disabled]="isSaving()"
                 >
-                    💾 {{ isSaving() ? 'Guardando...' : 'Guardar Configuración' }}
+                    💾 {{ isSaving() ? 'Guardando...' : 'Guardar' }}
                 </button>
                 <button 
                     class="btn btn-secondary" 
