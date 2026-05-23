@@ -24,7 +24,7 @@ export class NotificationService {
       const lastOrders = this.messageHistory();
       if (lastOrders.length > 0) {
         const latestOrder = lastOrders[0]; // Suponiendo que el último pedido es el primero en la lista
-        console.log('Último pedido recibido:', latestOrder);
+        // console.log('Último pedido recibido:', latestOrder);
         // Aquí podrías mostrar una notificación al usuario sobre el nuevo pedido
       }
     });

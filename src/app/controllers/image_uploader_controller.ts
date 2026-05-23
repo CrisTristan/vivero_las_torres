@@ -23,8 +23,8 @@ export class ImageUploaderController {
         this.imageUploaderService.setFileImage = file; //modificamos el servicio para almacenar el archivo seleccionado
         this.imageUploaderService.setFolder = sanitizedFolder;  //modificamos el servicio para almacenar la carpeta seleccionada
 
-        console.log("Selected file:", file);
-        console.log("Upload folder:", sanitizedFolder);
+        // console.log("Selected file:", file);
+        // console.log("Upload folder:", sanitizedFolder);
 
         try {
             const formData = new FormData();
@@ -54,7 +54,7 @@ export class ImageUploaderController {
                 throw new Error("La respuesta del servidor no contiene la URL de la imagen.");
             }
 
-            console.log("Image uploaded successfully:", data);
+            // console.log("Image uploaded successfully:", data);
             this.imageUploaderService.setImageUrl = uploadedUrl;
             return uploadedUrl;
         } catch (error) {

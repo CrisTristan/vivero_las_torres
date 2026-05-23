@@ -22,7 +22,7 @@ export class SearchBar {
       this.searchProduct.set('');
       //Reiniciar el valor de búsqueda al cargar el componente solo si estamos en la sección de productos
       if(this.adminMenuService.currentSection() === 'Productos') {
-        console.log("Resetting search value for Productos section");
+        // console.log("Resetting search value for Productos section");
         this.updateSearchProduct('');
       }
     }

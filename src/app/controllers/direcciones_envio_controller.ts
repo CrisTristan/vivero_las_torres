@@ -31,7 +31,7 @@ export async function createDireccionEnvioByOrderId(orden_id: number, data: {
     codigo_postal: string;
     referencia?: string | undefined;
 }): Promise<ServerResponse> {
-    console.log('Creando dirección de envío para la orden:', orden_id, 'con datos:', data);
+    // console.log('Creando dirección de envío para la orden:', orden_id, 'con datos:', data);
 
     const response = await fetch(`${environment.apiUrl}/direcciones_envio/createDireccionEnvioByOrderId/${orden_id}`, {
         method: 'POST',

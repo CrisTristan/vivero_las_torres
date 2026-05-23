@@ -31,7 +31,7 @@ export class RocksDesigns {
   groupedStones = computed<Product[][]>(() => {
     const groups = [];
     const stones = this.designService.fetchedStones;
-    console.log(stones);
+    // console.log(stones);
     for (let i = 0; i < stones.length; i += 4) {
       groups.push(stones.slice(i, i + 4));
     }

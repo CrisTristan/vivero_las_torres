@@ -17,7 +17,7 @@ export class StockNotificationsService {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (notification) => {
-          console.log('Notificación de stock recibida:', notification);
+          // console.log('Notificación de stock recibida:', notification);
           // Aquí puedes ejecutar lógica adicional cuando haya cambios
           // Por ejemplo: mostrar alertas, actualizar UI, etc.
         },

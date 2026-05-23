@@ -86,7 +86,7 @@ export class ProductCatalog implements OnInit {
       Promise.all([fetchAllPlants(), fetchAllMacetas(), fetchAllPiedras(), fetchAllTierra(), fetchAllPasto()])
       .then(([plantas, macetas, piedras, tierra, pasto]) => {
         this.products.set([...plantas, ...macetas, ...piedras, ...tierra, ...pasto]);
-        console.log('productos', this.products());
+        // console.log('productos', this.products());
         this.isLoadingAllProducts.update((current)=>!current);
       })
       .catch((error) => {

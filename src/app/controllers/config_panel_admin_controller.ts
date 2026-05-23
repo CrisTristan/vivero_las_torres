@@ -62,7 +62,7 @@ export async function updateShippingCost(newCost: number): Promise<UpdateShippin
 
 export async function updateEmailNotifications(userId: number, allow: boolean): Promise<UpdateEmailNotificationsResponse> {
     try {
-        console.log('Enviando solicitud para actualizar notificaciones por correo:', allow);
+        // console.log('Enviando solicitud para actualizar notificaciones por correo:', allow);
         const response = await fetch(`${environment.apiUrl}/configuracion/notificaciones-email?userId=${userId}&allowEmailNotifications=${allow}`, {
             method: 'PUT',
             headers: {

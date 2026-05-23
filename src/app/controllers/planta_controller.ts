@@ -4,7 +4,7 @@ import { Product } from "../types/product.type";
 export async function fetchAllPlants(): Promise<Product[]> {
     try {
         const plantas: Product[] = await getAllPlants();
-        console.log("Plantas fetched in controller:", plantas);
+        // console.log("Plantas fetched in controller:", plantas);
         return plantas;
     } catch (error) {
         console.error("Error fetching plantas in controller:", error);
@@ -15,7 +15,7 @@ export async function fetchAllPlants(): Promise<Product[]> {
 export async function updatePlantById(id: number, updatedData: Partial<Product>): Promise<UpdatePlantResponse> {
     try {
         const updatedPlant = await updatePlant(id, updatedData);
-        console.log("Planta actualizada en controller:", updatedPlant);
+        // console.log("Planta actualizada en controller:", updatedPlant);
         return updatedPlant;
     } catch (error) {
         console.error("Error updating planta in controller:", error);
@@ -26,7 +26,7 @@ export async function updatePlantById(id: number, updatedData: Partial<Product>)
 export async function createPlant(payload: Record<string, unknown>): Promise<CreatePlantResponse> {
     try {
         const createdPlant = await createNewPlant(payload);
-        console.log("Planta creada en controller:", createdPlant);
+        // console.log("Planta creada en controller:", createdPlant);
         return createdPlant;
     } catch (error) {
         console.error("Error creating planta in controller:", error);

@@ -37,7 +37,7 @@ export default class OrderProductController {
           return [];
         }
         const data = await response.json();
-        console.log("Top selling products:", data.topSellingProducts);
+        // console.log("Top selling products:", data.topSellingProducts);
         return data.topSellingProducts as TopProductItem[];
     }
 
@@ -48,7 +48,7 @@ export default class OrderProductController {
           return [];
         }
         const data = await response.json();
-        console.log("IDs de productos vendidos:", data.idsProductosVendidos);
+        // console.log("IDs de productos vendidos:", data.idsProductosVendidos);
         return data.idsProductosVendidos as {producto_id: number}[];
     }
 }

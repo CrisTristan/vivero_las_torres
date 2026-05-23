@@ -68,6 +68,6 @@ export class App {
   }
 
   imprimirNombre() {
-    console.log('Nombre del héroe recibido desde el componente hijo.');
+    // console.log('Nombre del héroe recibido desde el componente hijo.');
   }
 }

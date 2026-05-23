@@ -30,7 +30,7 @@ export class LineChart{
             const ingresos = this.ingresos();
             if (ingresos.length > 0) {
                 this.initChart();
-                console.log("Ingresos mensuales en el componente LineChart:", ingresos);
+                // console.log("Ingresos mensuales en el componente LineChart:", ingresos);
             }         
         });
     }

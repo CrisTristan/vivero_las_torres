@@ -43,13 +43,13 @@ export class ShoppingCartPage implements OnInit {
 
   ngOnInit(): void {
     this.productsInCart = this.filterRepeatedProducts(this.getCartItems());
-    console.log('Productos en el carrito:', this.productsInCart);
+    // console.log('Productos en el carrito:', this.productsInCart);
     // Escuchar notificaciones de stock
     listenToStockNotifications()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (notification) => {
-          console.log('Notificación de stock recibida:', notification);
+          // console.log('Notificación de stock recibida:', notification);
           // Aquí puedes ejecutar lógica adicional cuando haya cambios
           // Actializar el carrito con el stock actualizado si el producto en el carrito es el mismo que el de la notificación
           const affectedProduct = this.productsInCart.find(p => p.producto_id === notification.payload.record.id);
@@ -122,7 +122,7 @@ export class ShoppingCartPage implements OnInit {
         alert('No hay suficiente stock para agregar más unidades de este producto');
       }
     }
-    console.log('Productos en el carrito después de incrementar cantidad:', this.productsInCart);
+    // console.log('Productos en el carrito después de incrementar cantidad:', this.productsInCart);
   }
 
   totalPrice() {

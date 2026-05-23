@@ -28,7 +28,7 @@ export async function ChatBotUsage(sessionId: string, userId: number) : Promise<
         return null;
     }
 
-    console.log("Respuesta del RPC:", data);
+    // // console.log("Respuesta del RPC:", data);
     return data;
 }
 
@@ -57,6 +57,6 @@ export async function unlockChatBotUsage(sessionId: string): Promise<ChatBotUsag
         return null;
     }
 
-    console.log("Respuesta del RPC:", data);
+    // console.log("Respuesta del RPC:", data);
     return data;
 }

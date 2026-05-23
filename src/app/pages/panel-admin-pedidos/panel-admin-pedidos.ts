@@ -55,10 +55,10 @@ export class PanelAdminPedidos implements OnInit {
     orderProductsController
       .getAllOrdersProducts()
       .then((ordersProducts) => {
-        console.log("Pedidos obtenidos del backend:", ordersProducts);
+        // console.log("Pedidos obtenidos del backend:", ordersProducts);
         // Aquí deberías transformar ordersProducts al formato de Pedido que usas en la UI
         // Esto es solo un ejemplo de cómo podrías hacerlo, dependiendo de la estructura de ordersProducts
-        console.log(typeof ordersProducts);
+        // console.log(typeof ordersProducts);
         this.pedidos.set(ordersProducts);
       })
       .catch((error) => {
@@ -147,7 +147,7 @@ export class PanelAdminPedidos implements OnInit {
     });
     this.showChangeStatusButton.set(false);
     this.selectedEstado.set("");
-    console.log("Orden actualizada:", this.selectedOrder());
+    // console.log("Orden actualizada:", this.selectedOrder());
     this.updateSelectedOrderStatusAndDeliveryDate(
       order.id,
       nuevoEstado,
@@ -162,7 +162,7 @@ export class PanelAdminPedidos implements OnInit {
   cambiarFiltro(f: string) {
     //Reiniciar la búsqueda al cambiar el filtro
     this.setBusqueda("");
-    
+
     if(f === 'entregado') {
       this.ordenarPor.set("reciente");
     }
@@ -263,7 +263,7 @@ export class PanelAdminPedidos implements OnInit {
     orderProductsController
       .updateOrderStatusAndDeliveryDate(id, newStatus, deliveryDate)
       .then(() => {
-        console.log("Orden actualizada en el backend");
+        // console.log("Orden actualizada en el backend");
         // Aquí podrías actualizar el estado de la orden en tu UI si es necesario
         this.messageService.add({
           severity: 'success',

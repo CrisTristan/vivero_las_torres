@@ -31,10 +31,10 @@ export default class OrderController {
       throw new Error("Usuario no autenticado");
     }
     const cartItems = this.shoppingCartService.getCartItems();
-    console.log("Items del carrito de productos:", cartItems);
+    // console.log("Items del carrito de productos:", cartItems);
 
     if (cartItems.length === 0) {
-      console.log("El carrito de productos está vacío");
+      // console.log("El carrito de productos está vacío");
     }
 
     //Calcular el total de la orden dependiendo del método de envío seleccionado por el usuario, para agregar el costo de envío al total de la orden
@@ -70,7 +70,7 @@ export default class OrderController {
         throw new Error(`Error al crear la orden: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Orden creada:", result);
+      // console.log("Orden creada:", result);
       return result;
     } catch (error) {
       console.error("Error al crear la orden:", error);
@@ -85,12 +85,12 @@ export default class OrderController {
     }
     const cartPersonalizedArrangementItems =
       this.shoppingCartService.getPersonalizedArrangementItems();
-    console.log(
-      "Items del arreglo personalizado en el carrito:",
-      cartPersonalizedArrangementItems,
-    );
+    // console.log(
+    //   "Items del arreglo personalizado en el carrito:",
+    //   cartPersonalizedArrangementItems,
+    // );
     if (cartPersonalizedArrangementItems.length === 0) {
-      console.log("El carrito de arrglo personalizado está vacío");
+      // console.log("El carrito de arrglo personalizado está vacío");
     }
 
     //Verificar que tipo de envio selecciono el usuario para agregar el costo de envío al total de la orden
@@ -180,7 +180,7 @@ export default class OrderController {
         throw new Error(`Error al obtener las últimas 10 órdenes: ${response.status}`);
       }
       const result = await response.json();
-      console.log("Últimas 10 órdenes:", result);
+      // console.log("Últimas 10 órdenes:", result);
       return result;
     } catch (error) {
       console.error("Error al obtener las últimas 10 órdenes:", error);
