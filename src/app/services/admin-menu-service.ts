@@ -22,7 +22,7 @@ export class AdminMenuService {
   constructor() {}
 
   changeSection(section: string) {
-    // console.log('Changing section to:', section);
+    console.log('Changing section to:', section);
     this.currentSection.set(section);
   }
 

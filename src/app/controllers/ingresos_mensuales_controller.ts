@@ -27,7 +27,7 @@ export class IngresosMensualesController {
                 return [];
             }
             const data = await response.json();
-            // console.log("Ingresos mensuales:", data.ingresosMensuales);
+            console.log("Ingresos mensuales:", data.ingresosMensuales);
             return data.ingresosMensuales as IngresoMensual[];
         } catch (error) {
             console.error("Error fetching monthly ingresos:", error);

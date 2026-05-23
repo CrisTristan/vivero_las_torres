@@ -30,7 +30,7 @@ export class ProductsPurchasedByCustomer {
     effect(() => {
          const products = this.products();
 
-      // console.log('Productos recibidos del padre:', products);
+      console.log('Productos recibidos del padre:', products);
 
       this.isLoading.set(true);
 
@@ -71,7 +71,7 @@ export class ProductsPurchasedByCustomer {
   }
 
   viewDeliveredOrders(){
-    // console.log("Productos entregados:", this.purchasedProducts().filter((item) => {
+    console.log("Productos entregados:", this.purchasedProducts().filter((item) => {
       return item.estado === 'entregado';
     }));
     

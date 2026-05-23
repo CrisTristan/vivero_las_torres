@@ -155,14 +155,14 @@ export class UserShippingDataService {
     id: number,
     data: DireccionEnvio,
   ): Promise<{ status: number; data: any }> {
-    // console.log(
-    //   "Actualizando dirección de envío con id:",
-    //   id,
-    //   "y datos:",
-    //   data,
-    // );
+    console.log(
+      "Actualizando dirección de envío con id:",
+      id,
+      "y datos:",
+      data,
+    );
     //Verificar si el código postal es válido antes de hacer la petición
-    // console.log("Verificando código postal:", data.codigo_postal);
+    console.log("Verificando código postal:", data.codigo_postal);
     if (!this.verifyAddressCode(data.codigo_postal)) {
       console.warn(
         "⚠️ Código postal no válido:",
@@ -197,9 +197,9 @@ export class UserShippingDataService {
 
       const found = this.AllUserShippingData().some((item) => item.id === id);
       if (!found) {
-        // console.warn(
-        //   "⚠️ Advertencia: ID no encontrado en la lista, recargando datos...",
-        // );
+        console.warn(
+          "⚠️ Advertencia: ID no encontrado en la lista, recargando datos...",
+        );
         return this.reloadAllShippingData();
       }
 
@@ -213,11 +213,11 @@ export class UserShippingDataService {
           : shippingData,
       );
       this.AllUserShippingData.set(updatedList);
-      // console.log("✅ Dirección actualizada:", updatedShippingData);
-      // console.log(
-      //   "✅ Lista actual de direcciones:",
-      //   this.AllUserShippingData(),
-      // );
+      console.log("✅ Dirección actualizada:", updatedShippingData);
+      console.log(
+        "✅ Lista actual de direcciones:",
+        this.AllUserShippingData(),
+      );
     }
     return response;
   }
@@ -236,10 +236,10 @@ export class UserShippingDataService {
               ? [response.data.data]
               : [];
           this.AllUserShippingData.set(result);
-          // console.log(
-          //   "✅ Datos de envío recargados después de actualización:",
-          //   result,
-          // );
+          console.log(
+            "✅ Datos de envío recargados después de actualización:",
+            result,
+          );
           return response;
         }
       } catch (error) {

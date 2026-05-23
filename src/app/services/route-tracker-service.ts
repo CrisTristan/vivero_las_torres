@@ -12,11 +12,11 @@ export class RouteTrackerService {
   private history = signal<string[]>([]);
 
   constructor(private router: Router) {
-    // console.log('🔍 RouteTrackerService inicializado');
+    console.log('🔍 RouteTrackerService inicializado');
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        // console.log('📍 Navegación detectada:', event.urlAfterRedirects);
+        console.log('📍 Navegación detectada:', event.urlAfterRedirects);
         this.addRoute(event.urlAfterRedirects);
       });
   }
@@ -28,14 +28,14 @@ export class RouteTrackerService {
     const updated = [...current, route].slice(-2);
 
     this.history.set(updated);
-    // console.log('📚 Historial actualizado:', updated);
+    console.log('📚 Historial actualizado:', updated);
 
     this.checkPattern(updated);
   }
 
   private checkPattern(routes: string[]) {
     if (routes.length < 2) {
-      // console.log('⏳ Esperando al menos 2 rutas en el historial...');
+      console.log('⏳ Esperando al menos 2 rutas en el historial...');
       return;
     }
 

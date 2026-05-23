@@ -29,7 +29,7 @@ export class ImageUploaderCloudinary {
       return;
     }
 
-    // console.log("Selected file:", file);
+    console.log("Selected file:", file);
     
     const compressedImageUrl = await this.compressImageToDataUrl(file, 900, 900, 0.72);
     this.imageUrl.set(compressedImageUrl);
