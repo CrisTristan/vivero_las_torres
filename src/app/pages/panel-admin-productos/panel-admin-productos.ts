@@ -90,6 +90,7 @@ export class PanelAdminProductos implements OnInit {
   public editingProductId: number | null = null;
   public readonly lastEditedProductState = signal<Product | null>(null);
   private readonly volumeOptions = ['mini', 'pequeño', 'mediano', 'grande', 'extra_grande'];
+  public isCreatingProduct = signal(false); // Nueva señal para indicar si se está creando un producto
 
   @ViewChild('adminMenuHost', { read: ElementRef }) adminMenuHost?: ElementRef<HTMLElement>;
 
@@ -345,52 +346,11 @@ export class PanelAdminProductos implements OnInit {
     }));
   }
 
-  // openCreateFilePicker(fileInput: HTMLInputElement): void {
-  //   fileInput.click();
-  // }
-
-  // async onCreateImageFileSelected(event: Event): Promise<void> {
-  //   const target = event.target as HTMLInputElement;
-  //   const file = target.files?.[0];
-
-  //   if (!file) {
-  //     return;
-  //   }
-
-  //   const compressedImageUrl = await this.compressImageToDataUrl(file, 900, 900, 0.72);
-
-  //   if (!compressedImageUrl) {
-  //     this.messageService.add({
-  //       severity: 'error',
-  //       summary: 'Error',
-  //       detail: 'No se pudo procesar la imagen seleccionada',
-  //     });
-  //     target.value = '';
-  //     return;
-  //   }
-
-  //   if (compressedImageUrl.length > this.MAX_BASE64_IMAGE_LENGTH) {
-  //     this.messageService.add({
-  //       severity: 'warn',
-  //       summary: 'Imagen muy grande',
-  //       detail: 'Selecciona una imagen mas ligera para evitar errores al crear el producto',
-  //     });
-  //     target.value = '';
-  //     return;
-  //   }
-
-  //   this.createFormState.update((current) => ({
-  //     ...current,
-  //     imageUrl: compressedImageUrl,
-  //   }));
-  //   this.imageUploaderService.setFileImage = file;
-  //   target.value = '';
-  // }
-
   async onCreateProduct(): Promise<void> {
     const state = this.createFormState();
+    this.isCreatingProduct.set(true); // Indicamos que se está creando un producto para mostrar el spinner en el botón de creación
 
-    if (!state.name.trim() || !state.description.trim() || state.price <= 0 || state.stock <= 0 || !state.type.trim()) {
+    if (!state.name.trim() || state.price <= 0 || state.stock <= 0 || !state.type.trim()) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Campos requeridos',
@@ -447,6 +407,8 @@ export class PanelAdminProductos implements OnInit {
       this.reloadProductsBySelectedCategory();
       this.closeCreateModal();
     }
+
+    this.isCreatingProduct.set(false); // Reseteamos el estado de creación para ocultar el spinner del botón de creación
   }
 
   async onDeleteProduct(productId: number): Promise<void> {
@@ -721,59 +683,6 @@ export class PanelAdminProductos implements OnInit {
       this.messageService.add({severity:'error', summary: 'Error', detail: errorDetail});
     }
   }
-
-  // private async compressImageToDataUrl(
-  //   file: File,
-  //   maxWidth: number,
-  //   maxHeight: number,
-  //   quality: number,
-  // ): Promise<string | null> {
-  //   const imageDataUrl = await this.readFileAsDataUrl(file);
-
-  //   if (!imageDataUrl) {
-  //     return null;
-  //   }
-
-  //   const image = await this.loadImage(imageDataUrl);
-
-  //   if (!image) {
-  //     return null;
-  //   }
-
-  //   const ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
-  //   const targetWidth = Math.max(1, Math.round(image.width * ratio));
-  //   const targetHeight = Math.max(1, Math.round(image.height * ratio));
-
-  //   const canvas = document.createElement('canvas');
-  //   canvas.width = targetWidth;
-  //   canvas.height = targetHeight;
-
-  //   const context = canvas.getContext('2d');
-  //   if (!context) {
-  //     return null;
-  //   }
-
-  //   context.drawImage(image, 0, 0, targetWidth, targetHeight);
-  //   return canvas.toDataURL('image/jpeg', quality);
-  // }
-
-  // private readFileAsDataUrl(file: File): Promise<string | null> {
-  //   return new Promise((resolve) => {
-  //     const reader = new FileReader();
-  //     reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : null);
-  //     reader.onerror = () => resolve(null);
-  //     reader.readAsDataURL(file);
-  //   });
-  // }
-
-  // private loadImage(dataUrl: string): Promise<HTMLImageElement | null> {
-  //   return new Promise((resolve) => {
-  //     const image = new Image();
-  //     image.onload = () => resolve(image);
-  //     image.onerror = () => resolve(null);
-  //     image.src = dataUrl;
-  //   });
-  // }
 
   private reloadProductsBySelectedCategory(): void {
     if (this.selectedCategory() === 'plantas') {
