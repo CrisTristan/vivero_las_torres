@@ -129,6 +129,13 @@ export class ShoppingCartPage implements OnInit {
     return this.shoppingCartService.total;
   }
 
+  formatMexicanCurrency(value: number): string {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+    }).format(value);
+  }
+
   finalizePurchase() {
     // Antes de navegar a la página de pago, establecemos la señal para indicar que el pago es para productos normales (no personalizados)
     this.paymentService.isPaymentForPersonalizedArrangement.set(false);
