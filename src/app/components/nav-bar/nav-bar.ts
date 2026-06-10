@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ShoppingCartService } from '../../services/shopping-cart-service';
 import { AuthService } from '../../services/auth-service';
 import { AdminMenuService } from '../../services/admin-menu-service';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -15,6 +16,7 @@ export class NavBar {
   ShoppingCartService: ShoppingCartService;
 
   public adminMenuService = inject(AdminMenuService);
+  public readonly themeService = inject(ThemeService);
   
   @ViewChild('#aboutUs') aboutUs!: ElementRef;
 

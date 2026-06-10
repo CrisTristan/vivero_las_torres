@@ -13,6 +13,7 @@ import { getUserShippingDataByUserId } from './controllers/direcciones_usuario_c
 import { AuthService } from './services/auth-service';
 import { StockNotificationsService } from './services/stock-notifications-service';
 import { HeaderSection } from './components/header-section/header-section';
+import { ThemeService } from './services/theme-service';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,7 @@ export class App {
   private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService);
   
   //Solo se inyecta si el usuario tiene 0 direcciones de envío
   private routeTrackerService?: RouteTrackerService;

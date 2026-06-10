@@ -12,9 +12,31 @@ html, body {
 	overflow-x: hidden;
 }
 
+html {
+	color-scheme: light;
+	background: #f8fafc;
+}
+
+html.dark {
+	color-scheme: dark;
+	background: #0f172a;
+}
+
+body {
+	background: #f8fafc;
+	color: #1f2937;
+	transition: background-color 180ms ease, color 180ms ease;
+}
+
+html.dark body {
+	background: #0f172a;
+	color: #e5e7eb;
+}
+
 app-root, main.main {
 	display: block;
 	width: 100%;
+	min-height: 100vh;
 }
 
 .material-symbols-outlined {
@@ -27,4 +49,256 @@ app-root, main.main {
   font-style: normal;
   display: inline-block;
   line-height: 1;
+}
+
+/* Shared theme transitions */
+body div,
+body nav,
+body aside,
+body section,
+body article,
+body header,
+body footer,
+body input,
+body select,
+body textarea,
+body button {
+	transition-property: background-color, border-color, color, box-shadow;
+	transition-duration: 180ms;
+	transition-timing-function: ease;
+}
+
+/* Navigation */
+html.dark .theme-top-navbar,
+html.dark .theme-bottom-navbar {
+	background-color: #14532d !important;
+	color: #f0fdf4 !important;
+	border-color: #166534 !important;
+}
+
+html.dark .theme-top-navbar ul {
+	color: #f0fdf4 !important;
+}
+
+html.dark .theme-top-navbar .theme-toggle {
+	background-color: #1f2937 !important;
+	border-color: #4b5563 !important;
+	color: #facc15 !important;
+}
+
+/* Main surfaces */
+html.dark :where(
+	.bg-white,
+	.bg-gray-50,
+	.bg-gray-100,
+	.bg-slate-50,
+	.bg-slate-100
+),
+html.dark [class*="bg-white/"],
+html.dark [class*="bg-[#eff3ef]"],
+html.dark [class*="bg-[#eef2ee]"],
+html.dark [class*="bg-[#f0f8f7]"],
+html.dark [class*="bg-[#f3f4f6]"],
+html.dark [class*="bg-[#f3f7f3]"],
+html.dark [class*="bg-[#f8fafc]"] {
+	background-color: #111827 !important;
+}
+
+html.dark :where(
+	.bg-gray-200,
+	.bg-gray-300,
+	.bg-slate-200
+),
+html.dark [class*="bg-[#e4ece4]"],
+html.dark [class*="bg-[#e4ebe4]"],
+html.dark [class*="bg-[#e7ece7]"],
+html.dark [class*="bg-[#e6ebe6]"],
+html.dark [class*="bg-[#e5e7eb]"],
+html.dark [class*="bg-[#dce5dc]"],
+html.dark [class*="bg-[#d4dae4]"],
+html.dark [class*="bg-[#b7d1b7]"] {
+	background-color: #1f2937 !important;
+}
+
+html.dark :where(.bg-green-50, .bg-green-100, .bg-emerald-50),
+html.dark [class*="bg-[#c6dfb8]"] {
+	background-color: #143524 !important;
+}
+
+html.dark :where(.bg-blue-50) {
+	background-color: #172554 !important;
+}
+
+html.dark :where(.bg-red-50) {
+	background-color: #450a0a !important;
+}
+
+html.dark [class*="bg-[#fff1f1]"] {
+	background-color: #450a0a !important;
+}
+
+html.dark :where(.bg-amber-50, .bg-amber-100, .bg-yellow-50) {
+	background-color: #422006 !important;
+}
+
+/* Text contrast */
+html.dark :where(
+	.text-black,
+	.text-gray-900,
+	.text-gray-800,
+	.text-gray-700,
+	.text-slate-900,
+	.text-slate-800
+),
+html.dark [class*="text-[#0f172a]"],
+html.dark [class*="text-[#111827]"],
+html.dark [class*="text-[#1b1f1c]"],
+html.dark [class*="text-[#1f2421]"],
+html.dark [class*="text-[#1f2937]"],
+html.dark [class*="text-[#374151]"] {
+	color: #f3f4f6 !important;
+}
+
+html.dark :where(
+	.text-gray-600,
+	.text-gray-500,
+	.text-gray-400,
+	.text-slate-600,
+	.text-slate-500,
+	.text-slate-400
+),
+html.dark [class*="text-[#4a4f53]"],
+html.dark [class*="text-[#4b5563]"],
+html.dark [class*="text-[#526152]"],
+html.dark [class*="text-[#4f5b4f]"],
+html.dark [class*="text-[#5b635b]"],
+html.dark [class*="text-[#5d6662]"],
+html.dark [class*="text-[#5f6877]"],
+html.dark [class*="text-[#5f695f]"],
+html.dark [class*="text-[#64748b]"],
+html.dark [class*="text-[#677182]"],
+html.dark [class*="text-[#6b7280]"],
+html.dark [class*="text-[#8a958a]"],
+html.dark [class*="text-[#96a196]"],
+html.dark [class*="text-[#9ca3af]"] {
+	color: #cbd5e1 !important;
+}
+
+html.dark :where(.text-green-700, .text-green-600, .text-emerald-700, .text-emerald-600),
+html.dark [class*="text-[#0f766e]"],
+html.dark [class*="text-[#1ea65d]"] {
+	color: #6ee7b7 !important;
+}
+
+html.dark :where(.text-blue-900, .text-blue-700, .text-blue-600) {
+	color: #93c5fd !important;
+}
+
+html.dark :where(.text-red-700, .text-red-600, .text-red-500) {
+	color: #fca5a5 !important;
+}
+
+html.dark :where(.text-amber-700, .text-amber-600, .text-yellow-700) {
+	color: #fcd34d !important;
+}
+
+/* Borders, controls and data surfaces */
+html.dark :where(
+	.border-gray-200,
+	.border-gray-300,
+	.border-slate-200,
+	.divide-gray-200
+),
+html.dark [class*="border-[#bcc6d3]"],
+html.dark [class*="border-[#c6d0c7]"],
+html.dark [class*="border-[#d1d5db]"],
+html.dark [class*="border-[#d3dcd3]"],
+html.dark [class*="border-[#d5dfd5]"],
+html.dark [class*="border-[#d6e0d6]"],
+html.dark [class*="border-[#d8e0d8]"],
+html.dark [class*="border-[#d9e2d9]"],
+html.dark [class*="border-[#e5e7eb]"] {
+	border-color: #475569 !important;
+}
+
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html.dark select,
+html.dark textarea {
+	background-color: #111827 !important;
+	border-color: #475569 !important;
+	color: #f3f4f6 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+	color: #94a3b8 !important;
+	opacity: 1;
+}
+
+html.dark select option {
+	background-color: #111827;
+	color: #f3f4f6;
+}
+
+html.dark table,
+html.dark thead,
+html.dark tbody,
+html.dark tr,
+html.dark th,
+html.dark td {
+	border-color: #334155 !important;
+}
+
+html.dark thead {
+	background-color: #1e293b !important;
+	color: #f8fafc !important;
+}
+
+html.dark tbody tr:hover {
+	background-color: #1e293b !important;
+}
+
+/* PrimeNG and chat surfaces */
+html.dark :where(
+	.p-component,
+	.p-dialog,
+	.p-popover,
+	.p-overlaypanel,
+	.p-select-overlay,
+	.p-datepicker,
+	.p-menu,
+	.p-toast-message
+) {
+	color: #e5e7eb;
+}
+
+html.dark :where(
+	.p-dialog,
+	.p-popover,
+	.p-overlaypanel,
+	.p-select-overlay,
+	.p-datepicker,
+	.p-menu
+) {
+	background-color: #111827 !important;
+	border-color: #475569 !important;
+}
+
+html.dark {
+	--chat--color-white: #111827;
+	--chat--color-light: #1f2937;
+	--chat--color-light-shade-50: #334155;
+	--chat--color-dark: #f8fafc;
+	--chat--color-medium: #cbd5e1;
+}
+
+html.dark img {
+	color-scheme: only light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body,
+	body * {
+		transition-duration: 0.01ms !important;
+	}
 }

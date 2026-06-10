@@ -1,9 +1,21 @@
-<div class="bg-green-400 h-[8vh] fixed w-full">
+<div class="theme-top-navbar bg-green-400 h-[8vh] fixed w-full">
   <nav class="nav-bar flex items-center w-full h-full">
       <img src="images/ViveroLasTorresLogo.jpeg" alt="Vivero Las Torres" class="h-full w-25 inline-block"
         loading="eager" />
 
-    <button destinationAnimation (click)="open = !open" class="md:hidden ml-auto m-3">
+    <button
+      type="button"
+      (click)="themeService.toggleTheme()"
+      class="theme-toggle ml-auto md:ml-2 md:order-3 h-10 w-10 shrink-0 rounded-full border border-green-800/30 bg-white/80 text-green-900 flex items-center justify-center shadow-sm transition-colors hover:bg-white"
+      [attr.aria-label]="themeService.isDark() ? 'Activar modo claro' : 'Activar modo oscuro'"
+      [attr.title]="themeService.isDark() ? 'Activar modo claro' : 'Activar modo oscuro'"
+    >
+      <span class="material-symbols-outlined text-[24px] leading-none">
+        {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+      </span>
+    </button>
+
+    <button destinationAnimation (click)="open = !open" class="md:hidden m-3">
       @if (!open) {
       <span class="material-symbols-outlined"> menu </span>
       } @else {
@@ -13,7 +25,7 @@
     <ul [class.hidden]="!open" [class.flex]="open"
       class="absolute md:static md:flex md:flex-1 md:justify-evenly md:items-center
          md:w-full top-10 w-screen md:mt-0 bg-white md:bg-transparent
-         flex-col items-center md:flex-row z-100 mt-10 rounded-4xl md:border-0 border-3 divide-y-4 md:divide-y-0 text-green-700 md:text-black">
+         flex-col items-center md:flex-row md:order-2 z-100 mt-10 rounded-4xl md:border-0 border-3 divide-y-4 md:divide-y-0 text-green-700 md:text-black">
       <li
         class="px-4 py-2 rounded cursor-pointer transition-all hover:text-black hover:shadow-lg menu-text elemento-navbar">
         <!-- <a (click)="this.getUserSession()">Inicio <span class="material-symbols-outlined"> home </span></a> -->
