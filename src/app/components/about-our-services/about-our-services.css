@@ -2,3 +2,54 @@
     margin-left: 5vw;
     margin-right: 5vw;
 }
+
+:host {
+    display: block;
+}
+
+.about-services {
+    color: #111827;
+}
+
+:host-context(.dark) .about-services {
+    background: #000;
+    color: #f3f4f6;
+}
+
+:host-context(.dark) .services-heading,
+:host-context(.dark) .about-us-section,
+:host-context(.dark) .contact-section {
+    background: #000;
+}
+
+:host-context(.dark) :is(
+    .services-heading h1,
+    .services-heading h2,
+    .about-us-section h2,
+    .about-benefit h4,
+    .contact-card h2
+) {
+    color: #f9fafb;
+}
+
+:host-context(.dark) :is(
+    .about-us-section h3,
+    .about-benefit p,
+    .contact-card p
+) {
+    color: #d1d5db;
+}
+
+:host-context(.dark) .about-benefit {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 10px 25px rgb(0 0 0 / 35%);
+}
+
+:host-context(.dark) .contact-card {
+    background: #111827;
+    border-color: #22c55e;
+    box-shadow: 0 12px 30px rgb(0 0 0 / 40%);
+}

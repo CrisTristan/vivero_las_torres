@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.service-card {
+  color: #111827;
+}
+
+:host-context(.dark) .service-card {
+  background: #111827;
+  border-color: #166534;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 40%);
+}
+
+:host-context(.dark) .service-card-content {
+  background-color: #0f1f18;
+  background-image: none;
+}
+
+:host-context(.dark) :is(.service-title, .service-description, .service-features) {
+  color: #f3f4f6;
+}
+
+:host-context(.dark) .service-icon {
+  background: #1f2937;
+  border: 1px solid #374151;
+}
+
+:host-context(.dark) .service-divider {
+  background: #22c55e;
+}

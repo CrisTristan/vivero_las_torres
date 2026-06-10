@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.home-page {
+  background: #dcfce7;
+  color: #111827;
+}
+
+:host-context(.dark) .home-page {
+  background: #000;
+  color: #f3f4f6;
+}

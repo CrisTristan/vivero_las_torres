@@ -7,6 +7,55 @@
     color: red;
 }
 
+:host-context(.dark) .product-details-page {
+  background: #000;
+  color: #f3f4f6;
+}
+
+:host-context(.dark) .product-image-panel,
+:host-context(.dark) .product-description-panel,
+:host-context(.dark) .product-detail-card,
+:host-context(.dark) .product-feature-card {
+  background: #111827;
+  border-color: #374151;
+  box-shadow: 0 10px 25px rgb(0 0 0 / 35%);
+}
+
+:host-context(.dark) .product-title-panel,
+:host-context(.dark) .product-specifications-panel,
+:host-context(.dark) .product-features-panel {
+  background-color: #0f1f18;
+  background-image: none;
+  border-color: #166534;
+}
+
+:host-context(.dark) .product-title-panel h1 {
+  color: #f9fafb;
+}
+
+:host-context(.dark) .product-specifications-panel h3 {
+  color: #86efac;
+}
+
+:host-context(.dark) .product-specifications-panel > div {
+  border-color: #166534;
+}
+
+:host-context(.dark) .favorite-button {
+  background: #111827;
+  color: #e5e7eb;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 45%);
+}
+
+:host-context(.dark) .favorite-button:hover {
+  background: #1f2937;
+  color: #f87171;
+}
+
+:host-context(.dark) .favorite-button.favorite-selected {
+  color: #f87171;
+}
+
 .bubble-img {
   position: fixed;
   width: 70px;
