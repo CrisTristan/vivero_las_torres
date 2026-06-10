@@ -43,4 +43,27 @@ export class CardProduct {
     event.stopPropagation();
     this.remove.emit(this.product.id);
   }
+
+  getProductDetails(): string {
+    const details: string[] = [];
+
+    if (this.product.tipo) {
+      details.push(`Tipo: ${this.formatDetail(this.product.tipo)}`);
+    }
+
+    if (this.product.volumen) {
+      details.push(`Volumen: ${this.formatDetail(this.product.volumen)}`);
+    }
+
+    if (this.product.nivel_cuidado) {
+      details.push(`Cuidado: ${this.formatDetail(this.product.nivel_cuidado)}`);
+    }
+
+    return details.join(' · ') || 'Sin detalles adicionales';
+  }
+
+  private formatDetail(value: string): string {
+    const normalizedValue = value.replaceAll('_', ' ');
+    return normalizedValue.charAt(0).toUpperCase() + normalizedValue.slice(1);
+  }
 }
