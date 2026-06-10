@@ -69,7 +69,7 @@ export class PanelAdminProductos implements OnInit {
   public readonly categoryOptions: ProductCategoryType[] = ['plantas', 'macetas', 'piedras', 'tierra', 'pasto', 'plaguicidas', 'herbicidas', 'fertilizantes'];
   private readonly typeOptionsByCategory: Record<ProductCategoryType, string[]> = {
     plantas: ['interior', 'exterior'],
-    macetas: ['barro', 'plastico', 'fibra_vidrio'],
+    macetas: ['barro', 'plastico', 'fibra_vidrio', 'polietileno', 'cemento'],
     piedras: ['blanca marmol', 'negra mamol', 'rio'],
     tierra: ['negra', "hoja", "fibra de coco"],
     pasto: ['San Agustin', 'Chino'],

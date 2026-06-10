@@ -43,7 +43,7 @@ export class EditModalProduct implements OnChanges {
   public readonly volumenOptions: EditPlantForm['volumen'][] = ['extra_grande', 'grande', 'mediano', 'pequeño', 'mini'];
   private readonly typeOptionsByCategory: Record<string, string[]> = {
     plantas: ['interior', 'exterior'],
-    macetas: ['barro', 'plastico', 'fibra_vidreo'],
+    macetas: ['barro', 'plastico', 'fibra_vidreo', 'polietileno', 'cemento'],
     piedras: ['blanca marmol', 'negra marmol', 'rio'],
     tierra: ['negra', 'hoja', 'fibra de coco'],
     pasto: ['San Agustin', 'Chino'],
