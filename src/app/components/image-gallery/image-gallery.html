@@ -1,0 +1,120 @@
+<section class="gallery-section" aria-labelledby="gallery-title">
+  <header class="gallery-header">
+    <div>
+      @if (eyebrow) {
+        <p class="gallery-eyebrow">{{ eyebrow }}</p>
+      }
+      <h2 id="gallery-title">{{ title }}</h2>
+    </div>
+
+    @if (description) {
+      <p class="gallery-description">{{ description }}</p>
+    }
+  </header>
+
+  @if (images.length) {
+    <div class="gallery-grid">
+      @for (image of images; track image.src; let index = $index) {
+        <button
+          type="button"
+          class="gallery-item"
+          [class.gallery-item-featured]="index === 0"
+          [attr.aria-label]="'Abrir imagen: ' + image.alt"
+          (click)="openImage(index)"
+        >
+          <img
+            [src]="image.src"
+            [alt]="image.alt"
+            [loading]="index < 2 ? 'eager' : 'lazy'"
+            decoding="async"
+          />
+
+          <span class="gallery-shade" aria-hidden="true"></span>
+
+          @if (showCaptions && (image.title || image.location)) {
+            <span class="gallery-caption">
+              @if (image.location) {
+                <span class="gallery-location">
+                  <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                  {{ image.location }}
+                </span>
+              }
+              @if (image.title) {
+                <strong>{{ image.title }}</strong>
+              }
+            </span>
+          }
+
+          <span class="gallery-open" aria-hidden="true">
+            <span class="material-symbols-outlined">open_in_full</span>
+          </span>
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="gallery-empty">
+      <span class="material-symbols-outlined" aria-hidden="true">photo_library</span>
+      <p>Próximamente compartiremos nuevos proyectos.</p>
+    </div>
+  }
+</section>
+
+@if (activeImage; as image) {
+  <div
+    class="lightbox"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="'Vista ampliada de ' + image.alt"
+    (click)="closeImage()"
+  >
+    <div class="lightbox-toolbar">
+      <span>{{ (selectedIndex ?? 0) + 1 }} / {{ images.length }}</span>
+      <button type="button" class="icon-button" aria-label="Cerrar imagen" (click)="closeImage()">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+      @if (images.length > 1) {
+        <button
+          type="button"
+          class="icon-button lightbox-control lightbox-previous"
+          aria-label="Imagen anterior"
+          (click)="showPrevious($event)"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+        </button>
+      }
+
+      <figure>
+        <img [src]="image.src" [alt]="image.alt" />
+        @if (image.title || image.description || image.location) {
+          <figcaption>
+            <div>
+              @if (image.title) {
+                <h3>{{ image.title }}</h3>
+              }
+              @if (image.location) {
+                <p class="lightbox-location">{{ image.location }}</p>
+              }
+            </div>
+            @if (image.description) {
+              <p>{{ image.description }}</p>
+            }
+          </figcaption>
+        }
+      </figure>
+
+      @if (images.length > 1) {
+        <button
+          type="button"
+          class="icon-button lightbox-control lightbox-next"
+          aria-label="Imagen siguiente"
+          (click)="showNext($event)"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </button>
+      }
+    </div>
+  </div>
+}

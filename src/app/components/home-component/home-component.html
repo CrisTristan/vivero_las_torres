@@ -1,4 +1,175 @@
-<div class="home-page h-screen overflow-hidden overflow-y-scroll pb-[9vh]">
-    <app-hero></app-hero>
-    <app-about-our-services></app-about-our-services>
+<div class="home-page">
+  
+   <app-hero></app-hero>
+   
+  <main>
+    <section class="intro-section section-shell">
+      <div class="section-heading">
+        <span class="section-kicker">Todo para tu espacio verde</span>
+        <h2>Más que plantas, creamos ambientes que se sienten bien</h2>
+        <p>
+          Te acompañamos desde la elección de cada especie hasta el diseño y
+          mantenimiento de tu jardín.
+        </p>
+      </div>
+
+      <div class="category-grid">
+        <a routerLink="/productCatalog" class="category-card category-card-large">
+          <div class="category-icon">
+            <span class="material-symbols-outlined">potted_plant</span>
+          </div>
+          <div>
+            <span class="category-label">Nuestra selección</span>
+            <h3>Plantas para cada espacio</h3>
+            <p>Especies de interior y exterior listas para darle vida a tu hogar.</p>
+            <span class="text-link">Ver plantas <span class="material-symbols-outlined">arrow_forward</span></span>
+          </div>
+        </a>
+
+        <a routerLink="/productCatalog" class="category-card">
+          <div class="category-icon">
+            <span class="material-symbols-outlined">home_and_garden</span>
+          </div>
+          <div>
+            <span class="category-label">Detalles con estilo</span>
+            <h3>Macetas y complementos</h3>
+            <p>Diseños que resaltan la belleza natural de tus plantas.</p>
+            <span class="text-link">Explorar <span class="material-symbols-outlined">arrow_forward</span></span>
+          </div>
+        </a>
+
+        <a routerLink="/plantDesignDashboard" class="category-card category-card-accent">
+          <div class="category-icon">
+            <span class="material-symbols-outlined">draw</span>
+          </div>
+          <div>
+            <span class="category-label">Hazlo a tu manera</span>
+            <h3>Arreglos personalizados</h3>
+            <p>Combina plantas, macetas y acabados para crear una pieza única.</p>
+            <span class="text-link">Comenzar diseño <span class="material-symbols-outlined">arrow_forward</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section id="servicios" class="services-section">
+      <div class="section-shell">
+        <div class="section-heading section-heading-left">
+          <span class="section-kicker">Servicios profesionales</span>
+          <h2>Cuidamos tus espacios como si fueran nuestros</h2>
+          <p>Soluciones pensadas para que disfrutes un jardín saludable durante todo el año.</p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <span class="service-number">01</span>
+            <div class="service-icon"><span class="material-symbols-outlined">content_cut</span></div>
+            <h3>Mantenimiento de jardines</h3>
+            <p>Poda, riego, fertilización y cuidado periódico para mantener cada área en su mejor estado.</p>
+            <ul>
+              <li><span class="material-symbols-outlined">check_circle</span> Cuidado programado</li>
+              <li><span class="material-symbols-outlined">check_circle</span> Diagnóstico de plantas</li>
+            </ul>
+          </article>
+
+          <article class="service-card featured">
+            <span class="service-badge">Más solicitado</span>
+            <span class="service-number">02</span>
+            <div class="service-icon"><span class="material-symbols-outlined">design_services</span></div>
+            <h3>Diseño de jardines</h3>
+            <p>Planeamos espacios funcionales y atractivos que reflejan tu estilo y se adaptan a tu entorno.</p>
+            <ul>
+              <li><span class="material-symbols-outlined">check_circle</span> Propuesta personalizada</li>
+              <li><span class="material-symbols-outlined">check_circle</span> Selección de especies</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <span class="service-number">03</span>
+            <div class="service-icon"><span class="material-symbols-outlined">psychiatry</span></div>
+            <h3>Plantación y trasplante</h3>
+            <p>Preparamos el suelo y realizamos cada proceso con el cuidado necesario para un crecimiento saludable.</p>
+            <ul>
+              <li><span class="material-symbols-outlined">check_circle</span> Preparación del suelo</li>
+              <li><span class="material-symbols-outlined">check_circle</span> Cuidado posterior</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="aboutUs" class="experience-section section-shell">
+      <div class="experience-visual">
+        <img src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/d00a9270096191.5b97f4c04f0c9.gif" alt="Jardín verde cuidado profesionalmente" loading="lazy" />
+        <div class="experience-note">
+          <span class="material-symbols-outlined">spa</span>
+          <div>
+            <strong>Cultivo responsable</strong>
+            <span>Respeto por cada planta y su entorno</span>
+          </div>
+        </div>
+      </div>
+     <app-image-gallery [images]="galleryImages"/>
+      <div class="experience-copy">
+        <span class="section-kicker">La experiencia Vivero Las Torres</span>
+        <h2>Conocimiento, calidad y atención cercana</h2>
+        <p>
+          Queremos que elegir y cuidar plantas sea una experiencia sencilla.
+          Por eso combinamos productos de calidad con orientación clara en cada paso.
+        </p>
+
+        <div class="value-list">
+          <div class="value-item">
+            <span class="material-symbols-outlined">workspace_premium</span>
+            <div>
+              <h3>Calidad desde el origen</h3>
+              <p>Seleccionamos plantas saludables y materiales que ofrecen resultados duraderos.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <span class="material-symbols-outlined">groups</span>
+            <div>
+              <h3>Acompañamiento experto</h3>
+              <p>Recibe recomendaciones prácticas según tu espacio, clima y nivel de experiencia.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <span class="material-symbols-outlined">eco</span>
+            <div>
+              <h3>Una visión más sostenible</h3>
+              <p>Promovemos decisiones responsables para disfrutar la naturaleza por más tiempo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contactUs" class="contact-section">
+      <div class="contact-card section-shell">
+        <div>
+          <span class="section-kicker section-kicker-light">Estamos para ayudarte</span>
+          <h2>¿Tienes una idea para tu jardín?</h2>
+          <p>Cuéntanos qué necesitas y recibe orientación directa de nuestro equipo.</p>
+        </div>
+        <button type="button" class="button whatsapp-button" (click)="openWhatsApp()">
+          <img src="images/whatsapp_icon.webp" alt="" aria-hidden="true" />
+          Hablar por WhatsApp
+          <span class="material-symbols-outlined">arrow_outward</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="home-footer">
+    <div class="section-shell">
+      <div class="footer-brand">
+        <span class="material-symbols-outlined">local_florist</span>
+        <div>
+          <strong>Vivero Las Torres</strong>
+          <span>Haz de tu espacio un lugar más vivo.</span>
+        </div>
+      </div>
+      <a href="#home-title">Volver arriba <span class="material-symbols-outlined">north</span></a>
+    </div>
+  </footer>
 </div>
