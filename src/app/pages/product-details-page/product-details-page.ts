@@ -413,6 +413,71 @@ export class ProductDetailsPage {
     return !!selectedHerbicidas?.some((item: any) => item.id === productId);
   }
 
+  isProductInMyFavorites(productId: number): boolean {
+    switch (this.productCategory) {
+      case 'plantas':
+        return this.isProductInMyFavoritePlants(productId);
+      case 'macetas':
+        return this.isProductInMyFavoritePots(productId);
+      case 'piedras':
+        return this.isProductInMyFavoriteRocks(productId);
+      case 'tierra':
+        return this.isProductInMyFavoriteTierra(productId);
+      case 'pasto':
+        return this.isProductInMyFavoritePasto(productId);
+      case 'plaguicidas':
+        return this.isProductInMyFavoritePlaguicidas(productId);
+      case 'herbicidas':
+        return this.isProductInMyFavoriteHerbicidas(productId);
+      default:
+        return false;
+    }
+  }
+
+  toggleProductFavorite(product: any): void {
+    if (product?.id == null) {
+      return;
+    }
+
+    switch (this.productCategory) {
+      case 'plantas':
+        this.isProductInMyFavoritePlants(product.id)
+          ? this.removeFromMyFavoritePlants(product.id)
+          : this.addToMyFavoritePlants(product);
+        break;
+      case 'macetas':
+        this.isProductInMyFavoritePots(product.id)
+          ? this.removeFromMyFavoritePots(product.id)
+          : this.addToMyFavoritePots(product);
+        break;
+      case 'piedras':
+        this.isProductInMyFavoriteRocks(product.id)
+          ? this.removeFromMyFavoriteRocks(product.id)
+          : this.addToMyFavoriteRocks(product);
+        break;
+      case 'tierra':
+        this.isProductInMyFavoriteTierra(product.id)
+          ? this.removeFromMyFavoriteTierra(product.id)
+          : this.addToMyFavoriteTierra(product);
+        break;
+      case 'pasto':
+        this.isProductInMyFavoritePasto(product.id)
+          ? this.removeFromMyFavoritePasto(product.id)
+          : this.addToMyFavoritePasto(product);
+        break;
+      case 'plaguicidas':
+        this.isProductInMyFavoritePlaguicidas(product.id)
+          ? this.removeFromMyFavoritePlaguicidas(product.id)
+          : this.addToMyFavoritePlaguicidas(product);
+        break;
+      case 'herbicidas':
+        this.isProductInMyFavoriteHerbicidas(product.id)
+          ? this.removeFromMyFavoriteHerbicidas(product.id)
+          : this.addToMyFavoriteHerbicidas(product);
+        break;
+    }
+  }
+
   addToCart(product: Product) {
     
     //validar que el producto no se pueda agregar mayor a la cantidad disponible en stock

@@ -12,9 +12,11 @@ import type {GalleryImage} from "../image-gallery/image-gallery";
 })
 export class HomeComponent {
   galleryImages: GalleryImage[] = [
-    {src: 'https://res.cloudinary.com/dns3p07as/image/upload/v1781402996/Jardin_1_yjfesq.jpg', alt: 'Jardin 1', title: 'Jardín Tropical', location: 'Galaxias del Sol', description: 'Un espacio de tranquilidad y armonía con plantas cuidadosamente seleccionadas.'},
-    {src: 'https://i.pinimg.com/originals/ef/b2/96/efb296cda5b28641e48d06ea34ac3ad9.jpg', alt: 'Jardin 2', title: 'Jardín Tropical', location: 'Selva Encantada', description: 'Un rincón exótico con plantas tropicales que aportan color y vitalidad.'},
-    {src: 'https://images.homify.com/v1438194588/p/photo/image/781299/P1020967.jpg', alt: 'Jardin 3', title: 'Jardín Minimalista', location: 'Ciudad Jardinera', description: 'Un diseño elegante y sencillo que destaca la belleza natural de las plantas.'}
+    {src: 'https://res.cloudinary.com/dns3p07as/image/upload/v1781467923/Jardin_2_vh8r0f.jpg', alt: 'Jardin 1', title: 'Jardín Fresco', location: '', description: 'Un espacio de tranquilidad y armonía con plantas cuidadosamente seleccionadas.'},
+    {src: 'https://res.cloudinary.com/dns3p07as/image/upload/v1781467923/Jardin_4_yjsgy9.jpg', alt: 'Jardin 2', title: 'Jardín Tropical', location: '', description: 'Un rincón exótico con plantas tropicales que aportan color y vitalidad.'},
+    {src: 'https://res.cloudinary.com/dns3p07as/image/upload/v1781467923/Jardin_5_k7sbr2.jpg', alt: 'Jardin 3', title: 'Jardín Perpetuo', location: '', description: 'Un diseño elegante y sencillo que destaca la belleza natural de las plantas.'},
+    {src: 'https://res.cloudinary.com/dns3p07as/image/upload/v1781467923/Jardin_3_jidcin.jpg', alt: 'Jardin 4', title: 'Jardín Minimalista', location: '', description: 'Un espacio de meditación y relajación con plantas que transmiten serenidad.'},
+    {src: 'https://res.cloudinary.com/dns3p07as/image/upload/v1781402996/Jardin_1_yjfesq.jpg', alt: 'Jardin 5', title: 'Jardín Tropical', location: '', description: 'Plantas ornamentales y diseños naturales. Ideales para decorar entradas, pasillos, terrazas y áreas verdes, aportando frescura, elegancia y un toque especial a cualquier ambiente.'},
   ];
 
   protected openWhatsApp(): void {
