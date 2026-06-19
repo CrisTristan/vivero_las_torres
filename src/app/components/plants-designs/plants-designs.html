@@ -3,7 +3,11 @@
   <div #carrousel class="overflow-x-auto scroll-smooth snap-x snap-mandatory" (scroll)="onScroll()">
     <div class="flex w-full">
       @for (group of groupedPlants; track $index) {
-        <div class="min-w-full grid grid-cols-2 grid-rows-2 gap-4 p-2 snap-start">
+        <div
+          class="min-w-full grid grid-cols-2 gap-4 p-2 snap-start"
+          [class.grid-rows-1]="group.length <= 2"
+          [class.grid-rows-2]="group.length > 2"
+        >
           @for (product of group; track product.id) {
             <div
               class="border rounded-xl p-4 shadow cursor-pointer transition"
@@ -25,7 +29,19 @@
         <div
           class="border rounded-xl p-4 shadow mb-2.5 flex flex-col items-center justify-center my-10 w-[80vw]"
         >
-          <p class="text-red-500 text-xl">No tienes plantas Favoritas</p>
+          <p class="text-red-500 text-xl font-semibold">No tienes plantas Favoritas</p>
+          <p class="mt-2 max-w-md text-center text-gray-600">
+            Para guardar tus plantas favoritas, ve a los detalles del producto
+            y da clic en
+            <span class="inline-flex items-center gap-1 font-bold">
+              <span
+                class="material-symbols-outlined text-base text-red-500 [font-variation-settings:'FILL'_1]"
+                aria-hidden="true"
+                >favorite</span
+              >
+              agregar a favoritos
+            </span>.
+          </p>
           <button
             class="bg-green-400 text-white rounded-xl p-2 ml-4 text-2xl my-5"
             (click)="navigateToCatalog()"
