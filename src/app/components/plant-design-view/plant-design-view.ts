@@ -13,6 +13,13 @@ export class PlantDesignView {
   plantDesignService = inject(PlantDesignService);
   public authService = inject(AuthService);
   public paymentService = inject(PaymentService);
+
+  formatMexicanCurrency(value?: number): string {
+    return `${new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+    }).format(value ?? 0)} MXN`;
+  }
   
   resetDesign() {
     this.plantDesignService.resetDesign();

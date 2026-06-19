@@ -1,25 +1,3 @@
-<style>
-  @keyframes spin-pause {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    /* Gira en los primeros 30% del tiempo */
-    30% {
-      transform: rotate(-360deg);
-    }
-
-    /* Se queda detenido el resto del tiempo */
-    100% {
-      transform: rotate(-360deg);
-    }
-  }
-
-  .spin-counter {
-    animation: spin-pause 10s linear infinite;
-  }
-</style>
-
 <div class="bg-gray-300 w-screen pb-10">
   <div class="flex flex-row justify-between my-10">
     <h2>Arreglo</h2>
@@ -29,16 +7,28 @@
     ) {
       <div class="flex flex-col items-center gap-3">
         <button class="bg-red-400 hover:bg-red-600 active:bg-red-700 text-black rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex flex-col items-center gap-2" (click)="resetDesign()">
-          <span class="material-symbols-outlined text-2xl font-bold spin-counter"> replay </span>
-          <span class="font-semibold text-sm">Reiniciar</span>
-          <span class="font-semibold text-sm">Elección</span>
+          <span class="material-symbols-outlined text-2xl font-bold">delete</span>
+          <span class="font-semibold text-sm">borrar todo</span>
         </button>
       </div>
     }
   </div>
   <div class="flex flex-col justify-center">
     <div class="flex flex-row justify-around gap-4 my-20 design-preview">
-      @if (plantDesignService.userSelectedPlant()) {
+      @if (plantDesignService.isComplete()) {
+        <img
+          src="{{ plantDesignService.userSelectedPot()?.productos?.imagen }}"
+          alt="{{ plantDesignService.userSelectedPot()?.productos?.nombre }}"
+          class="shadow-2xl shadow-black w-[20vw] plantPot-img selected"
+        />
+
+        <img
+          src="{{ plantDesignService.userSelectedPlant()?.productos?.imagen }}"
+          alt="{{ plantDesignService.userSelectedPlant()?.productos?.nombre }}"
+          class="shadow-2xl shadow-black w-[20vw] plant-img selected"
+        />
+      } @else {
+        @if (plantDesignService.userSelectedPlant()) {
           <img
             src="{{ plantDesignService.userSelectedPlant()?.productos?.imagen }}"
             alt="{{ plantDesignService.userSelectedPlant()?.productos?.nombre }}"
@@ -49,28 +39,29 @@
               plantDesignService.userSelectedStone()
             "
           />
-      } @else {
-        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
-          <h3>Planta</h3>
-        </div>
-      }
+        } @else {
+          <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
+            <h3>Planta</h3>
+          </div>
+        }
 
-      @if (plantDesignService.userSelectedPot()) {
+        @if (plantDesignService.userSelectedPot()) {
 
-          <img
-            src="{{ plantDesignService.userSelectedPot()?.productos?.imagen }}"
-            alt="{{ plantDesignService.userSelectedPot()?.productos?.nombre }}"
-            class="shadow-2xl shadow-black w-[20vw] plantPot-img"
-            [class.selected]="
-              plantDesignService.userSelectedPlant() &&
-              plantDesignService.userSelectedPot() &&
-              plantDesignService.userSelectedStone()
-            "
-          />
-      } @else {
-        <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
-          <h3>Maceta</h3>
-        </div>
+            <img
+              src="{{ plantDesignService.userSelectedPot()?.productos?.imagen }}"
+              alt="{{ plantDesignService.userSelectedPot()?.productos?.nombre }}"
+              class="shadow-2xl shadow-black w-[20vw] plantPot-img"
+              [class.selected]="
+                plantDesignService.userSelectedPlant() &&
+                plantDesignService.userSelectedPot() &&
+                plantDesignService.userSelectedStone()
+              "
+            />
+        } @else {
+          <div class="bg-gray-200 p-5 border-dashed border-4 border-gray-600 h-[10vh]">
+            <h3>Maceta</h3>
+          </div>
+        }
       }
 
       @if (plantDesignService.userSelectedStone()) {
@@ -113,7 +104,7 @@
         </div>
         </div>
         <div>
-          <p>${{ plantDesignService.userSelectedPlant()?.productos?.precio }}</p>
+          <p>{{ formatMexicanCurrency(plantDesignService.userSelectedPlant()?.productos?.precio) }}</p>
         </div>
       </div>
       <div class="flex flex-row justify-between">
@@ -135,7 +126,7 @@
         </div>
         </div>
         <div>
-          <p>${{ plantDesignService.userSelectedPot()?.productos?.precio }}</p>
+          <p>{{ formatMexicanCurrency(plantDesignService.userSelectedPot()?.productos?.precio) }}</p>
         </div>
       </div>
       <div class="flex flex-row justify-between">
@@ -157,7 +148,7 @@
         </div>
         </div>
         <div>
-          <p>${{ plantDesignService.userSelectedStone()?.productos?.precio }}</p>
+          <p>{{ formatMexicanCurrency(plantDesignService.userSelectedStone()?.productos?.precio) }}</p>
         </div>
       </div>
     </div>
@@ -165,7 +156,7 @@
     <div class="flex flex-row justify-between mt-5">
       <p class="text-2xl">Total: </p>
       <p class="text-2xl font-bold text-green-600">
-        ${{ plantDesignService.total() }}
+        {{ formatMexicanCurrency(plantDesignService.total()) }}
       </p>
     </div>
     <div class="flex justify-center">

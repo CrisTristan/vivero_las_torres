@@ -1,9 +1,9 @@
-<div class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[9vh] bg-green-300" #scrollContainer
+<div class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[9vh] bg-green-300 [html.dark_&]:bg-none [html.dark_&]:bg-black" #scrollContainer
   (scroll)="onContainerScroll($event)">
   <!-- Search Bar & Filters Container -->
   <div class="fixed w-full px-3 md:px-6 py-4 bg-green-300/90 backdrop-blur-sm border-b border-green-500/50 z-50">
     <!-- Search Bar -->
-    <div class="mb-6 fixed left-1/2 transform -translate-x-1/2 w-[100%] z-70 bg-green-300">
+    <div class="mb-6 fixed left-1/2 transform -translate-x-1/2 w-[100%] z-70 bg-green-300 [html.dark_&]:bg-black">
       <div class="w-[80%] mx-auto mb-5">
         <app-search-bar [value]="searchTerm()" class="drop-shadow-sm"></app-search-bar>
       </div>
