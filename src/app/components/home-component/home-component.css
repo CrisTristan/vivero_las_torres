@@ -10,13 +10,12 @@
   --cream: #f6f5ed;
   --ink: #17211c;
   --muted: #647068;
-  height: 100dvh;
+  height: calc(100dvh - 8vh);
   overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
   background: var(--cream);
   color: var(--ink);
-  padding-top: 8vh;
   padding-bottom: 8vh;
 }
 

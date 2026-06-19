@@ -214,8 +214,8 @@
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.65rem, 13vw, 4rem);
-    line-height: 1.04;
+    font-size: clamp(2rem, 9.5vw, 2.85rem);
+    line-height: 1.08;
   }
 
   .hero-title-primary,
