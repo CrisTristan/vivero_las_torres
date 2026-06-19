@@ -15,10 +15,10 @@ export class PlantDesignView {
   public paymentService = inject(PaymentService);
 
   formatMexicanCurrency(value?: number): string {
-    return `${new Intl.NumberFormat('es-MX', {
+    return new Intl.NumberFormat('es-MX', {
       style: 'currency',
       currency: 'MXN',
-    }).format(value ?? 0)} MXN`;
+    }).format(value ?? 0);
   }
   
   resetDesign() {
