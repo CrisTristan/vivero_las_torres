@@ -2,100 +2,20 @@
   class="product-details-page h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[8vh] bg-linear-to-b from-green-100 to-green-300 py-8 px-4 sm:px-6 lg:px-8">
   <div class="max-w-5xl mx-auto">
     <!-- Breadcrumb -->
-    <div #destAnimation class="mb-8">
-      <button (click)="navigateToCatalog()" class="text-xs text-gray-500 hover:text-gray-700 transition">← Volver al
-        catálogo</button>
+    <div #destAnimation class="my-2">
+      <button (click)="navigateToCatalog()" class="flex justify-center bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 items-center gap-2">
+        <span class="material-symbols-outlined back-icon">arrow_back</span>
+      </button>
     </div>
 
     <!-- Contenedor principal -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-12">
 
       <!-- Sección de imagen -->
       <div class="relative group">
         <div class="product-image-panel relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
           <img src="{{ productDetails()?.productos?.imagen }}" alt="{{ productDetails()?.productos?.nombre }}"
             class="w-full h-auto object-cover hover:scale-110 transition-transform duration-500" />
-          <!-- Botón Favorito flotante -->
-          <!-- <div class="absolute top-3 right-3">
-            @if (this.productCategory === 'plantas') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoritePlants(productDetails()?.id!)" (click)="
-                  isProductInMyFavoritePlants(productDetails()?.id!)
-                    ? removeFromMyFavoritePlants(productDetails()?.id!)
-                    : addToMyFavoritePlants(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            } @else if (this.productCategory === 'macetas') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoritePots(productDetails()?.id!)" (click)="
-                  isProductInMyFavoritePots(productDetails()?.id!)
-                    ? removeFromMyFavoritePots(productDetails()?.id!)
-                    : addToMyFavoritePots(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            } @else if (this.productCategory === 'piedras') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoriteRocks(productDetails()?.id!)" (click)="
-                  isProductInMyFavoriteRocks(productDetails()?.id!)
-                    ? removeFromMyFavoriteRocks(productDetails()?.id!)
-                    : addToMyFavoriteRocks(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            } @else if (this.productCategory === 'tierra') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoriteTierra(productDetails()?.id!)" (click)="
-                  isProductInMyFavoriteTierra(productDetails()?.id!)
-                    ? removeFromMyFavoriteTierra(productDetails()?.id!)
-                    : addToMyFavoriteTierra(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            } @else if (this.productCategory === 'pasto') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoritePasto(productDetails()?.id!)" (click)="
-                  isProductInMyFavoritePasto(productDetails()?.id!)
-                    ? removeFromMyFavoritePasto(productDetails()?.id!)
-                    : addToMyFavoritePasto(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            } @else if (this.productCategory === 'plaguicidas') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoritePlaguicidas(productDetails()?.id!)" (click)="
-                  isProductInMyFavoritePlaguicidas(productDetails()?.id!)
-                    ? removeFromMyFavoritePlaguicidas(productDetails()?.id!)
-                    : addToMyFavoritePlaguicidas(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            } @else if (this.productCategory === 'herbicidas') {
-            <span
-              class="favorite-button material-symbols-outlined text-xl bg-white rounded-full p-1.5 shadow hover:shadow-md cursor-pointer transition-all duration-300 hover:scale-110 hover:text-red-600"
-              [class.favorite-selected]="this.isProductInMyFavoriteHerbicidas(productDetails()?.id!)" (click)="
-                  isProductInMyFavoriteHerbicidas(productDetails()?.id!)
-                    ? removeFromMyFavoriteHerbicidas(productDetails()?.id!)
-                    : addToMyFavoriteHerbicidas(productDetails()!);
-                  $event.stopPropagation()
-                ">
-              favorite
-            </span>
-            }
-          </div> -->
         </div>
       </div>
 
@@ -114,7 +34,7 @@
             </div>
             @if(this.productDetails(); as Product) {
             <button (click)="this.toggleProductFavorite(this.productDetails()!)">
-              <div class="flex flex-col">
+              <div class="flex flex-col justify-center items-center">
               <span class="material-symbols-outlined"
                 [class.favorite-selected]="this.isProductInMyFavorites(this.productDetails()?.id || 0)">
                 favorite
