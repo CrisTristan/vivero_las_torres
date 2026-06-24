@@ -29,17 +29,16 @@ export class LogInPage {
     this.showEmailVerificationMessage.set(false);
     try{
       const res = await this.authService.login(this.correo, this.contrasena);
-      if (res.status === 200) {
-        this.messageService.add({ severity: 'success', summary: 'Sesión iniciada con éxito', detail: '¡Bienvenido!', life: 5000 });
-        await this.router.navigate(['/']);
-      } else if(res.status === 401) {
-        this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: 'La contraseña es incorrecta', life: 5000 });
-      }else if(res.status === 403) {
-        this.showEmailVerificationMessage.set(true);
+      if(res.error){
+        this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: res.error, life: 5000 });
+        return;
       }
-      else if(res.status === 404) {
-        this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: 'El correo ingresado no existe', life: 5000 });
+
+      if (res.status === 200 && res.user) {
+        // Inicio de sesión exitoso, redirigir a la página principal
+        this.router.navigate(['/']);
       }
+      
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: 'Correo o contraseña incorrectos', life: 5000 });
       console.error('Error al iniciar sesión:', error);

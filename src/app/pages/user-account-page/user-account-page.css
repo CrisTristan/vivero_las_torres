@@ -1,0 +1,6 @@
+.user-account-page{
+     height: calc(100dvh - 8vh);
+     overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 8vh;
+}

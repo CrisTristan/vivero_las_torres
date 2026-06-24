@@ -4,12 +4,7 @@ import { User } from '../types/user';
 import { environment } from '../../environments/environment';
 import { ShoppingCartService } from './shopping-cart-service';
 import { UserController } from '../controllers/user_controller';
-
-type AuthResponse = {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
-};
+import type { AuthResponse } from '../controllers/user_controller';
 
 type RegisterInput = {
   nombre: string;
@@ -122,22 +117,13 @@ export class AuthService {
   }
 
   async register(input: RegisterInput): Promise<User> {
-    // const response = await fetch(this.API_URL + '/registerUser', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(input),
-    // });
 
     const userController = new UserController();
     const response = await userController.registerUser(input);
 
-     if (!response?.status || response.status >= 400) {
-      throw new Error('Error al registrar');
-     }
      
-    if (response.status >= 400) {
-      const errorData = response as { status: number, authResponse: AuthResponse | null, error?: string };
-      throw new Error(errorData.error || 'Error al registrar');
+    if (response.error) {
+      throw new Error(response.error || 'Error al registrar');
     }
 
     const result = (response.authResponse) as AuthResponse;
@@ -145,20 +131,14 @@ export class AuthService {
     return result.user;
   }
 
-  async login(correo: string, password: string): Promise<{status: number, user?: User}> {
-    // const response = await fetch(this.API_URL + '/loginUser', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ correo, password }),
-    // });
-
+  async login(correo: string, password: string): Promise<{status: number, user?: User, error?: string}> {
     const userController = new UserController();    
     const response = await userController.loginUser(correo, password);
 
-    if (!response?.status || response.status >= 400) {
+    if (response.error) {
       // const errorData = await response?.json();
       // throw new Error(errorData.message || 'Error al iniciar sesión');
-      return {status: response?.status, user: undefined};
+      return {status: response.status, user: undefined, error: response.error};
     }
 
     const result = (response.authResponse) as AuthResponse;

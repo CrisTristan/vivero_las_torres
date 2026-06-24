@@ -1,8 +1,9 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { User } from '../../types/user';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-user-account-page',
@@ -21,6 +22,8 @@ export class UserAccountPage implements OnInit {
   passwordSuccess = signal(false);
   passwordLoading = signal(false);
 
+  public themeService = inject(ThemeService);
+  
   constructor(
     private authService: AuthService,
     private router: Router,

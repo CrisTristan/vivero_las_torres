@@ -32,8 +32,10 @@ export class RocksDesigns {
     const groups = [];
     const stones = this.designService.fetchedStones;
     console.log(stones);
-    for (let i = 0; i < stones.length; i += 4) {
-      groups.push(stones.slice(i, i + 4));
+    //Filtrar solo las piedras sueltas (esPiedraSuelta = true)
+    const looseStones = stones.filter(stone => stone.esPiedraSuelta);
+    for (let i = 0; i < looseStones.length; i += 4) {
+      groups.push(looseStones.slice(i, i + 4));
     }
     return groups;
   });

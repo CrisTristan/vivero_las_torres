@@ -1,7 +1,7 @@
-<div class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[9vh] bg-green-300 [html.dark_&]:bg-none [html.dark_&]:bg-black" #scrollContainer
+<div class="h-screen overflow-hidden overflow-y-scroll pt-[8vh] pb-[9vh] bg-green-300" #scrollContainer
   (scroll)="onContainerScroll($event)">
   <!-- Search Bar & Filters Container -->
-  <div class="fixed w-full px-3 md:px-6 py-4 bg-green-300/90 backdrop-blur-sm border-b border-green-500/50 z-50 [html.dark_&]:bg-black/90 [html.dark_&]:border-slate-800">
+  <div class="fixed w-full px-3 md:px-6 py-4 bg-green-300 backdrop-blur-sm border-b border-green-500/50 z-50">
     <!-- Search Bar -->
     <div class="mb-6 fixed left-1/2 transform -translate-x-1/2 w-[100%] z-70 bg-green-300 [html.dark_&]:bg-black">
       <div class="w-[80%] mx-auto mb-5">
@@ -186,7 +186,7 @@
         @if(this.getSelectedCategory() === 'plantas') {
         <div class="flex items-center gap-2 bg-green-50 rounded-lg p-2">
           <span class="material-symbols-outlined text-sm text-green-600">local_florist</span>
-          <p class="text-xs text-green-700 font-semibold">Cuidado: {{ product.nivel_cuidado }}</p>
+          <p class="text-xs text-green-800 font-semibold">Cuidado: {{ product.nivel_cuidado }}</p>
         </div>
         }
 

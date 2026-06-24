@@ -3,25 +3,14 @@
       <img src="images/logo_vivero.jpeg" alt="Vivero Las Torres" class="h-full w-25 inline-block"
         loading="eager" />
 
-    <button
-      type="button"
-      (click)="themeService.toggleTheme()"
-      class="theme-toggle ml-auto md:ml-2 md:order-3 h-10 w-10 shrink-0 rounded-full border border-green-800/30 bg-white/80 text-green-900 flex items-center justify-center shadow-sm transition-colors hover:bg-white"
-      [attr.aria-label]="themeService.isDark() ? 'Activar modo claro' : 'Activar modo oscuro'"
-      [attr.title]="themeService.isDark() ? 'Activar modo claro' : 'Activar modo oscuro'"
-    >
-      <span class="material-symbols-outlined text-[24px] leading-none">
-        {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
-      </span>
-    </button>
-
-    <button destinationAnimation (click)="open = !open" class="md:hidden m-3">
+    <button destinationAnimation (click)="open = !open" class="md:hidden ml-auto m-3">
       @if (!open) {
       <span class="material-symbols-outlined"> menu </span>
       } @else {
       <span class="material-symbols-outlined text-red-500"> close </span>
       }
     </button>
+
     <ul [class.hidden]="!open" [class.flex]="open"
       class="absolute md:static md:flex md:flex-1 md:justify-evenly md:items-center
          md:w-full top-10 w-screen md:mt-0 bg-white md:bg-transparent

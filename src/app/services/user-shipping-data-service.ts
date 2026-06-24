@@ -40,23 +40,23 @@ export class UserShippingDataService {
 
           if (this.userId !== newUserId) {
             if (this.skipNextUserCheck) {
-              console.log(
-                "⏭️ Saltando verificación de usuario para evitar sobrescribir datos recientes",
-              );
+              // console.log(
+              //   "⏭️ Saltando verificación de usuario para evitar sobrescribir datos recientes",
+              // );
               this.skipNextUserCheck = false;
               return;
             }
 
-            console.log(
-              `👤 Usuario cambió de ${this.userId} a ${newUserId}, recargando direcciones...`,
-            );
+            // console.log(
+            //   `👤 Usuario cambió de ${this.userId} a ${newUserId}, recargando direcciones...`,
+            // );
             this.userId = newUserId;
             this.loadShippingDataForUser(newUserId);
           }
         } else {
           // Usuario hizo logout
           if (this.userId !== null) {
-            console.log("👤 Usuario desconectado, limpiando datos...");
+            // console.log("👤 Usuario desconectado, limpiando datos...");
             this.userId = null;
             this.AllUserShippingData.set([]); // Limpiar datos
             this.selectedShippingData.set(null);

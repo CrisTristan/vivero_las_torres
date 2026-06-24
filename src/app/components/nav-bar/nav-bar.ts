@@ -16,7 +16,6 @@ export class NavBar {
   ShoppingCartService: ShoppingCartService;
 
   public adminMenuService = inject(AdminMenuService);
-  public readonly themeService = inject(ThemeService);
   
   @ViewChild('#aboutUs') aboutUs!: ElementRef;
 

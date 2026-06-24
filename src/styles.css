@@ -126,17 +126,21 @@ html.dark [class*="bg-[#b7d1b7]"] {
 	background-color: #1f2937 !important;
 }
 
-html.dark :where(.bg-green-50, .bg-green-100, .bg-emerald-50),
+html.dark :where(.bg-green-300){
+	background-color: #111827 !important;
+}
+
+html.dark :where(.bg-green-200),
 html.dark [class*="bg-[#c6dfb8]"] {
-	background-color: #143524 !important;
+	background-color: #096636 !important;
 }
 
 html.dark :where(.bg-blue-50) {
 	background-color: #172554 !important;
 }
 
-html.dark :where(.bg-red-50) {
-	background-color: #450a0a !important;
+html.dark :where(.bg-red-200) {
+	background-color: #972b2b !important;
 }
 
 html.dark [class*="bg-[#fff1f1]"] {

@@ -350,11 +350,12 @@ export class PanelAdminProductos implements OnInit {
     const state = this.createFormState();
     this.isCreatingProduct.set(true); // Indicamos que se está creando un producto para mostrar el spinner en el botón de creación
 
-    if (!state.name.trim() || state.price <= 0 || state.stock <= 0 || !state.type.trim()) {
+    if (!state.name.trim() || (!state.esPiedraSuelta && state.price <= 0) || state.stock <= 0 || !state.type.trim()) {
+  
       this.messageService.add({
         severity: 'warn',
         summary: 'Campos requeridos',
-        detail: 'Nombre, descripcion, precio, stock, tipo y volumen son obligatorios',
+        detail: 'Nombre, descripcion, precio, stock, tipo son obligatorios',
       });
       return;
     }

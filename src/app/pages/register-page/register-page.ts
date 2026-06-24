@@ -83,7 +83,8 @@ export class RegisterPage {
       this.submitted.set(true);
       
     } catch (error) {
-      this.errorMessage.set('Ocurrió un error al registrarse. Intenta de nuevo.');
+      console.error('Error en onSubmit:', error);
+      this.errorMessage.set(error as string || 'Error al registrar usuario');
     } finally {
       this.loading.set(false);
     }

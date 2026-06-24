@@ -8,7 +8,7 @@
   @for(shippingData of this.userShippingDataService.AllUserShippingData(); track shippingData?.id; let i = $index) {
 
   <!-- Resumen -->
-  <div class="bg-green-100 rounded-xl p-4 mt-3 shadow-sm flex flex-col gap-3">
+  <div class="bg-green-200 rounded-xl p-4 mt-3 shadow-sm flex flex-col gap-3">
     <div class="flex flex-col md:flex-row md:items-center md:gap-4">
       <!-- @if(this.userShippingDataService.getSelectedShippingData()?.id === shippingData?.id) {
         <div class="flex items-center gap-2 text-green-600">
@@ -17,19 +17,18 @@
         </div>
       } -->
       <span>Dirección #{{i+1 }}</span>
-      <span class="font-semibold text-green-700">Calle: {{ shippingData.calle }}, Num. Ext: {{
-        shippingData.numero_exterior }}, {{ shippingData.numero_interior ? ' Num. Int. ' + shippingData.numero_interior
-        : '' }}</span>
+      <span class="font-semibold text-green-600">Calle: {{ shippingData.calle }} - Num. Ext: {{
+        shippingData.numero_exterior }} - Num. Int. {{ shippingData.numero_interior ? shippingData.numero_interior : '' }}</span>
       <span class="text-gray-700">Col. {{ shippingData.colonia }}</span>
       <span class="text-gray-700">CP: {{ shippingData.codigo_postal }}</span>
     </div>
-    <div class="text-xs text-gray-500">{{ shippingData.region }} - {{ shippingData.manzana }} - {{ shippingData.lote }}
+    <div class="text-xs text-gray-500">Reg. {{ shippingData.region }} - Mzn. {{ shippingData.manzana }} - Lt. {{ shippingData.lote }}
     </div>
     <!-- Botones de acciones -->
     <div class="flex gap-2">
       <button class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition"
         (click)="this.handleEditShippingDataForm(shippingData)">
-        Editar
+        {{this.indexEditingShippingDataForm() === shippingData?.id ? '(Editando)' : 'Editar'}}
       </button>
       <!-- <button
         class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 rounded-lg transition"
@@ -41,7 +40,9 @@
   </div>
   <!-- Mostrar solo el formulario expandido si está en edición -->
   @if (this.indexEditingShippingDataForm() === shippingData?.id) {
-  <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+  <div class="bg-green-200 rounded-xl p-5 mt-3 shadow-sm">
+    <h2 class="text-lg text-white font-bold text-center">Editar dirección #{{i +1}}</h2>
+    <h3 class="text-sm text-gray-700 mb-4 text-center">Actualiza los datos de tu dirección de envío</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       @for (field of numericFields; track field.key) {
       <div class="flex flex-col">
@@ -98,7 +99,7 @@
     </div>
     <div class="flex gap-2 mt-4">
       <button
-        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+        class="w-full bg-green-600 hover:bg-green-900 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
         [disabled]="!isValid()" (click)="this.onSubmitEditedForm()">
         Guardar cambios
       </button>
@@ -120,7 +121,7 @@
     @if(this.createNewShippingData()){
     <h2 class="text-lg text-green-600 font-semibold">Agregar nueva dirección de envío</h2>
     }
-    <div class="bg-green-300 rounded-xl p-5 mt-3 shadow-sm">
+    <div class="bg-green-300 [html.dark_&]:bg-green-800 rounded-xl p-5 mt-3 shadow-sm">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @for (field of numericFields; track field.key) {
 

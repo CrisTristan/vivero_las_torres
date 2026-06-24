@@ -62,6 +62,7 @@ export class App {
       
       // Solo inyectar RouteTrackerService si el usuario tiene 0 direcciones
       if (!userShippingData || userShippingData.data.length === 0) {
+        console.log('Usuario sin direcciones de envío, inyectando RouteTrackerService...');
         this.routeTrackerService = inject(RouteTrackerService);
       }
     } catch (error) {

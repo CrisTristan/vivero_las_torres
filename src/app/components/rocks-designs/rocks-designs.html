@@ -3,7 +3,10 @@
     <div #carrousel class="overflow-x-auto scroll-smooth snap-x snap-mandatory" (scroll)="onScroll()">
     <div class="flex w-full">
         @for(group of groupedStones(); track $index) {
-           <div class="min-w-full grid grid-cols-2 grid-rows-2 gap-4 p-2 snap-start">
+           <div class="min-w-full grid grid-cols-2 gap-4 p-2 snap-start"
+                 [class.grid-rows-1]="group.length <= 2"
+                 [class.grid-rows-2]="group.length > 2"
+          >
           @for (product of group; track product.id) {
             @if(product.esPiedraSuelta === true) {
               <div
