@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserController } from '../../controllers/user_controller';
 import { User } from '../../types/user';
 import { AuthService } from '../../services/auth-service';
+import { resendVerificationEmail } from '../../controllers/email_verification_controller';
 
 @Component({
   selector: 'app-register-page',
@@ -11,7 +12,7 @@ import { AuthService } from '../../services/auth-service';
   templateUrl: './register-page.html',
   styleUrl: './register-page.css',
 })
-export class RegisterPage {
+export class RegisterPage implements OnDestroy {
   nombre = '';
   apellidos = '';
   telefono = '';
@@ -25,6 +26,11 @@ export class RegisterPage {
   loading = signal(false);
 
   public submitted = signal(false);  // Nueva señal para rastrear el estado de envío del formulario
+
+  public resendCountdown = signal(20); // Segundos restantes antes de poder reenviar el correo
+  public resending = signal(false); // Indica si la solicitud de reenvío está en curso
+  public resendMessage = signal(''); // Mensaje de retroalimentación del reenvío
+  private resendInterval?: ReturnType<typeof setInterval>;
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -81,7 +87,8 @@ export class RegisterPage {
 
       //await this.router.navigate(['/']);
       this.submitted.set(true);
-      
+      this.startResendCountdown();
+
     } catch (error) {
       console.error('Error en onSubmit:', error);
       this.errorMessage.set(error as string || 'Error al registrar usuario');
@@ -90,7 +97,40 @@ export class RegisterPage {
     }
   }
 
+  private startResendCountdown() {
+    clearInterval(this.resendInterval);
+    this.resendCountdown.set(20);
+    this.resendInterval = setInterval(() => {
+      this.resendCountdown.update(value => value - 1);
+      if (this.resendCountdown() <= 0) {
+        clearInterval(this.resendInterval);
+      }
+    }, 1000);
+  }
+
+  async resendVerification() {
+    if (this.resendCountdown() > 0 || this.resending()) return;
+
+    this.resending.set(true);
+    this.resendMessage.set('');
+
+    try {
+      await resendVerificationEmail(Number(this.authService.getUser()?.id));
+      this.resendMessage.set('Hemos reenviado el correo de verificación.');
+      this.startResendCountdown();
+    } catch (error) {
+      console.error('Error en resendVerification:', error);
+      this.resendMessage.set(error as string || 'Error al reenviar el correo de verificación.');
+    } finally {
+      this.resending.set(false);
+    }
+  }
+
   navigateToLogIn() {
     this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.resendInterval);
   }
 }

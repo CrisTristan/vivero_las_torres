@@ -1,5 +1,6 @@
 import { Component, signal, inject, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import {resendVerificationEmail} from '../../controllers/email_verification_controller';
 
 @Component({
   selector: 'app-verificacion-correo',
@@ -11,32 +12,40 @@ export class VerificacionCorreo {
 
   public counterClock = signal(10); // Contador de 10 segundos para redirigir al login
   public router = inject(Router);
+  private route = inject(ActivatedRoute);
   private ngZone = inject(NgZone);
 
-  constructor() { 
-    // Inicia el contador de 10 segundos para redirigir al usuario a la página de inicio de sesión
-    this.navigateToLogin();
+  //Si el guard detectó un token inválido o expirado, llega aquí con un queryParam 'error'
+  public verificationFailed = signal(false);
+  public errorMessage = signal('');
+  public allowEmailResend = signal(false); // Permite al usuario reenviar el correo de verificación si el token es inválido o expirado
+  public userId = signal('');
+  public emailWasSent = signal(false); // Indica si se ha enviado un correo de verificación
+
+  constructor() {
+    const error = this.route.snapshot.queryParamMap.get('error');
+    if (error) {
+      this.verificationFailed.set(true);
+      this.errorMessage.set(error);
+    }
+
+    const status = this.route.snapshot.queryParamMap.get('status');
+    if (status === '401') {
+      //Permitir reenviar correo de verificación si el token ha expirado.
+      this.allowEmailResend.set(true);
+    }
+
+    const userId = this.route.snapshot.queryParamMap.get('user_id');
+    if (userId) {
+      this.userId.set(userId);
+    }
+    
   }
 
-  navigateToLogin() {
-    // Redirige al usuario a la página de inicio de sesión después de verificar el correo
-    // contador de 10 segundos antes de redirigir
-    this.ngZone.runOutsideAngular(() => {
-      setTimeout(() => {
-        //decrementa el contador cada segundo
-        const interval = setInterval(() => {
-          this.ngZone.run(() => {
-            this.counterClock.update(value => value - 1);
-          });
-          
-          if (this.counterClock() <= 0) {
-            clearInterval(interval);
-            this.ngZone.run(() => {
-              this.router.navigate(['/login']);
-            });
-          }
-        }, 1000);
-      }, this.counterClock() * 1000); // Redirige después de 10 segundos
-    });
+  async resendVerificationEmail() {
+    // Llama a la función para reenviar el correo de verificación
+    await resendVerificationEmail(Number(this.userId()));
+    this.emailWasSent.set(true);
   }
+
 }

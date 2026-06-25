@@ -127,7 +127,8 @@ export class AuthService {
     }
 
     const result = (response.authResponse) as AuthResponse;
-    this.persistSession(result);
+    
+    //this.persistSession(result);
     return result.user;
   }
 

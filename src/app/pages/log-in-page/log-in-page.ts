@@ -30,6 +30,7 @@ export class LogInPage {
     try{
       const res = await this.authService.login(this.correo, this.contrasena);
       if(res.error){
+        this.showEmailVerificationMessage.set(true);
         this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: res.error, life: 5000 });
         return;
       }
