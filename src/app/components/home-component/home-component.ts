@@ -20,9 +20,9 @@ export class HomeComponent {
   ];
 
   protected openWhatsApp(): void {
-    const phoneNumber = '5219984990394';
+    const phoneNumber = '5219903056390';
     const message = encodeURIComponent(
-      '¡Hola! Estoy interesado en sus plantas y servicios de jardinería.',
+      '¡Hola! Quisiera obtener más información sobre sus productos y servicios',
     );
 
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank', 'noopener,noreferrer');

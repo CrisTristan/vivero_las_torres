@@ -30,9 +30,12 @@ export class LogInPage {
     try{
       const res = await this.authService.login(this.correo, this.contrasena);
       if(res.error){
-        this.showEmailVerificationMessage.set(true);
         this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: res.error, life: 5000 });
         return;
+      }
+
+      if(res.status === 403){
+        this.showEmailVerificationMessage.set(true);
       }
 
       if (res.status === 200 && res.user) {
@@ -44,7 +47,6 @@ export class LogInPage {
       this.messageService.add({ severity: 'error', summary: 'Error al iniciar sesión', detail: 'Correo o contraseña incorrectos', life: 5000 });
       console.error('Error al iniciar sesión:', error);
     }
-
   }
 
   navigateToRegister() {
